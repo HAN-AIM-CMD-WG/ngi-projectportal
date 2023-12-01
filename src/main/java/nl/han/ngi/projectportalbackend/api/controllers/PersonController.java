@@ -3,9 +3,7 @@ package nl.han.ngi.projectportalbackend.api.controllers;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
@@ -14,8 +12,13 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @GetMapping("/{id}")
-    public Person getPerson(@PathVariable int id){
-        return personService.getPerson(id);
+    @GetMapping("/{name}")
+    public Person getPerson(@PathVariable String name){
+        return personService.getPerson(name);
+    }
+
+    @PostMapping("/{name}")
+    public Person createPerson(@RequestBody Person person){
+        return personService.createPerson(person);
     }
 }

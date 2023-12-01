@@ -9,7 +9,11 @@ import org.springframework.stereotype.Component;
 public class PersonService {
     @Autowired
     private PersonRepository personRepository;
-    public Person getPerson(int id){
-        return personRepository.getPerson(id);
+    public Person getPerson(String name){
+        return personRepository.getPerson(name);
+    }
+
+    public Person createPerson(Person person) {
+        return personRepository.createPerson(person);
     }
 }

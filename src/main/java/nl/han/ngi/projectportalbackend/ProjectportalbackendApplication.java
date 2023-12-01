@@ -16,29 +16,6 @@ public class ProjectportalbackendApplication {
 	private final static Logger log = LoggerFactory.getLogger(ProjectportalbackendApplication.class);
 	public static void main(String[] args) throws Exception{
 		SpringApplication.run(ProjectportalbackendApplication.class, args);
-//		System.exit(0);
 	}
-	@Bean
-	public Configuration cypherDslConfiguration() {
-		return Configuration.newConfig().withDialect(Dialect.NEO4J_5).build();
-	}
-
-//	@Bean
-//	CommandLineRunner demo(PersonRepository personRepository) {
-//		return args -> {
-//			personRepository.deleteAll();
-//
-//			Person jesse = new Person("Jesse", "jesseveldmaat@hotmail.nl", Arrays.asList("OPDRACHTGEVER"));
-//
-//			log.info("Testing to see if person is added to db");
-//			personRepository.save(jesse);
-//
-//			log.info("Lookup person by name...");
-//
-//			Person gotFromDB = personRepository.findByName("jesse");
-//
-//			log.info("Person found is: " + gotFromDB.getName() + " with e-mailadres: " + gotFromDB.getEmail());
-//		};
-//	}
 
 }
