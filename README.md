@@ -8,6 +8,6 @@ This project uses the Springboot framework in combination with the following dep
 * Spring Data Neo4j
 
 ## Quickstart
-This is a step-by-step procedure to run the back-end locally. Because this uses a Neo4j it's more difficult to set it up.
+This is a step-by-step procedure to run the back-end locally. Because we use Neo4j it's more difficult to set it up. The quickstart is a step-by-step guide for Windows installations. In the future there will be a second quickstart for Docker as well.
 
-### Install and configure Neo4j
+### Install and configure Neo4j for Windows

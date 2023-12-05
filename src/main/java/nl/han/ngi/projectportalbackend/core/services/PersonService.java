@@ -16,4 +16,12 @@ public class PersonService {
     public Person createPerson(Person person) {
         return personRepository.createPerson(person);
     }
+
+    public Person updatePerson(int id, Person person) {
+        return personRepository.updatePerson(id, person);
+    }
+
+    public void deletePerson(int id) {
+        personRepository.deletePerson(id);
+    }
 }
