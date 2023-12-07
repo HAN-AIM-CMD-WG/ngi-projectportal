@@ -52,34 +52,10 @@ public class PersonRepository {
         return personList;
     }
 
-    public Person getPerson(String name){
+    public Person getPerson(String email){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH (p:Person {name: $name}) RETURN p";
-        var result = session.run(query, parameters("name", name));
-        if (!result.hasNext()) {
-            System.out.println("niks");
-        }
-
-        Person person = new Person();
-        var res = result.next();
-        List<Pair<String, Value>> values = res.fields();
-        for (Pair<String, Value> nameValue: values) {
-            if ("p".equals(nameValue.key())) {
-                Value value = nameValue.value();
-                person.setName(value.get("name").asString());
-                person.setEmail(value.get("email").asString());
-                person.setStatus(value.get("status").asList().stream().map( Object::toString ).collect( Collectors.toList()));
-            }
-        }
-
-        return person;
-    }
-
-    public Person getPersonById(String email){
-        driver = db.getDriver();
-        var session = driver.session();
-        var query = "MATCH (p:Person {email: $email) RETURN p";
+        var query = "MATCH (p:Person {email: $email}) RETURN p";
         var result = session.run(query, parameters("email", email));
         if (!result.hasNext()) {
             System.out.println("niks");
