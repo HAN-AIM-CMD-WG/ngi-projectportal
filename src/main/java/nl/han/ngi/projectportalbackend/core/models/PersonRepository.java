@@ -7,6 +7,7 @@ import org.neo4j.driver.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,10 +25,37 @@ public class PersonRepository {
     public PersonRepository(){
     }
 
+    public List<Person> getAll(){
+        List<Person> personList = new ArrayList<>();
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH (p:Person) RETURN p";
+        var result = session.run(query);
+        if (!result.hasNext()) {
+            System.out.println("niks");
+        }
+
+        while(result.hasNext()){
+            var res = result.next();
+            List<Pair<String, Value>> values = res.fields();
+            for (Pair<String, Value> nameValue : values) {
+                if ("p".equals(nameValue.key())) {
+                    Person person = new Person();
+                    Value value = nameValue.value();
+                    person.setName(value.get("name").asString());
+                    person.setEmail(value.get("email").asString());
+                    person.setStatus(value.get("status").asList().stream().map(Object::toString).collect(Collectors.toList()));
+                    personList.add(person);
+                }
+            }
+        }
+        return personList;
+    }
+
     public Person getPerson(String name){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "match (p:Person {name: $name}) return p";
+        var query = "MATCH (p:Person {name: $name}) RETURN p";
         var result = session.run(query, parameters("name", name));
         if (!result.hasNext()) {
             System.out.println("niks");
@@ -48,11 +76,11 @@ public class PersonRepository {
         return person;
     }
 
-    public Person getPersonById(int id){
+    public Person getPersonById(String email){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "match (p:Person) where split(elementId(p), ':')[2] = $id return p";
-        var result = session.run(query, parameters("$id", id));
+        var query = "MATCH (p:Person {email: $email) RETURN p";
+        var result = session.run(query, parameters("email", email));
         if (!result.hasNext()) {
             System.out.println("niks");
         }
@@ -75,7 +103,7 @@ public class PersonRepository {
     public Person createPerson(Person person) {
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MERGE (p:Person {name: $name, email: $email, status: $status}) return p";
+        var query = "MERGE (p:Person {email: $email) ON CREATE SET p.name = $name, p.status = $status RETURN p";
         var result = session.run(query, parameters("name", person.getName(), "email", person.getEmail(), "status", person.getStatus()));
 
         if (!result.hasNext()){
@@ -85,37 +113,36 @@ public class PersonRepository {
         return person;
     }
 
-    public Person updatePerson(int id, Person person){
+    public Person updatePerson(String email, Person person){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH (p:Person) where split(elementId(p), ':')[2] = $id set p.name = $name, p.email = $email, p.status = $status return p";
-        var result = session.run(query, parameters("id", id, "name", person.getName(), "email", person.getEmail(), "status", person.getStatus()));
+        var query = "MATCH (p:Person {email: $email}) SET p.name = $name, p.email = $mail, p.status = $status RETURN p";
+        var result = session.run(query, parameters("email", email, "name", person.getName(), "mail", person.getEmail(), "status", person.getStatus()));
 
         if (!result.hasNext()){
             System.out.println("Er ging iets mis");
         }
 
-        Person returnedPerson = new Person();
         var res = result.next();
         List<Pair<String, Value>> values = res.fields();
         for (Pair<String, Value> nameValue: values) {
             if ("p".equals(nameValue.key())) {
                 Value value = nameValue.value();
-                returnedPerson.setName(value.get("name").asString());
-                returnedPerson.setEmail(value.get("email").asString());
-                returnedPerson.setStatus(value.get("status").asList().stream().map( Object::toString ).collect( Collectors.toList()));
+                person.setName(value.get("name").asString());
+                person.setEmail(value.get("email").asString());
+                person.setStatus(value.get("status").asList().stream().map( Object::toString ).collect( Collectors.toList()));
             }
         }
 
-        return returnedPerson;
+        return person;
     }
 
-    public void deletePerson(int id){
+    public void deletePerson(String email){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH(p:Person) WHERE SPLIT(elementId(p), ':')[2] = $id DELETE p";
-        System.out.println("About to run query: " + query + "; With id of: " + id);
-        var result = session.run(query, parameters("id", id));
+        var query = "MATCH(p:Person {email: $email}) DELETE p";
+        System.out.println("About to run query: " + query + "; With id of: " + email);
+        var result = session.run(query, parameters("email", email));
         if (result.hasNext()){
             System.out.println("Er ging iets mis met het verwijderen");
         }

@@ -5,8 +5,7 @@ import nl.han.ngi.projectportalbackend.core.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/person")
@@ -14,9 +13,14 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @GetMapping("/{name}")
-    public Person getPerson(@PathVariable String name){
-        return personService.getPerson(name);
+    @GetMapping()
+    public List<Person> getll(){
+        return personService.getAll();
+    }
+
+    @GetMapping("/{email}")
+    public Person getPerson(@PathVariable String email){
+        return personService.getPerson(email);
     }
 
     @PostMapping("/create")
@@ -24,14 +28,14 @@ public class PersonController {
         return personService.createPerson(person);
     }
 
-    @PutMapping("/{id}")
-    public Person updatePerson(@PathVariable int id, @RequestBody Person person){
-        return personService.updatePerson(id, person);
+    @PutMapping("/{email}")
+    public Person updatePerson(@PathVariable String email, @RequestBody Person person){
+        return personService.updatePerson(email, person);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Integer> deletePerson(@PathVariable int id){
-        personService.deletePerson(id);
+    @DeleteMapping("{email}")
+    public ResponseEntity<Integer> deletePerson(@PathVariable String email){
+        personService.deletePerson(email);
         return ResponseEntity.ok().build();
     }
 }

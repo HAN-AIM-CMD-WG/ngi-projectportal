@@ -5,23 +5,29 @@ import nl.han.ngi.projectportalbackend.core.models.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class PersonService {
     @Autowired
     private PersonRepository personRepository;
-    public Person getPerson(String name){
-        return personRepository.getPerson(name);
+
+    public List<Person> getAll() {
+        return personRepository.getAll();
+    }
+    public Person getPerson(String email){
+        return personRepository.getPerson(email);
     }
 
     public Person createPerson(Person person) {
         return personRepository.createPerson(person);
     }
 
-    public Person updatePerson(int id, Person person) {
-        return personRepository.updatePerson(id, person);
+    public Person updatePerson(String email, Person person) {
+        return personRepository.updatePerson(email, person);
     }
 
-    public void deletePerson(int id) {
-        personRepository.deletePerson(id);
+    public void deletePerson(String email) {
+        personRepository.deletePerson(email);
     }
 }
