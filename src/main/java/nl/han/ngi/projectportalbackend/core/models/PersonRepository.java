@@ -1,7 +1,10 @@
 package nl.han.ngi.projectportalbackend.core.models;
 
 import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfiguration;
+import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
+import nl.han.ngi.projectportalbackend.core.models.mappers.ResultToPersonMapper;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Result;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,9 @@ import static org.neo4j.driver.Values.parameters;
 @Component
 public class PersonRepository {
 
+    @Autowired
+    private IMapper<Result, Person> mapper;
+
     private Driver driver;
     @Autowired
     private DbConnectionConfiguration db;
@@ -26,7 +32,6 @@ public class PersonRepository {
     }
 
     public List<Person> getAll(){
-        List<Person> personList = new ArrayList<>();
         driver = db.getDriver();
         var session = driver.session();
         var query = "MATCH (p:Person) RETURN p";
@@ -35,21 +40,8 @@ public class PersonRepository {
             System.out.println("niks");
         }
 
-        while(result.hasNext()){
-            var res = result.next();
-            List<Pair<String, Value>> values = res.fields();
-            for (Pair<String, Value> nameValue : values) {
-                if ("p".equals(nameValue.key())) {
-                    Person person = new Person();
-                    Value value = nameValue.value();
-                    person.setName(value.get("name").asString());
-                    person.setEmail(value.get("email").asString());
-                    person.setStatus(value.get("status").asList().stream().map(Object::toString).collect(Collectors.toList()));
-                    personList.add(person);
-                }
-            }
-        }
-        return personList;
+
+        return mapper.mapToList(result);
     }
 
     public Person getPerson(String email){
@@ -60,20 +52,7 @@ public class PersonRepository {
         if (!result.hasNext()) {
             System.out.println("niks");
         }
-
-        Person person = new Person();
-        var res = result.next();
-        List<Pair<String, Value>> values = res.fields();
-        for (Pair<String, Value> nameValue: values) {
-            if ("p".equals(nameValue.key())) {
-                Value value = nameValue.value();
-                person.setName(value.get("name").asString());
-                person.setEmail(value.get("email").asString());
-                person.setStatus(value.get("status").asList().stream().map( Object::toString ).collect( Collectors.toList()));
-            }
-        }
-
-        return person;
+        return mapper.mapTo(result);
     }
 
     public Person createPerson(Person person) {
@@ -86,7 +65,7 @@ public class PersonRepository {
             System.out.println("Er ging iets mis");
         }
 
-        return person;
+        return mapper.mapTo(result);
     }
 
     public Person updatePerson(String email, Person person){
@@ -99,18 +78,7 @@ public class PersonRepository {
             System.out.println("Er ging iets mis");
         }
 
-        var res = result.next();
-        List<Pair<String, Value>> values = res.fields();
-        for (Pair<String, Value> nameValue: values) {
-            if ("p".equals(nameValue.key())) {
-                Value value = nameValue.value();
-                person.setName(value.get("name").asString());
-                person.setEmail(value.get("email").asString());
-                person.setStatus(value.get("status").asList().stream().map( Object::toString ).collect( Collectors.toList()));
-            }
-        }
-
-        return person;
+        return mapper.mapTo(result);
     }
 
     public void deletePerson(String email){
