@@ -1,7 +1,9 @@
 package nl.han.ngi.projectportalbackend.core.models;
 
 import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfiguration;
+import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
+import org.neo4j.driver.Result;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ import static org.neo4j.driver.Values.parameters;
 public class ProjectRepository {
 
     private Driver driver;
+
+    @Autowired
+    private IMapper<Result, Project> mapper;
     @Autowired
     private DbConnectionConfiguration db;
 
@@ -24,7 +29,6 @@ public class ProjectRepository {
     }
 
     public List<Project> getAll(){
-        List<Project> projectList = new ArrayList<>();
         driver = db.getDriver();
         var session = driver.session();
         var query = "MATCH (pr: Project) RETURN pr";
@@ -33,20 +37,8 @@ public class ProjectRepository {
             System.out.println("niks");
         }
 
-        while(result.hasNext()){
-            var res = result.next();
-            List<Pair<String, Value>> values = res.fields();
-            for (Pair<String, Value> nameValue : values) {
-                if ("pr".equals(nameValue.key())) {
-                    Project project = new Project();
-                    Value value = nameValue.value();
-                    project.setTitle(value.get("title").asString());
-                    project.setDescription(value.get("description").asString());
-                    projectList.add(project);
-                }
-            }
-        }
-        return projectList;
+
+        return mapper.mapToList(result);
     }
     public Project getProject(String title) {
         driver = db.getDriver();
@@ -57,18 +49,7 @@ public class ProjectRepository {
         if(!result.hasNext()){
             System.out.println("er is niks gevonden");
         }
-
-        Project project = new Project();
-        var res = result.next();
-        List<Pair<String, Value>> values = res.fields();
-        for (Pair<String, Value> nameValue: values) {
-            if ("pr".equals(nameValue.key())) {
-                Value value = nameValue.value();
-                project.setTitle(value.get("title").asString());
-                project.setDescription(value.get("description").asString());
-            }
-        }
-        return project;
+        return mapper.mapTo(result);
     }
 
     public Project createProject(Project project, String creator){
@@ -82,10 +63,10 @@ public class ProjectRepository {
             System.out.println("test");
         }
         // still a bug where you can create multiple of the same relationships
-        query = "MATCH (person:Person{email: $creator}), (pr:Project {title: $title}) CREATE (person)-[:LEADS {title: 'project manager'}]->(pr)";
+        query = "MATCH (person:Person{email: $creator}), (pr:Project {title: $title}) MERGE (person)-[:LEADS {title: 'project manager'}]->(pr)";
 
         session.run(query, parameters("creator", creator, "title", project.getTitle()));
-        return project;
+        return mapper.mapTo(result);
     }
 
     public Project updateProject(String title, Project project) {
@@ -98,17 +79,7 @@ public class ProjectRepository {
         if(!result.hasNext()){
             System.out.println("no project found");
         }
-
-        var res = result.next();
-        List<Pair<String, Value>> values = res.fields();
-        for (Pair<String, Value> nameValue: values) {
-            if ("pr".equals(nameValue.key())) {
-                Value value = nameValue.value();
-                project.setTitle(value.get("title").asString());
-                project.setDescription(value.get("description").asString());
-            }
-        }
-        return project;
+        return mapper.mapTo(result);
     }
 
     //Note: DOESN'T WORK YET. Don't know why
