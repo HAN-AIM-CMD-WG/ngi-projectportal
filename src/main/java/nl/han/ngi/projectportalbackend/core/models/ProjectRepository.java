@@ -62,7 +62,6 @@ public class ProjectRepository {
         if(!result.hasNext()){
             System.out.println("test");
         }
-        // still a bug where you can create multiple of the same relationships
         query = "MATCH (person:Person{email: $creator}), (pr:Project {title: $title}) MERGE (person)-[:LEADS {title: 'project manager'}]->(pr)";
 
         session.run(query, parameters("creator", creator, "title", project.getTitle()));

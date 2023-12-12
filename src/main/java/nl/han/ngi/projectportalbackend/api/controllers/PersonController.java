@@ -3,6 +3,7 @@ package nl.han.ngi.projectportalbackend.api.controllers;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -14,28 +15,50 @@ public class PersonController {
     private PersonService personService;
 
     @GetMapping()
-    public List<Person> getll(){
-        return personService.getAll();
+    public ResponseEntity getall(){
+        try {
+            return new ResponseEntity(personService.getAll(), HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{email}")
-    public Person getPerson(@PathVariable String email){
-        return personService.getPerson(email);
+    public ResponseEntity getPerson(@PathVariable String email){
+        try {
+            return new ResponseEntity<>(personService.getPerson(email), HttpStatus.OK);
+        }catch(Exception exc){
+            return new ResponseEntity<>(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/create")
-    public Person createPerson(@RequestBody Person person){
-        return personService.createPerson(person);
+    public ResponseEntity createPerson(@RequestBody Person person){
+        try {
+            return new ResponseEntity<>(personService.createPerson(person), HttpStatus.OK);
+
+        } catch(Exception exc) {
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/{email}")
-    public Person updatePerson(@PathVariable String email, @RequestBody Person person){
-        return personService.updatePerson(email, person);
+    public ResponseEntity updatePerson(@PathVariable String email, @RequestBody Person person){
+        try{
+            return new ResponseEntity(personService.updatePerson(email, person), HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @DeleteMapping("{email}")
-    public ResponseEntity<Integer> deletePerson(@PathVariable String email){
-        personService.deletePerson(email);
-        return ResponseEntity.ok().build();
+    public ResponseEntity deletePerson(@PathVariable String email){
+        try{
+            personService.deletePerson(email);
+            return new ResponseEntity("Person with email: " + email + " has been successfully deleted", HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }
