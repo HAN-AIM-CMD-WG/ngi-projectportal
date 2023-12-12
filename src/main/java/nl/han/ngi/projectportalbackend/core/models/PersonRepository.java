@@ -3,6 +3,7 @@ package nl.han.ngi.projectportalbackend.core.models;
 import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfiguration;
 import nl.han.ngi.projectportalbackend.core.exceptions.NoPersonFoundException;
 import nl.han.ngi.projectportalbackend.core.exceptions.PersonAlreadyExistsException;
+import nl.han.ngi.projectportalbackend.core.exceptions.PersonCouldNotBeDeletedException;
 import nl.han.ngi.projectportalbackend.core.exceptions.PersonNotFoundException;
 import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
@@ -87,7 +88,7 @@ public class PersonRepository {
         var query = "MATCH(p:Person {email: $email}) DELETE p";
         var result = session.run(query, parameters("email", email));
         if (result.hasNext()){
-            System.out.println("Er ging iets mis met het verwijderen");
+            throw new PersonCouldNotBeDeletedException(email);
         }
     }
 }

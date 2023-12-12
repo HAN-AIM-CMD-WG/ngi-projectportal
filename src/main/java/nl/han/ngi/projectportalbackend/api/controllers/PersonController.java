@@ -15,7 +15,7 @@ public class PersonController {
     private PersonService personService;
 
     @GetMapping()
-    public ResponseEntity getall(){
+    public ResponseEntity getAll(){
         try {
             return new ResponseEntity(personService.getAll(), HttpStatus.OK);
         } catch(Exception exc){
