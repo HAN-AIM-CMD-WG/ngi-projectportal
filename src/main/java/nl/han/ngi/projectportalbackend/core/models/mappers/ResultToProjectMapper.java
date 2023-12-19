@@ -23,7 +23,7 @@ public class ResultToProjectMapper implements IMapper<Result, Project>{
                 project.setDescription(value.get("description").asString());
             }
         }
-        return null;
+        return project;
     }
 
     @Override

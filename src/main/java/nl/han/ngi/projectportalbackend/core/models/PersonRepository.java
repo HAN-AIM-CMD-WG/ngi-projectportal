@@ -74,7 +74,6 @@ public class PersonRepository {
         var session = driver.session();
         var query = "MATCH (p:Person {email: $email}) SET p.name = $name, p.email = $mail, p.status = $status RETURN p";
         var result = session.run(query, parameters("email", email, "name", person.getName(), "mail", person.getEmail(), "status", person.getStatus()));
-
         if (!result.hasNext()){
             throw new PersonNotFoundException(email);
         }

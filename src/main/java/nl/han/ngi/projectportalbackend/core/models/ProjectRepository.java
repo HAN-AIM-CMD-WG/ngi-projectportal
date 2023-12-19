@@ -43,9 +43,8 @@ public class ProjectRepository {
     public Project getProject(String title) {
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH (pr: Project {title: $title})RETURN pr";
+        var query = "MATCH (pr: Project {title: $title}) RETURN pr";
         var result = session.run(query, parameters("title", title));
-
         if(!result.hasNext()){
             System.out.println("er is niks gevonden");
         }
@@ -81,11 +80,10 @@ public class ProjectRepository {
         return mapper.mapTo(result);
     }
 
-    //Note: DOESN'T WORK YET. Don't know why
     public void deleteProject(String title) {
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH(pr:Project {title: '$title'}) DETACH DELETE pr";
+        var query = "MATCH(pr:Project {title: $title}) DETACH DELETE pr";
         var result = session.run(query, parameters("title", title));
         if (result.hasNext()){
             System.out.println("Er ging iets mis met het verwijderen");
