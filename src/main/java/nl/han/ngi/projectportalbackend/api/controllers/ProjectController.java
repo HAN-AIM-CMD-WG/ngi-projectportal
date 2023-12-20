@@ -1,13 +1,12 @@
 package nl.han.ngi.projectportalbackend.api.controllers;
 
-import jakarta.websocket.server.PathParam;
 import nl.han.ngi.projectportalbackend.core.models.Project;
 import nl.han.ngi.projectportalbackend.core.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/project")
@@ -17,29 +16,49 @@ public class ProjectController {
     private ProjectService projectService;
 
     @GetMapping()
-    public List<Project> getAll(){
-        return projectService.getAll();
+    public ResponseEntity getAll(){
+        try {
+            return new ResponseEntity(projectService.getAll(), HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{title}")
-    public Project getProject(@PathVariable String title){
-        return projectService.getProject(title);
+    public ResponseEntity getProject(@PathVariable String title) {
+        try {
+            return new ResponseEntity<>(projectService.getProject(title), HttpStatus.OK);
+        } catch (Exception exc) {
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/create/{creator}")
-    public Project createProject(@PathVariable String creator, @RequestBody Project project){
-        return projectService.createProject(project, creator);
-
+    public ResponseEntity createProject(@PathVariable String creator, @RequestBody Project project){
+        try {
+            return new ResponseEntity(projectService.createProject(project, creator), HttpStatus.OK);
+        } catch(Exception exc) {
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/{title}")
-    public Project updateProject(@PathVariable String title, @RequestBody Project project){
-        return projectService.updateProject(title, project);
+    public ResponseEntity updateProject(@PathVariable String title, @RequestBody Project project){
+        try{
+            return new ResponseEntity(projectService.updateProject(title, project), HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @DeleteMapping("/{title}")
-    public ResponseEntity<Integer> deleteProject(@PathVariable String title){
-        projectService.deleteProject(title);
-        return ResponseEntity.ok().build();
+    public ResponseEntity deleteProject(@PathVariable String title){
+        try{
+            projectService.deleteProject(title);
+            return new ResponseEntity("Project with title: " + title + " has been successfully deleted", HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }
