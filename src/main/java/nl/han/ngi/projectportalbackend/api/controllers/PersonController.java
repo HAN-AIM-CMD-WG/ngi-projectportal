@@ -29,17 +29,16 @@ public class PersonController {
     @GetMapping("/{email}")
     public ResponseEntity getPerson(@PathVariable String email){
         try {
-            return new ResponseEntity<>(personService.getPerson(email), HttpStatus.OK);
+            return new ResponseEntity(personService.getPerson(email), HttpStatus.OK);
         }catch(PersonNotFoundException exc){
-            return new ResponseEntity<>(exc, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(exc, HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/create")
     public ResponseEntity createPerson(@RequestBody Person person){
         try {
-            return new ResponseEntity<>(personService.createPerson(person), HttpStatus.OK);
-
+            return new ResponseEntity(personService.createPerson(person), HttpStatus.OK);
         } catch(Exception exc) {
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
