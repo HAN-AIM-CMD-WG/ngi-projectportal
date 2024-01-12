@@ -57,7 +57,7 @@ public class PersonRepository {
     public Person createPerson(Person person) {
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MERGE (p:Person {email: $email) ON CREATE SET p.name = $name, p.status = $status RETURN p";
+        var query = "MERGE (p:Person {email: $email}) ON CREATE SET p.name = $name, p.status = $status RETURN p";
         var result = session.run(query, parameters("name", person.getName(), "email", person.getEmail(), "status", person.getStatus()));
 
         if (!result.hasNext()){
