@@ -38,8 +38,6 @@ public class PersonRepository {
         if (!result.hasNext()) {
             throw new NoPersonFoundException();
         }
-
-
         return mapper.mapToList(result);
     }
 
