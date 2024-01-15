@@ -8,6 +8,9 @@ import nl.han.ngi.projectportalbackend.core.exceptions.PersonNotFoundException;
 import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
+import org.neo4j.driver.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,29 +46,45 @@ public class PersonRepository {
 
     public Person getPerson(String email){
         driver = db.getDriver();
-        var session = driver.session();
-        var query = "MATCH (p:Person {email: $email}) RETURN p";
-        var result = session.run(query, parameters("email", email));
-        if (!result.hasNext()) {
-            throw new PersonNotFoundException(email);
+        try (var session = driver.session()) {
+            var query = "MATCH (p:Person {email: $email}) RETURN p";
+            var result = session.run(query, parameters("email", email));
+
+            if (!result.hasNext()) {
+                throw new PersonNotFoundException(email);
+            }
+
+            var record = result.next();
+            var node = record.get("p").asNode();
+            String name = node.get("name").asString();
+            List<String> status = node.get("status").asList(Value::asString);
+            String password = node.get("password").asString();
+            return new Person(name, email, password, status);
         }
-        return mapper.mapTo(result);
     }
 
     public Person createPerson(Person person) {
+        System.out.println("Creating person: " + person.getName());
+        System.out.println("Creating person: " + person.getEmail());
+        System.out.println("Creating person: " + person.getStatus());
+        System.out.println("Creating person: " + person.getPassword());
         driver = db.getDriver();
-        var session = driver.session();
-        var query = "MERGE (p:Person {email: $email}) ON CREATE SET p.name = $name, p.status = $status RETURN p";
-        var result = session.run(query, parameters("name", person.getName(), "email", person.getEmail(), "status", person.getStatus()));
+        try (var session = driver.session()) {
+            var query = "MERGE (p:Person {email: $email}) ON CREATE SET p.name = $name, p.status = $status, p.password = $password RETURN p";
+            var result = session.run(query, parameters(
+                    "name", person.getName(),
+                    "email", person.getEmail(),
+                    "status", person.getStatus(),
+                    "password", person.getPassword()
+            ));
 
-        if (!result.hasNext()){
-            throw new PersonAlreadyExistsException(person.getEmail());
+            if (!result.hasNext()) {
+                throw new PersonAlreadyExistsException(person.getEmail());
+            }
+
+            return mapper.mapTo(result);
         }
-
-        return mapper.mapTo(result);
     }
-
-
 
     public Person updatePerson(String email, Person person){
         driver = db.getDriver();
