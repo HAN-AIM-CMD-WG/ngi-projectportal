@@ -66,7 +66,6 @@ public class PersonRepository {
     }
 
     public Person createPerson(Person person) {
-        //log.info("Creating person: " + person.getName());
         System.out.println("Creating person: " + person.getName());
         System.out.println("Creating person: " + person.getEmail());
         System.out.println("Creating person: " + person.getStatus());
