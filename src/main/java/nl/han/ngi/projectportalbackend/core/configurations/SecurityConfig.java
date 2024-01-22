@@ -2,6 +2,8 @@ package nl.han.ngi.projectportalbackend.core.configurations;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import nl.han.ngi.projectportalbackend.core.enums.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,12 +48,20 @@ public class SecurityConfig {
     }
 
     @Bean
+    GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults("");
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll())
-                .formLogin(form -> form
+                        .requestMatchers("/api/authentication").permitAll()
+                        .requestMatchers("/api/person/create").permitAll()
+                        .requestMatchers("/api/person/**").permitAll()
+                        .requestMatchers("/api/project/**").permitAll())
+                        .formLogin(form -> form
                         .loginProcessingUrl("/api/login")
                         .successHandler(authenticationSuccessHandler())
                         .failureHandler(authenticationFailureHandler()))
@@ -75,11 +86,20 @@ class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler
         var principal = (User) authentication.getPrincipal();
         String email = principal.getUsername();
 
-        String roles = authentication.getAuthorities().stream()
+        String roles = principal.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .map(role -> role.startsWith("ROLE_") ? role.substring(5) : role) // Remove "ROLE_" prefix
                 .collect(Collectors.joining(","));
 
+        HttpSession session = request.getSession(false); // false ensures no new session is created
+
+        System.out.println("Session ID: " + session.getId());
+        System.out.println("Session creation time: " + session.getCreationTime());
+        System.out.println("Session last accessed time: " + session.getLastAccessedTime());
+        System.out.println("Session max inactive interval seconds: " + session.getMaxInactiveInterval());
+System.out.println("Session is new: " + session.isNew());
+        System.out.println("Session attributes: " + session.getAttributeNames().toString());
+        System.out.println("Session attribute email: " + session.getAttribute("email"));
+        System.out.println("Session attribute roles: " + session.getAttribute("roles"));
 
         response.setContentType("application/json");
         response.getWriter().write("{\"email\":\"" + email + "\",\"roles\":\"" + roles + "\"}");
@@ -98,3 +118,4 @@ class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler
         response.getWriter().flush();
     }
 }
+
