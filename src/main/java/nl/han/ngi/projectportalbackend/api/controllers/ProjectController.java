@@ -33,7 +33,7 @@ public class ProjectController {
     @GetMapping("/{title}")
     public ResponseEntity getProject(@PathVariable String title) {
         try {
-            return new ResponseEntity<>(projectService.getProject(title), HttpStatus.OK);
+            return new ResponseEntity(projectService.getProject(title), HttpStatus.OK);
         } catch (Exception exc) {
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }

@@ -8,6 +8,9 @@ import org.neo4j.driver.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.neo4j.driver.Values.parameters;
@@ -47,9 +50,10 @@ public class ProjectRepository {
     public Project createProject(Project project, String creator){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MERGE (pr:Project {title: $title}) ON CREATE SET pr.description = $description RETURN pr";
+        var query = "MERGE (pr:Project {title: $title}) ON CREATE SET pr.description = $description, pr.created = $created RETURN pr";
 
-        var result = session.run(query, parameters("title", project.getTitle(), "description", project.getDescription()));
+        LocalDate localDate = LocalDate.now(ZoneId.of("Europe/Amsterdam"));
+        var result = session.run(query, parameters("title", project.getTitle(), "description", project.getDescription(), "created", localDate));
 
         if(!result.hasNext()){
             throw new ProjectAlreadyExistsException(project.getTitle());
