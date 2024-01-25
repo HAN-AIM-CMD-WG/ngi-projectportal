@@ -82,6 +82,24 @@ public class PersonRepository {
         }
     }
 
+    public UnverifiedPerson createUnverifiedPerson(UnverifiedPerson unverifiedPerson) {
+        driver = db.getDriver();
+        try (var session = driver.session()) {
+            var query = "MERGE (p:Person {email: $email}) ON CREATE SET p.name = $name, p.status = $status RETURN p";
+            var result = session.run(query, parameters(
+                    "name", unverifiedPerson.getName(),
+                    "email", unverifiedPerson.getEmail(),
+                    "status", unverifiedPerson.getStatus()
+            ));
+
+            if (!result.hasNext()) {
+                throw new PersonAlreadyExistsException(unverifiedPerson.getEmail());
+            }
+
+            return unverifiedPerson;
+        }
+    }
+
     public Person updatePerson(String email, Person person){
         driver = db.getDriver();
         var session = driver.session();

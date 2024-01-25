@@ -2,14 +2,12 @@ package nl.han.ngi.projectportalbackend.api.controllers;
 
 import nl.han.ngi.projectportalbackend.core.exceptions.PersonNotFoundException;
 import nl.han.ngi.projectportalbackend.core.models.Person;
+import nl.han.ngi.projectportalbackend.core.models.UnverifiedPerson;
 import nl.han.ngi.projectportalbackend.core.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.ConnectException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/person")
@@ -42,6 +40,17 @@ public class PersonController {
         } catch(Exception exc) {
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/createUnverified")
+    public ResponseEntity createUnverifiedPerson(@RequestBody UnverifiedPerson unverifiedPerson){
+        try {
+            return new ResponseEntity(personService.createUnverifiedPerson(unverifiedPerson), HttpStatus.OK);
+        } catch (Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+
     }
 
     @PutMapping("/{email}")
