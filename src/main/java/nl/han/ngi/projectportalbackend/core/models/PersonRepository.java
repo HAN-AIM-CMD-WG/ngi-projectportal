@@ -41,8 +41,6 @@ public class PersonRepository {
         if (!result.hasNext()) {
             throw new NoPersonFoundException();
         }
-
-
         return mapper.mapToList(result);
     }
 
@@ -66,10 +64,6 @@ public class PersonRepository {
     }
 
     public Person createPerson(Person person) {
-        System.out.println("Creating person: " + person.getName());
-        System.out.println("Creating person: " + person.getEmail());
-        System.out.println("Creating person: " + person.getStatus());
-        System.out.println("Creating person: " + person.getPassword());
         driver = db.getDriver();
         try (var session = driver.session()) {
             var query = "MERGE (p:Person {email: $email}) ON CREATE SET p.name = $name, p.status = $status, p.password = $password RETURN p";
@@ -91,6 +85,11 @@ public class PersonRepository {
     public Person updatePerson(String email, Person person){
         driver = db.getDriver();
         var session = driver.session();
+        var checkQuery = "MATCH (p:Person {email: $email}) RETURN p";
+        var checkResult = session.run(checkQuery, parameters("email", person.getEmail()));
+        if(checkResult.hasNext()){
+            throw new PersonAlreadyExistsException(person.getEmail());
+        }
         var query = "MATCH (p:Person {email: $email}) SET p.name = $name, p.email = $mail, p.status = $status RETURN p";
         var result = session.run(query, parameters("email", email, "name", person.getName(), "mail", person.getEmail(), "status", person.getStatus()));
         if (!result.hasNext()){

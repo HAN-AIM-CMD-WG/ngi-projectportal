@@ -1,5 +1,6 @@
 package nl.han.ngi.projectportalbackend.core.services;
 
+import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.Project;
 import nl.han.ngi.projectportalbackend.core.models.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,4 +33,11 @@ public class ProjectService {
         projectRepository.deleteProject(title);
     }
 
+    public void addParticipantToProject(String title, Person person, String function) {
+        projectRepository.addParticipantToProject(title, person, function);
+    }
+
+//    public void removeParticipantFromProject(String title, String email) {
+//        projectRepository.removeParticipantFromProject(title, email);
+//    }
 }
