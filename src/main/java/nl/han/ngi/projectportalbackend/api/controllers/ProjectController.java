@@ -86,13 +86,13 @@ public class ProjectController {
         }
     }
 
-    @DeleteMapping("/{title}/{email}")
-    public ResponseEntity removeParticipantFromProject(@PathVariable String title, @PathVariable String email){
-        try{
-            projectService.removeParticipantFromProject(title, email);
-            return new ResponseEntity("", HttpStatus.OK);
-        } catch(Exception exc){
-            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @DeleteMapping("/{title}/{email}")
+//    public ResponseEntity removeParticipantFromProject(@PathVariable String title, @PathVariable String email){
+//        try{
+//            projectService.removeParticipantFromProject(title, email);
+//            return new ResponseEntity("", HttpStatus.OK);
+//        } catch(Exception exc){
+//            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
 }

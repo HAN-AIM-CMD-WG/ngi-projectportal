@@ -37,7 +37,7 @@ public class ProjectService {
         projectRepository.addParticipantToProject(title, person, function);
     }
 
-    public void removeParticipantFromProject(String title, String email) {
-        projectRepository.removeParticipantFromProject(title, email);
-    }
+//    public void removeParticipantFromProject(String title, String email) {
+//        projectRepository.removeParticipantFromProject(title, email);
+//    }
 }

@@ -97,13 +97,13 @@ public class ProjectRepository {
         }
     }
 
-    public void removeParticipantFromProject(String title, String email) {
-        driver = db.getDriver();
-        var session = driver.session();
-        var query = "";
-        var result = session.run(query, parameters("title", title, "email", email));
-        if(!result.hasNext()){
-            throw new PersonCouldNotBeRemovedException(title, email);
-        }
-    }
+//    public void removeParticipantFromProject(String title, String email) {
+//        driver = db.getDriver();
+//        var session = driver.session();
+//        var query = "";
+//        var result = session.run(query, parameters("title", title, "email", email));
+//        if(!result.hasNext()){
+//            throw new PersonCouldNotBeRemovedException(title, email);
+//        }
+//    }
 }
