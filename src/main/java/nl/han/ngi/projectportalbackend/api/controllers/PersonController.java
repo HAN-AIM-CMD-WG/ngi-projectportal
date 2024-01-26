@@ -1,5 +1,6 @@
 package nl.han.ngi.projectportalbackend.api.controllers;
 
+import nl.han.ngi.projectportalbackend.core.exceptions.EmptyParameterException;
 import nl.han.ngi.projectportalbackend.core.exceptions.PersonNotFoundException;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.UnverifiedPerson;
@@ -45,6 +46,9 @@ public class PersonController {
     @PostMapping("/createUnverified")
     public ResponseEntity createUnverifiedPerson(@RequestBody UnverifiedPerson unverifiedPerson){
         try {
+            if(unverifiedPerson.getEmail().isEmpty() || unverifiedPerson.getName().isEmpty()){
+                throw new EmptyParameterException();
+            }
             return new ResponseEntity(personService.createUnverifiedPerson(unverifiedPerson), HttpStatus.OK);
         } catch (Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);

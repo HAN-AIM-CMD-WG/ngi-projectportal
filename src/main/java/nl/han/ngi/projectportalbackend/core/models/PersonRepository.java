@@ -9,12 +9,14 @@ import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Value;
+import org.neo4j.driver.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -66,14 +68,13 @@ public class PersonRepository {
     public Person createPerson(Person person) {
         driver = db.getDriver();
         try (var session = driver.session()) {
-            var query = "MERGE (p:Person {email: $email}) ON CREATE SET p.name = $name, p.status = $status, p.password = $password RETURN p";
+            var query = "CREATE (p:Person {email: $email, name: $name, status: $status, password: $password}) RETURN p";
             var result = session.run(query, parameters(
                     "name", person.getName(),
                     "email", person.getEmail(),
                     "status", person.getStatus(),
                     "password", person.getPassword()
             ));
-
             if (!result.hasNext()) {
                 throw new PersonAlreadyExistsException(person.getEmail());
             }
@@ -85,15 +86,20 @@ public class PersonRepository {
     public UnverifiedPerson createUnverifiedPerson(UnverifiedPerson unverifiedPerson) {
         driver = db.getDriver();
         try (var session = driver.session()) {
-            var query = "MERGE (p:Person {email: $email}) ON CREATE SET p.name = $name, p.status = $status RETURN p";
+            var query = "CREATE (p:Person {email: $email, name: $name, status: $status}) RETURN p";
             var result = session.run(query, parameters(
                     "name", unverifiedPerson.getName(),
                     "email", unverifiedPerson.getEmail(),
                     "status", unverifiedPerson.getStatus()
             ));
 
-            if (!result.hasNext()) {
-                throw new PersonAlreadyExistsException(unverifiedPerson.getEmail());
+            var res = result.next();
+            List<Pair<String, Value>> values = res.fields();
+            for (Pair<String, Value> nameValue: values) {
+                if ("p".equals(nameValue.key())) {
+                    Value value = nameValue.value();
+                    System.out.println(value);
+                }
             }
 
             return unverifiedPerson;
