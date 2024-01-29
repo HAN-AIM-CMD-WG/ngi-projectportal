@@ -32,6 +32,22 @@ public class ProjectRepository {
 
     }
 
+    public List<Project> getAllByUser(String email){
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH (p:Person {email: $email})-[:LEADS]->(pr:Project) RETURN pr";
+        var result = session.run(query, parameters("email", email));
+        if (!result.hasNext()) {
+            throw new NoProjectFoundException();
+        }
+        //log result
+        System.out.println("getAllByUser resultdsaaaaDDDDDDDDDDDDDDDDDDDD:");
+        System.out.println(result.toString());
+
+
+        return mapper.mapToList(result);
+    }
+
     public List<Project> getAll(){
         driver = db.getDriver();
         var session = driver.session();

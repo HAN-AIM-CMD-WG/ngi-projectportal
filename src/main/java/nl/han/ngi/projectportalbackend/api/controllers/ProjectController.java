@@ -24,12 +24,13 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/{title}")
-    public ResponseEntity getProject(@PathVariable String title) {
+    //GET BASED ON User
+    @GetMapping("/{email}")
+    public ResponseEntity getAllByUser(@PathVariable String email){
         try {
-            return new ResponseEntity<>(projectService.getProject(title), HttpStatus.OK);
-        } catch (Exception exc) {
-            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(projectService.getAllByUser(email), HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

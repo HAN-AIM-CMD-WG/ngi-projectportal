@@ -16,6 +16,10 @@ public class ProjectService {
         return projectRepository.getAll();
     }
 
+    public List<Project> getAllByUser(String email) {
+        return projectRepository.getAllByUser(email);
+    }
+
     public Project getProject(String title){
         return projectRepository.getProject(title);
     }
