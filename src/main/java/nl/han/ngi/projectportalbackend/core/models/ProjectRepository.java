@@ -1,19 +1,16 @@
 package nl.han.ngi.projectportalbackend.core.models;
 
 import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfiguration;
-import nl.han.ngi.projectportalbackend.core.exceptions.NoProjectFoundException;
-import nl.han.ngi.projectportalbackend.core.exceptions.ProjectAlreadyExistsException;
-import nl.han.ngi.projectportalbackend.core.exceptions.ProjectCouldNotBeDeletedException;
-import nl.han.ngi.projectportalbackend.core.exceptions.ProjectNotFoundException;
+import nl.han.ngi.projectportalbackend.core.exceptions.*;
 import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
-import org.neo4j.driver.Value;
-import org.neo4j.driver.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.neo4j.driver.Values.parameters;
@@ -57,7 +54,6 @@ public class ProjectRepository {
             throw new NoProjectFoundException();
         }
 
-
         return mapper.mapToList(result);
     }
     public Project getProject(String title) {
@@ -74,9 +70,10 @@ public class ProjectRepository {
     public Project createProject(Project project, String creator){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MERGE (pr:Project {title: $title}) ON CREATE SET pr.description = $description RETURN pr";
+        var query = "MERGE (pr:Project {title: $title}) ON CREATE SET pr.description = $description, pr.created = $created RETURN pr";
 
-        var result = session.run(query, parameters("title", project.getTitle(), "description", project.getDescription()));
+        LocalDate localDate = LocalDate.now(ZoneId.of("Europe/Amsterdam"));
+        var result = session.run(query, parameters("title", project.getTitle(), "description", project.getDescription(), "created", localDate));
 
         if(!result.hasNext()){
             throw new ProjectAlreadyExistsException(project.getTitle());
@@ -109,4 +106,24 @@ public class ProjectRepository {
             throw new ProjectCouldNotBeDeletedException(title);
         }
     }
+
+    public void addParticipantToProject(String title, Person person, String function) {
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH (p:Person{email: $email}), (pr:Project {title: $title}) MERGE (p)-[:PARTICIPATES {title: $function}]->(pr)";
+        var result = session.run(query, parameters("email", person.getEmail(), "title", title, "function", function));
+        if(!result.hasNext()){
+            throw new PersonAlreadyAddedToProjectException(title, person.getEmail());
+        }
+    }
+
+//    public void removeParticipantFromProject(String title, String email) {
+//        driver = db.getDriver();
+//        var session = driver.session();
+//        var query = "";
+//        var result = session.run(query, parameters("title", title, "email", email));
+//        if(!result.hasNext()){
+//            throw new PersonCouldNotBeRemovedException(title, email);
+//        }
+//    }
 }
