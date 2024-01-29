@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 import static org.neo4j.driver.Values.parameters;
@@ -35,12 +36,8 @@ public class ProjectRepository {
         var query = "MATCH (p:Person {email: $email})-[:LEADS]->(pr:Project) RETURN pr";
         var result = session.run(query, parameters("email", email));
         if (!result.hasNext()) {
-            throw new NoProjectFoundException();
+            return Collections.emptyList();
         }
-        //log result
-        System.out.println("getAllByUser resultdsaaaaDDDDDDDDDDDDDDDDDDDD:");
-        System.out.println(result.toString());
-
 
         return mapper.mapToList(result);
     }

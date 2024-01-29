@@ -30,7 +30,6 @@ public class ProjectController {
         }
     }
 
-    //GET BASED ON User
     @GetMapping("/{email}")
     public ResponseEntity getAllByUser(@PathVariable String email){
         try {
