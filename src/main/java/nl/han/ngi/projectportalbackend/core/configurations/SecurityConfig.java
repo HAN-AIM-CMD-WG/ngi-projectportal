@@ -91,17 +91,6 @@ class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        HttpSession session = request.getSession(false); // false ensures no new session is created
-
-        System.out.println("Session ID: " + session.getId());
-        System.out.println("Session creation time: " + session.getCreationTime());
-        System.out.println("Session last accessed time: " + session.getLastAccessedTime());
-        System.out.println("Session max inactive interval seconds: " + session.getMaxInactiveInterval());
-System.out.println("Session is new: " + session.isNew());
-        System.out.println("Session attributes: " + session.getAttributeNames().toString());
-        System.out.println("Session attribute email: " + session.getAttribute("email"));
-        System.out.println("Session attribute roles: " + session.getAttribute("roles"));
-
         response.setContentType("application/json");
         response.getWriter().write("{\"email\":\"" + email + "\",\"roles\":\"" + roles + "\"}");
         response.getWriter().flush();
