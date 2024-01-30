@@ -5,6 +5,7 @@ import nl.han.ngi.projectportalbackend.core.exceptions.PersonNotFoundException;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.UnverifiedPerson;
 import nl.han.ngi.projectportalbackend.core.services.PersonService;
+import org.neo4j.driver.exceptions.ClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,7 @@ public class PersonController {
         try {
             return new ResponseEntity(personService.createPerson(person), HttpStatus.OK);
         } catch(Exception exc) {
+            System.out.println(exc);
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -50,11 +52,11 @@ public class PersonController {
                 throw new EmptyParameterException();
             }
             return new ResponseEntity(personService.createUnverifiedPerson(unverifiedPerson), HttpStatus.OK);
+        } catch(ClientException exc){
+            return new ResponseEntity("person with email: " + unverifiedPerson.getEmail() + " already exists in the database", HttpStatus.BAD_REQUEST);
         } catch (Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
-
     }
 
     @PutMapping("/{email}")

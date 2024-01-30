@@ -1,17 +1,12 @@
 package nl.han.ngi.projectportalbackend.core.models;
 
 import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfiguration;
-import nl.han.ngi.projectportalbackend.core.exceptions.NoPersonFoundException;
-import nl.han.ngi.projectportalbackend.core.exceptions.PersonAlreadyExistsException;
-import nl.han.ngi.projectportalbackend.core.exceptions.PersonCouldNotBeDeletedException;
-import nl.han.ngi.projectportalbackend.core.exceptions.PersonNotFoundException;
+import nl.han.ngi.projectportalbackend.core.exceptions.*;
 import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Value;
-import org.neo4j.driver.util.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.neo4j.driver.exceptions.ClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -56,12 +51,7 @@ public class PersonRepository {
                 throw new PersonNotFoundException(email);
             }
 
-            var record = result.next();
-            var node = record.get("p").asNode();
-            String name = node.get("name").asString();
-            List<String> status = node.get("status").asList(Value::asString);
-            String password = node.get("password").asString();
-            return new Person(name, email, password, status);
+            return mapper.mapTo(result);
         }
     }
 
@@ -86,6 +76,7 @@ public class PersonRepository {
     public UnverifiedPerson createUnverifiedPerson(UnverifiedPerson unverifiedPerson) {
         driver = db.getDriver();
         try (var session = driver.session()) {
+            UnverifiedPerson person = new UnverifiedPerson();
             var query = "CREATE (p:Person {email: $email, name: $name, status: $status}) RETURN p";
             var result = session.run(query, parameters(
                     "name", unverifiedPerson.getName(),
@@ -94,15 +85,12 @@ public class PersonRepository {
             ));
 
             var res = result.next();
-            List<Pair<String, Value>> values = res.fields();
-            for (Pair<String, Value> nameValue: values) {
-                if ("p".equals(nameValue.key())) {
-                    Value value = nameValue.value();
-                    System.out.println(value);
-                }
-            }
+            var node = res.get("p").asNode();
+            person.setName(node.get("name").asString());
+            person.setEmail(node.get("email").asString());
+            person.setStatus(node.get("status").asList(Value::asString));
 
-            return unverifiedPerson;
+            return person;
         }
     }
 

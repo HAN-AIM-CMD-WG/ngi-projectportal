@@ -16,15 +16,12 @@ public class ResultToPersonMapper implements IMapper<Result, Person> {
     public Person mapTo(Result from) {
         Person person = new Person();
         var res = from.next();
-        List<Pair<String, Value>> values = res.fields();
-        for (Pair<String, Value> nameValue: values) {
-            if ("p".equals(nameValue.key())) {
-                Value value = nameValue.value();
-                person.setName(value.get("name").asString());
-                person.setEmail(value.get("email").asString());
-                person.setStatus(value.get("status").asList().stream().map( Object::toString ).collect( Collectors.toList()));
-            }
-        }
+        var node = res.get("p").asNode();
+        person.setName(node.get("name").asString());
+        person.setEmail(node.get("email").asString());
+        person.setPassword(node.get("password").asString());
+        person.setStatus(node.get("status").asList(Value::asString));
+
         return person;
     }
 
@@ -47,18 +44,7 @@ public class ResultToPersonMapper implements IMapper<Result, Person> {
     public List<Person> mapToList(Result from) {
         List<Person> personList = new ArrayList<>();
         while(from.hasNext()){
-            var res = from.next();
-            List<Pair<String, Value>> values = res.fields();
-            for (Pair<String, Value> nameValue : values) {
-                if ("p".equals(nameValue.key())) {
-                    Person person = new Person();
-                    Value value = nameValue.value();
-                    person.setName(value.get("name").asString());
-                    person.setEmail(value.get("email").asString());
-                    person.setStatus(value.get("status").asList().stream().map(Object::toString).collect(Collectors.toList()));
-                    personList.add(person);
-                }
-            }
+            personList.add(mapTo(from));
         }
         return personList;
     }

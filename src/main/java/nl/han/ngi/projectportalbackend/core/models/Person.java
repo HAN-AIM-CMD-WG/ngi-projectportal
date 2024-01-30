@@ -11,8 +11,7 @@ public class Person {
     enum Status {
         OPDRACHTGEVER,
         DEELNEMER,
-        ADMIN,
-        GAST
+        ADMIN
     }
     public Person(){
         // Empty constructor required as of Neo4j API 2.0.5
