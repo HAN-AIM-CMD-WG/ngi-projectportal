@@ -1,16 +1,11 @@
 package nl.han.ngi.projectportalbackend.core.models;
 
 import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfiguration;
-import nl.han.ngi.projectportalbackend.core.exceptions.NoPersonFoundException;
-import nl.han.ngi.projectportalbackend.core.exceptions.PersonAlreadyExistsException;
-import nl.han.ngi.projectportalbackend.core.exceptions.PersonCouldNotBeDeletedException;
-import nl.han.ngi.projectportalbackend.core.exceptions.PersonNotFoundException;
+import nl.han.ngi.projectportalbackend.core.exceptions.*;
 import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +18,10 @@ import static org.neo4j.driver.Values.parameters;
 public class PersonRepository {
 
     @Autowired
-    private IMapper<Result, Person> mapper;
+    private IMapper<Result, Person> personMapper;
+
+    @Autowired
+    private IMapper<Result, UnverifiedPerson> unverifiedPersonMapper;
 
     private Driver driver;
     @Autowired
@@ -41,7 +39,7 @@ public class PersonRepository {
         if (!result.hasNext()) {
             throw new NoPersonFoundException();
         }
-        return mapper.mapToList(result);
+        return personMapper.mapToList(result);
     }
 
     public Person getPerson(String email){
@@ -54,31 +52,40 @@ public class PersonRepository {
                 throw new PersonNotFoundException(email);
             }
 
-            var record = result.next();
-            var node = record.get("p").asNode();
-            String name = node.get("name").asString();
-            List<String> status = node.get("status").asList(Value::asString);
-            String password = node.get("password").asString();
-            return new Person(name, email, password, status);
+            return personMapper.mapTo(result);
         }
     }
 
     public Person createPerson(Person person) {
         driver = db.getDriver();
         try (var session = driver.session()) {
-            var query = "MERGE (p:Person {email: $email}) ON CREATE SET p.name = $name, p.status = $status, p.password = $password RETURN p";
+            var query = "CREATE (p:Person {email: $email, name: $name, status: $status, password: $password}) RETURN p";
             var result = session.run(query, parameters(
                     "name", person.getName(),
                     "email", person.getEmail(),
                     "status", person.getStatus(),
                     "password", person.getPassword()
             ));
-
             if (!result.hasNext()) {
                 throw new PersonAlreadyExistsException(person.getEmail());
             }
 
-            return mapper.mapTo(result);
+            return personMapper.mapTo(result);
+        }
+    }
+
+    public UnverifiedPerson createUnverifiedPerson(UnverifiedPerson unverifiedPerson) {
+        driver = db.getDriver();
+        try (var session = driver.session()) {
+            UnverifiedPerson person = new UnverifiedPerson();
+            var query = "CREATE (p:Person {email: $email, name: $name, status: $status}) RETURN p";
+            var result = session.run(query, parameters(
+                    "name", unverifiedPerson.getName(),
+                    "email", unverifiedPerson.getEmail(),
+                    "status", unverifiedPerson.getStatus()
+            ));
+
+            return unverifiedPersonMapper.mapTo(result);
         }
     }
 
@@ -96,7 +103,7 @@ public class PersonRepository {
             throw new PersonNotFoundException(email);
         }
 
-        return mapper.mapTo(result);
+        return personMapper.mapTo(result);
     }
 
     public void deletePerson(String email){

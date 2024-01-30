@@ -2,9 +2,8 @@ package nl.han.ngi.projectportalbackend.core.services;
 
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.PersonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.han.ngi.projectportalbackend.core.models.UnverifiedPerson;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,4 +40,7 @@ public class PersonService {
         personRepository.deletePerson(email);
     }
 
+    public UnverifiedPerson createUnverifiedPerson(UnverifiedPerson unverifiedPerson) {
+        return personRepository.createUnverifiedPerson(unverifiedPerson);
+    }
 }
