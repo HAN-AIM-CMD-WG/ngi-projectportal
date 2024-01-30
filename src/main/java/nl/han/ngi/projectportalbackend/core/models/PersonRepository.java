@@ -6,12 +6,10 @@ import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Value;
-import org.neo4j.driver.exceptions.ClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -20,7 +18,10 @@ import static org.neo4j.driver.Values.parameters;
 public class PersonRepository {
 
     @Autowired
-    private IMapper<Result, Person> mapper;
+    private IMapper<Result, Person> personMapper;
+
+    @Autowired
+    private IMapper<Result, UnverifiedPerson> unverifiedPersonMapper;
 
     private Driver driver;
     @Autowired
@@ -38,7 +39,7 @@ public class PersonRepository {
         if (!result.hasNext()) {
             throw new NoPersonFoundException();
         }
-        return mapper.mapToList(result);
+        return personMapper.mapToList(result);
     }
 
     public Person getPerson(String email){
@@ -51,7 +52,7 @@ public class PersonRepository {
                 throw new PersonNotFoundException(email);
             }
 
-            return mapper.mapTo(result);
+            return personMapper.mapTo(result);
         }
     }
 
@@ -69,7 +70,7 @@ public class PersonRepository {
                 throw new PersonAlreadyExistsException(person.getEmail());
             }
 
-            return mapper.mapTo(result);
+            return personMapper.mapTo(result);
         }
     }
 
@@ -84,13 +85,7 @@ public class PersonRepository {
                     "status", unverifiedPerson.getStatus()
             ));
 
-            var res = result.next();
-            var node = res.get("p").asNode();
-            person.setName(node.get("name").asString());
-            person.setEmail(node.get("email").asString());
-            person.setStatus(node.get("status").asList(Value::asString));
-
-            return person;
+            return unverifiedPersonMapper.mapTo(result);
         }
     }
 
@@ -108,7 +103,7 @@ public class PersonRepository {
             throw new PersonNotFoundException(email);
         }
 
-        return mapper.mapTo(result);
+        return personMapper.mapTo(result);
     }
 
     public void deletePerson(String email){

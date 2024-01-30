@@ -4,10 +4,11 @@ import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.UnverifiedPerson;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Component
 public class ResultToUnverifiedPersonMapper implements IMapper<Result, UnverifiedPerson> {
     @Override
     public UnverifiedPerson mapTo(Result from) {
