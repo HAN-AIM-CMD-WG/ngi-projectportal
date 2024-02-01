@@ -18,6 +18,8 @@ public class StatusController {
     public ResponseEntity getAll(){
         try{
             return new ResponseEntity(statusService.getAll(), HttpStatus.OK);
+        } catch (Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

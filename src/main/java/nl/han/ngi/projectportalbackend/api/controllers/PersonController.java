@@ -40,7 +40,6 @@ public class PersonController {
         try {
             return new ResponseEntity(personService.createPerson(person), HttpStatus.OK);
         } catch(Exception exc) {
-            System.out.println(exc);
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

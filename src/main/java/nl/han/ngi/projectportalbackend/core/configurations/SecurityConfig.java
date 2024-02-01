@@ -7,6 +7,7 @@ import nl.han.ngi.projectportalbackend.core.enums.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,6 +25,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import java.io.IOException;
 import java.util.stream.Collectors;
+
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -58,10 +61,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/authentication").permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.PUT, "/api/person/**")).hasRole("ADMIN")
                         .requestMatchers("/api/person/create").hasRole("ADMIN")
                         .requestMatchers("/api/person/**").permitAll()
                         .requestMatchers("/api/project/create").hasRole("OPDRACHTGEVER")
-                        .requestMatchers("/api/project/**").permitAll())
+                        .requestMatchers("/api/project/**").permitAll()
+                        .requestMatchers("/api/status").permitAll())
                         .formLogin(form -> form
                         .loginProcessingUrl("/api/login")
                         .successHandler(authenticationSuccessHandler())
