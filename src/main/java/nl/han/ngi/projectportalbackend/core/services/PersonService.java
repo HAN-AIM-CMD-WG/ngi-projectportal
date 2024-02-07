@@ -3,10 +3,14 @@ package nl.han.ngi.projectportalbackend.core.services;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.PersonRepository;
 import nl.han.ngi.projectportalbackend.core.models.UnverifiedPerson;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PersonService {
@@ -42,5 +46,17 @@ public class PersonService {
 
     public UnverifiedPerson createUnverifiedPerson(UnverifiedPerson unverifiedPerson) {
         return personRepository.createUnverifiedPerson(unverifiedPerson);
+    }
+
+    public Person patchPerson(String email, Map<Object, Object> fields) {
+        Person person = personRepository.getPerson(email);
+            fields.forEach((key, value) -> {
+                Field field = ReflectionUtils.findField(Person.class, (String) key);
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, person, value);
+        });
+            System.out.println(person.getStatus());
+            personRepository.patchPerson(email, person);
+        return person;
     }
 }

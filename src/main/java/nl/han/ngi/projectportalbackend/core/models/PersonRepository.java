@@ -105,7 +105,12 @@ public class PersonRepository {
 
         return personMapper.mapTo(result);
     }
-
+    public void patchPerson(String email, Person person) {
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH(p:Person {email: $email}) SET p.name = $name, p.email = $mail, p.status = $status RETURN p";
+        var result = session.run(query, parameters("email", email, "name", person.getName(), "mail", person.getEmail(), "status", person.getStatus()));
+    }
     public void deletePerson(String email){
         driver = db.getDriver();
         var session = driver.session();
@@ -115,4 +120,6 @@ public class PersonRepository {
             throw new PersonCouldNotBeDeletedException(email);
         }
     }
+
+
 }

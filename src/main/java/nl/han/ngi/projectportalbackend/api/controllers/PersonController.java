@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/person")
 public class PersonController {
@@ -40,7 +42,6 @@ public class PersonController {
         try {
             return new ResponseEntity(personService.createPerson(person), HttpStatus.OK);
         } catch(Exception exc) {
-            System.out.println(exc);
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -61,12 +62,22 @@ public class PersonController {
 
     @PutMapping("/{email}")
     public ResponseEntity updatePerson(@PathVariable String email, @RequestBody Person person){
+        System.out.println(person.getEmail() + person.getStatus() + person.getPassword());
         try{
             return new ResponseEntity(personService.updatePerson(email, person), HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @PatchMapping("{email}")
+    public ResponseEntity patchPerson(@PathVariable String email, @RequestBody Map<Object, Object> fields){
+        try{
+            return new ResponseEntity(personService.patchPerson(email, fields), HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("{email}")
