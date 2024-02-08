@@ -56,6 +56,15 @@ public class PersonRepository {
         }
     }
 
+    public boolean doesPersonExist(String email) {
+        driver = db.getDriver();
+        try (var session = driver.session()) {
+            var query = "MATCH (p:Person {email: $email}) RETURN p";
+            var result = session.run(query, parameters("email", email));
+            return result.hasNext();
+        }
+    }
+
     public Person createPerson(Person person) {
         driver = db.getDriver();
         try (var session = driver.session()) {

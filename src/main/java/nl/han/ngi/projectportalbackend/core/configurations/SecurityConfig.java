@@ -61,6 +61,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/authentication").permitAll()
+                        .requestMatchers("/api/auth/google").permitAll()
                         .requestMatchers("/api/person/create").hasRole("ADMIN")
                         .requestMatchers("/api/person/**").permitAll()
                         .requestMatchers("/api/project/create").hasRole("OPDRACHTGEVER")

@@ -30,6 +30,10 @@ public class PersonService {
         return personRepository.getPerson(email);
     }
 
+    public boolean doesPersonExist(String email) {
+        return personRepository.doesPersonExist(email);
+    }
+
     public Person createPerson(Person person) {
         String encodedPassword = passwordEncoder.encode(person.getPassword());
         person.setPassword(encodedPassword);
