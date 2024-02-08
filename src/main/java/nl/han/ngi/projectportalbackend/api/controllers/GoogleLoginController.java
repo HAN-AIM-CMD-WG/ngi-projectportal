@@ -1,6 +1,7 @@
 package nl.han.ngi.projectportalbackend.api.controllers;
 
 import jakarta.servlet.http.HttpSession;
+import nl.han.ngi.projectportalbackend.core.models.Person;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -63,6 +64,14 @@ public class GoogleLoginController {
             }
 
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_GAST"));
+            if (personExists) {
+                Person person = personService.getPerson(email);
+                authorities = person.getStatus().stream()
+                        .map(status -> new SimpleGrantedAuthority("ROLE_" + status))
+                        .collect(Collectors.toList());
+                System.out.println("Person exists: " + email);
+                System.out.println("Person roles: " + authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")));
+            }
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(new User(email, "", authorities), null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -35,6 +35,7 @@ public class AuthenticationController {
             User user = (User) authentication.getPrincipal();
             String roles = String.join(",", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
 
+            System.out.println("User with email '" + user.getUsername() + "' has roles '" + roles + "'.");
             return ResponseEntity.ok("{\"email\":\"" + user.getUsername() + "\",\"roles\":\"" + roles + "\", \"sessionId\":\"" + session.getId() + "\"}");
         } else {
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("{\"error\":\"User not authenticated\"}");

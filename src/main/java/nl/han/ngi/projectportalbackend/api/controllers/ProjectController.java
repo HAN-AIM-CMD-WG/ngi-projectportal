@@ -42,12 +42,14 @@ public class ProjectController {
     @PostMapping("/create/{creator}")
     public ResponseEntity createProject(@PathVariable String creator, @RequestBody Project project){
         try {
+            System.out.println("Creator: " + creator);
             Person person = personService.getPerson(creator);
-            if(person.getStatus().contains("GAST")){
-                throw new PersonIsAGuestException(person.getEmail());
-            }
+            //if(person.getStatus().contains("GAST")){
+                //throw new PersonIsAGuestException(person.getEmail());
+            //}
             return new ResponseEntity(projectService.createProject(project, creator), HttpStatus.OK);
         } catch(Exception exc) {
+            exc.printStackTrace();
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
