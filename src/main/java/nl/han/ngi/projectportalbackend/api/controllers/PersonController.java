@@ -3,7 +3,7 @@ package nl.han.ngi.projectportalbackend.api.controllers;
 import nl.han.ngi.projectportalbackend.core.exceptions.EmptyParameterException;
 import nl.han.ngi.projectportalbackend.core.exceptions.PersonNotFoundException;
 import nl.han.ngi.projectportalbackend.core.models.Person;
-import nl.han.ngi.projectportalbackend.core.models.UnverifiedPerson;
+import nl.han.ngi.projectportalbackend.core.models.Guest;
 import nl.han.ngi.projectportalbackend.core.services.PersonService;
 import org.neo4j.driver.exceptions.ClientException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +47,14 @@ public class PersonController {
     }
 
     @PostMapping("/createUnverified")
-    public ResponseEntity createUnverifiedPerson(@RequestBody UnverifiedPerson unverifiedPerson){
+    public ResponseEntity createUnverifiedPerson(@RequestBody Guest guest){
         try {
-            if(unverifiedPerson.getEmail().isEmpty() || unverifiedPerson.getName().isEmpty()){
+            if(guest.getEmail().isEmpty() || guest.getName().isEmpty()){
                 throw new EmptyParameterException();
             }
-            return new ResponseEntity(personService.createUnverifiedPerson(unverifiedPerson), HttpStatus.OK);
+            return new ResponseEntity(personService.createGuest(guest), HttpStatus.OK);
         } catch(ClientException exc){
-            return new ResponseEntity("person with email: " + unverifiedPerson.getEmail() + " already exists in the database", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("person with email: " + guest.getEmail() + " already exists in the database", HttpStatus.BAD_REQUEST);
         } catch (Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }

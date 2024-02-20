@@ -21,7 +21,6 @@ public class ResultToPersonMapper implements IMapper<Result, Person> {
         person.setEmail(node.get("email").asString());
         person.setPassword(node.get("password").asString());
         person.setStatus(node.get("status").asList(Value::asString));
-
         return person;
     }
 

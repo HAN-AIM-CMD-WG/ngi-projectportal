@@ -2,7 +2,7 @@ package nl.han.ngi.projectportalbackend.core.services;
 
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.PersonRepository;
-import nl.han.ngi.projectportalbackend.core.models.UnverifiedPerson;
+import nl.han.ngi.projectportalbackend.core.models.Guest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class PersonService {
@@ -48,8 +47,8 @@ public class PersonService {
         personRepository.deletePerson(email);
     }
 
-    public UnverifiedPerson createUnverifiedPerson(UnverifiedPerson unverifiedPerson) {
-        return personRepository.createUnverifiedPerson(unverifiedPerson);
+    public Guest createGuest(Guest guest) {
+        return personRepository.createUnverifiedPerson(guest);
     }
 
     public Person patchPerson(String email, Map<Object, Object> fields) {

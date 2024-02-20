@@ -72,6 +72,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/person/**").permitAll()
                         .requestMatchers("/api/project/create").hasRole("OPDRACHTGEVER")
                         .requestMatchers("/api/project/**").permitAll()
+                        .requestMatchers("/api/person").permitAll()
                         .requestMatchers("/api/status").permitAll())
                         .formLogin(form -> form
                         .loginProcessingUrl("/api/login")

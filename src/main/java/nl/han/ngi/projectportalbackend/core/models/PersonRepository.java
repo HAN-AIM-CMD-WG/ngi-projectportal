@@ -5,7 +5,6 @@ import nl.han.ngi.projectportalbackend.core.exceptions.*;
 import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
-import org.neo4j.driver.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +20,7 @@ public class PersonRepository {
     private IMapper<Result, Person> personMapper;
 
     @Autowired
-    private IMapper<Result, UnverifiedPerson> unverifiedPersonMapper;
+    private IMapper<Result, Guest> unverifiedPersonMapper;
 
     private Driver driver;
     @Autowired
@@ -83,10 +82,10 @@ public class PersonRepository {
         }
     }
 
-    public UnverifiedPerson createUnverifiedPerson(UnverifiedPerson unverifiedPerson) {
+    public Guest createUnverifiedPerson(Guest unverifiedPerson) {
         driver = db.getDriver();
         try (var session = driver.session()) {
-            UnverifiedPerson person = new UnverifiedPerson();
+            Guest person = new Guest();
             var query = "CREATE (p:Person {email: $email, name: $name, status: $status}) RETURN p";
             var result = session.run(query, parameters(
                     "name", unverifiedPerson.getName(),

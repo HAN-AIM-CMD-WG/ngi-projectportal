@@ -1,8 +1,7 @@
 package nl.han.ngi.projectportalbackend.api.controllers;
 
 import jakarta.servlet.http.HttpSession;
-import nl.han.ngi.projectportalbackend.core.models.Person;
-import nl.han.ngi.projectportalbackend.core.models.UnverifiedPerson;
+import nl.han.ngi.projectportalbackend.core.models.Guest;
 import nl.han.ngi.projectportalbackend.core.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -67,11 +66,11 @@ public class GoogleLoginController {
     }
 
     private void createUnverifiedPerson(Map<String, Object> userInfo) {
-        UnverifiedPerson unverifiedPerson = new UnverifiedPerson();
+        Guest unverifiedPerson = new Guest();
         unverifiedPerson.setEmail((String) userInfo.get("email"));
         unverifiedPerson.setName((String) userInfo.get("name"));
-        unverifiedPerson.setStatus(Collections.singletonList("GAST"));
-        personService.createUnverifiedPerson(unverifiedPerson);
+        unverifiedPerson.setStatus(Collections.emptyList());
+        personService.createGuest(unverifiedPerson);
     }
 
     private List<GrantedAuthority> fetchUserAuthorities(String email) {
