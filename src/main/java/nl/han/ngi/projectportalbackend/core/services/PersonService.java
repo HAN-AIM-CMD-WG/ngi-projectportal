@@ -3,6 +3,7 @@ package nl.han.ngi.projectportalbackend.core.services;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.PersonRepository;
 import nl.han.ngi.projectportalbackend.core.models.Guest;
+import nl.han.ngi.projectportalbackend.responses.VerificationResponse;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,10 @@ public class PersonService {
     public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public VerificationResponse verifyPerson(String email) {
+        return personRepository.verifyPerson(email);
     }
 
     public List<Person> getAll() {

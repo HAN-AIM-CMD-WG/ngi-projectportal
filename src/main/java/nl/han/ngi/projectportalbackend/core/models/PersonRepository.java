@@ -1,12 +1,16 @@
 package nl.han.ngi.projectportalbackend.core.models;
 
 import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfiguration;
+import nl.han.ngi.projectportalbackend.core.enums.VerificationStatus;
 import nl.han.ngi.projectportalbackend.core.exceptions.*;
 import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
+import nl.han.ngi.projectportalbackend.core.services.EmailService;
+import nl.han.ngi.projectportalbackend.responses.VerificationResponse;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 
 import java.util.List;
 
@@ -23,9 +27,12 @@ public class PersonRepository {
     private IMapper<Result, Guest> unverifiedPersonMapper;
 
     private Driver driver;
+
     @Autowired
     private DbConnectionConfiguration db;
 
+    @Autowired
+    private EmailService emailService;
 
     public PersonRepository(){
     }
@@ -39,6 +46,33 @@ public class PersonRepository {
             throw new NoPersonFoundException();
         }
         return personMapper.mapToList(result);
+    }
+
+    public VerificationResponse verifyPerson(String email) {
+        System.out.println("Verifying person with email: " + email);
+        driver = db.getDriver();
+        try (var session = driver.session()) {
+            var checkQuery = "MATCH (p:Person {email: $email}) RETURN p.status AS status";
+            var checkResult = session.run(checkQuery, parameters("email", email));
+            if (checkResult.hasNext()) {
+                var record = checkResult.next();
+                var statuses = record.get("status").asList();
+                if (statuses.contains("GAST")) {
+                    return new VerificationResponse(VerificationStatus.ALREADY_VERIFIED);
+                }
+            }
+
+            var updateQuery = "MATCH (p:Person {email: $email}) SET p.status = ['GAST'] RETURN p";
+            var updateResult = session.run(updateQuery, parameters("email", email));
+            if (updateResult.hasNext()) {
+                return new VerificationResponse(VerificationStatus.SUCCESS);
+            } else {
+                throw new PersonNotFoundException(email);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new VerificationResponse(VerificationStatus.ERROR);
+        }
     }
 
     public Person getPerson(String email){
@@ -85,7 +119,6 @@ public class PersonRepository {
     public Guest createUnverifiedPerson(Guest unverifiedPerson) {
         driver = db.getDriver();
         try (var session = driver.session()) {
-            Guest person = new Guest();
             var query = "CREATE (p:Person {email: $email, name: $name, status: $status}) RETURN p";
             var result = session.run(query, parameters(
                     "name", unverifiedPerson.getName(),
@@ -93,7 +126,17 @@ public class PersonRepository {
                     "status", unverifiedPerson.getStatus()
             ));
 
-            return unverifiedPersonMapper.mapTo(result);
+            Guest createdGuest = unverifiedPersonMapper.mapTo(result);
+
+            String emailSubject = "Please verify your email address";
+            String verificationLink = "http://localhost:5173/verify?email=" + createdGuest.getEmail();
+            String emailContent = "Dear " + createdGuest.getName() + ",\n\nPlease click the following link to verify your email address: " + verificationLink + "\n\nThank you!";
+            emailService.sendSimpleEmail(createdGuest.getEmail(), emailSubject, emailContent);
+
+            return createdGuest;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -128,6 +171,4 @@ public class PersonRepository {
             throw new PersonCouldNotBeDeletedException(email);
         }
     }
-
-
 }

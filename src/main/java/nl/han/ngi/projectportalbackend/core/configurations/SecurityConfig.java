@@ -70,6 +70,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/google").permitAll()
                         .requestMatchers("/api/person/create").hasRole("ADMIN")
                         .requestMatchers("/api/person/**").permitAll()
+                        .requestMatchers("/api/person/verify/**").permitAll()
                         .requestMatchers("/api/project/create").hasRole("OPDRACHTGEVER")
                         .requestMatchers("/api/project/**").permitAll()
                         .requestMatchers("/api/person").permitAll()
