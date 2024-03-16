@@ -4,6 +4,7 @@ public class Project {
 
     String title;
     String description;
+    String created;
 
     public String getTitle() {
         return title;
@@ -21,5 +22,12 @@ public class Project {
         this.description = description;
     }
 
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
 
 }

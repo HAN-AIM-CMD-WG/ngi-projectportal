@@ -42,11 +42,6 @@ public class ProjectController {
     @PostMapping("/create/{creator}")
     public ResponseEntity createProject(@PathVariable String creator, @RequestBody Project project){
         try {
-            System.out.println("Creator: " + creator);
-            Person person = personService.getPerson(creator);
-            //if(person.getStatus().contains("GAST")){
-                //throw new PersonIsAGuestException(person.getEmail());
-            //}
             return new ResponseEntity(projectService.createProject(project, creator), HttpStatus.OK);
         } catch(Exception exc) {
             exc.printStackTrace();
@@ -62,6 +57,12 @@ public class ProjectController {
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @GetMapping("/exists/{title}")
+    public ResponseEntity<Boolean> existsByTitle(@PathVariable String title) {
+        boolean exists = projectService.existsByTitle(title);
+        return new ResponseEntity<>(exists, HttpStatus.OK);
     }
 
     @DeleteMapping("/{title}")

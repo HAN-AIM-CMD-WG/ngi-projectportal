@@ -26,6 +26,10 @@ public class PersonService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public List<Person> getDeelnemers() {
+        return personRepository.getDeelnemers();
+    }
+
     public VerificationResponse verifyPerson(String email) {
         return personRepository.verifyPerson(email);
     }

@@ -48,6 +48,17 @@ public class PersonRepository {
         return personMapper.mapToList(result);
     }
 
+    public List<Person> getDeelnemers(){
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH (p:Person) WHERE ANY(status IN p.status WHERE status = 'DEELNEMER') RETURN p";
+        var result = session.run(query);
+        if (!result.hasNext()) {
+            throw new NoPersonFoundException();
+        }
+        return personMapper.mapToList(result);
+    }
+
     public VerificationResponse verifyPerson(String email) {
         driver = db.getDriver();
         try (var session = driver.session()) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,14 +34,29 @@ public class ProjectRepository {
     public List<Project> getAllByUser(String email){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH (p:Person {email: $email})-[:LEADS]->(pr:Project) RETURN pr";
+        var query = "MATCH (p:Person {email: $email})-[:LEADS]->(pr:Project) RETURN pr.title AS title, pr.description AS description, pr.created AS created";
         var result = session.run(query, parameters("email", email));
         if (!result.hasNext()) {
             return Collections.emptyList();
         }
 
-        return mapper.mapToList(result);
+        List<Project> projects = new ArrayList<>();
+        while (result.hasNext()) {
+            var record = result.next();
+            Project project = new Project();
+            project.setTitle(record.get("title").asString());
+            project.setDescription(record.get("description").asString());
+
+            if (!record.get("created").isNull()) {
+                LocalDate createdDate = record.get("created").asLocalDate();
+                project.setCreated(createdDate.toString());
+            }
+
+            projects.add(project);
+        }
+        return projects;
     }
+
 
     public List<Project> getAll(){
         driver = db.getDriver();
@@ -79,6 +95,14 @@ public class ProjectRepository {
 
         session.run(query, parameters("creator", creator, "title", project.getTitle()));
         return mapper.mapTo(result);
+    }
+
+    public boolean existsByTitle(String title) {
+        try (var session = driver.session()) {
+            var query = "MATCH (pr:Project {title: $title}) RETURN count(pr) > 0 as exists";
+            var result = session.run(query, parameters("title", title));
+            return result.single().get("exists").asBoolean();
+        }
     }
 
     public Project updateProject(String title, Project project) {

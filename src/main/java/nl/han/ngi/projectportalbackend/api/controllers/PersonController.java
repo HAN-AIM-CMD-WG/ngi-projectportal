@@ -28,6 +28,15 @@ public class PersonController {
         }
     }
 
+    @GetMapping("/deelnemers")
+    public ResponseEntity getDeelnemers(){
+        try {
+            return new ResponseEntity(personService.getDeelnemers(), HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/verify/{email}")
     public ResponseEntity verifyPerson(@PathVariable String email){
         try {

@@ -21,6 +21,10 @@ public class ProjectService {
         return projectRepository.getAllByUser(email);
     }
 
+    public boolean existsByTitle(String title) {
+        return projectRepository.existsByTitle(title);
+    }
+
     public Project getProject(String title){
         return projectRepository.getProject(title);
     }

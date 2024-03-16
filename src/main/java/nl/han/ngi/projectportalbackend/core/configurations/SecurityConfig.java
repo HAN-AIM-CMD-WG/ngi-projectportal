@@ -73,6 +73,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/person/verify/**").permitAll()
                         .requestMatchers("/api/project/create").hasRole("OPDRACHTGEVER")
                         .requestMatchers("/api/project/**").permitAll()
+                        .requestMatchers("/api/project/exists/**").permitAll()
                         .requestMatchers("/api/person").permitAll()
                         .requestMatchers("/api/status").permitAll())
                         .formLogin(form -> form
