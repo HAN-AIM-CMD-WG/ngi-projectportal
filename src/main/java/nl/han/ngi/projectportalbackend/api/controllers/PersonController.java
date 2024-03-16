@@ -31,7 +31,6 @@ public class PersonController {
     @GetMapping("/verify/{email}")
     public ResponseEntity verifyPerson(@PathVariable String email){
         try {
-            System.out.println("Verifying person with email: " + email);
             return new ResponseEntity(personService.verifyPerson(email), HttpStatus.OK);
         }catch(PersonNotFoundException exc){
             return new ResponseEntity(exc, HttpStatus.BAD_REQUEST);

@@ -49,7 +49,6 @@ public class PersonRepository {
     }
 
     public VerificationResponse verifyPerson(String email) {
-        System.out.println("Verifying person with email: " + email);
         driver = db.getDriver();
         try (var session = driver.session()) {
             var checkQuery = "MATCH (p:Person {email: $email}) RETURN p.status AS status";
@@ -129,7 +128,7 @@ public class PersonRepository {
             Guest createdGuest = unverifiedPersonMapper.mapTo(result);
 
             String emailSubject = "Please verify your email address";
-            String verificationLink = "http://localhost:5173/verify?email=" + createdGuest.getEmail();
+            String verificationLink = "http://localhost:5173/verify/" + createdGuest.getEmail();
             String emailContent = "Dear " + createdGuest.getName() + ",\n\nPlease click the following link to verify your email address: " + verificationLink + "\n\nThank you!";
             emailService.sendSimpleEmail(createdGuest.getEmail(), emailSubject, emailContent);
 

@@ -18,24 +18,19 @@ public class AuthenticationController {
 
     @GetMapping()
     public ResponseEntity<?> checkAuthentication(HttpServletRequest request) {
-        HttpSession session = request.getSession(false); // false means it won't create a new session if one doesn't exist
+        HttpSession session = request.getSession(false);
 
         if (session == null) {
             System.out.println("No session found");
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("{\"error\":\"No active session\"}");
         }
-        System.out.println("Session ID: " + session.getId());
 
-
-
-        // At this point, a session exists. Now check for authentication.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String)) {
             User user = (User) authentication.getPrincipal();
             String roles = String.join(",", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
 
-            System.out.println("User with email '" + user.getUsername() + "' has roles '" + roles + "'.");
             return ResponseEntity.ok("{\"email\":\"" + user.getUsername() + "\",\"roles\":\"" + roles + "\", \"sessionId\":\"" + session.getId() + "\"}");
         } else {
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("{\"error\":\"User not authenticated\"}");
