@@ -10,8 +10,11 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.neo4j.driver.Value;
+import org.neo4j.driver.types.Node;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.neo4j.driver.Values.parameters;
@@ -39,13 +42,36 @@ public class PersonRepository {
 
     public List<Person> getAll(){
         driver = db.getDriver();
-        var session = driver.session();
-        var query = "MATCH (p:Person) RETURN p";
-        var result = session.run(query);
-        if (!result.hasNext()) {
-            throw new NoPersonFoundException();
+        try (var session = driver.session()) {
+            var query = "MATCH (p:Person) RETURN p";
+            var result = session.run(query);
+            List<Person> people = new ArrayList<>();
+            while (result.hasNext()) {
+                var record = result.next();
+                var node = record.get("p").asNode();
+
+                Person person = mapNodeToPerson(node);
+
+                people.add(person);
+                System.out.println(person.getEmail() + " - Picture URL: " + person.getPictureUrl());
+            }
+            return people;
         }
-        return personMapper.mapToList(result);
+    }
+
+    private Person mapNodeToPerson(Node node) {
+        String email = node.get("email").asString(null);
+        String name = node.get("name").asString(null);
+        String pictureUrl = node.get("pictureUrl").asString(null);
+        List<String> status = node.get("status").asList(Value::asString);
+
+        Person person = new Person();
+        person.setEmail(email);
+        person.setName(name);
+        person.setPictureUrl(pictureUrl);
+        person.setStatus(status);
+
+        return person;
     }
 
     public List<Person> getDeelnemers(){
@@ -53,10 +79,16 @@ public class PersonRepository {
         var session = driver.session();
         var query = "MATCH (p:Person) WHERE ANY(status IN p.status WHERE status = 'DEELNEMER') RETURN p";
         var result = session.run(query);
-        if (!result.hasNext()) {
-            throw new NoPersonFoundException();
+        List<Person> people = new ArrayList<>();
+        while (result.hasNext()) {
+            var record = result.next();
+            var node = record.get("p").asNode();
+
+            Person person = mapNodeToPerson(node);
+
+            people.add(person);
         }
-        return personMapper.mapToList(result);
+        return people;
     }
 
     public VerificationResponse verifyPerson(String email) {
@@ -153,13 +185,13 @@ public class PersonRepository {
     public Person updatePerson(String email, Person person){
         driver = db.getDriver();
         var session = driver.session();
-        var checkQuery = "MATCH (p:Person {email: $email}) RETURN p";
-        var checkResult = session.run(checkQuery, parameters("email", person.getEmail()));
-        if(checkResult.hasNext()){
-            throw new PersonAlreadyExistsException(person.getEmail());
-        }
-        var query = "MATCH (p:Person {email: $email}) SET p.name = $name, p.email = $mail, p.status = $status RETURN p";
-        var result = session.run(query, parameters("email", email, "name", person.getName(), "mail", person.getEmail(), "status", person.getStatus()));
+//        var checkQuery = "MATCH (p:Person {email: $email}) RETURN p";
+//        var checkResult = session.run(checkQuery, parameters("email", person.getEmail()));
+//        if(checkResult.hasNext()){
+//            throw new PersonAlreadyExistsException(person.getEmail());
+//        }
+        var query = "MATCH (p:Person {email: $email}) SET p.name = $name, p.email = $mail, p.status = $status, p.pictureUrl = $pictureUrl RETURN p";
+        var result = session.run(query, parameters("email", email, "name", person.getName(), "mail", person.getEmail(), "status", person.getStatus(), "pictureUrl", person.getPictureUrl()));
         if (!result.hasNext()){
             throw new PersonNotFoundException(email);
         }

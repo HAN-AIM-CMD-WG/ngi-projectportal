@@ -34,14 +34,22 @@ public class GoogleAuthenticationStrategy implements AuthenticationStrategy {
 
     @Override
     public Authentication authenticate(String token, HttpServletRequest request) {
-        Map<String, Object> userInfo = fetchUserInfo(token);
-        String email = (String) userInfo.get("email");
-        String name = (String) userInfo.get("name");
+        try {
+            Map<String, Object> userInfo = fetchUserInfo(token);
+            String email = (String) userInfo.get("email");
+            String name = (String) userInfo.get("name");
+            System.out.println(userInfo);
+            String pictureUrl = (String) userInfo.get("picture");
 
-        personService.createUnverifiedPerson(email, name);
-        List<GrantedAuthority> authorities = personService.fetchUserAuthorities(email);
+            personService.createOrUpdatePerson(email, name, pictureUrl);
+            List<GrantedAuthority> authorities = personService.fetchUserAuthorities(email);
 
-        return new UsernamePasswordAuthenticationToken(new User(email, "", authorities), null, authorities);
+            return new UsernamePasswordAuthenticationToken(new User(email, "", authorities), null, authorities);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private Map<String, Object> fetchUserInfo(String accessToken) {

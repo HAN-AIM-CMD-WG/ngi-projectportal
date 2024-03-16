@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 import java.util.Map;
 
@@ -20,13 +21,16 @@ public class PersonController {
     private PersonService personService;
 
     @GetMapping()
-    public ResponseEntity getAll(){
+    public ResponseEntity getAll() {
         try {
-            return new ResponseEntity(personService.getAll(), HttpStatus.OK);
-        } catch(Exception exc){
+            List<Person> allPersons = personService.getAll();
+            return new ResponseEntity(allPersons, HttpStatus.OK);
+        } catch(Exception exc) {
+            System.out.println("Error retrieving persons: " + exc.getMessage()); // Log the exception message
             return new ResponseEntity(exc.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @GetMapping("/deelnemers")
     public ResponseEntity getDeelnemers(){

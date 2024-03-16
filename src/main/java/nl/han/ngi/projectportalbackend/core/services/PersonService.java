@@ -76,13 +76,27 @@ public class PersonService {
         return person;
     }
 
-    public void createUnverifiedPerson(String email, String name) {
+    public void createUnverifiedPerson(String email, String name, String pictureUrl) {
         if (!doesPersonExist(email)) {
             Guest unverifiedPerson = new Guest();
             unverifiedPerson.setEmail(email);
             unverifiedPerson.setName(name);
             unverifiedPerson.setStatus(Collections.emptyList());
+            unverifiedPerson.setPictureUrl(pictureUrl);
             createGuest(unverifiedPerson);
+        }
+    }
+
+    public void createOrUpdatePerson(String email, String name, String pictureUrl) {
+        if (!doesPersonExist(email)) {
+            System.out.println("Creating unverified person");
+            createUnverifiedPerson(email, name, pictureUrl);
+        } else {
+            System.out.println("Updating person");
+            Person person = getPerson(email);
+            person.setName(name);
+            person.setPictureUrl(pictureUrl);
+            updatePerson(email, person);
         }
     }
 
