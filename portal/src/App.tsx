@@ -11,6 +11,7 @@ import { checkAuthentication } from './app/slices/authSlice';
 import { Loading } from './components/component/loading';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { Verified } from './components/component/verified';
+import { ProjectDetail } from './components/component/project-detail';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -101,6 +102,15 @@ const App = () => {
             </GuestRoute>
           }
         />
+        <Route
+          path="/project-example"
+          element={
+            <GeneralRouteWrapper>
+              <ProjectDetail />
+            </GeneralRouteWrapper>
+          }
+        />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
