@@ -1,4 +1,4 @@
-package nl.han.ngi.projectportalbackend.responses;
+package nl.han.ngi.projectportalbackend.core.models;
 
 import nl.han.ngi.projectportalbackend.core.enums.VerificationStatus;
 

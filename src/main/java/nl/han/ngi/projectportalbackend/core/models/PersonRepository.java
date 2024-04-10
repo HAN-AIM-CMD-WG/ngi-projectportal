@@ -4,7 +4,6 @@ import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfigura
 import nl.han.ngi.projectportalbackend.core.enums.VerificationStatus;
 import nl.han.ngi.projectportalbackend.core.exceptions.*;
 import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
-import nl.han.ngi.projectportalbackend.responses.VerificationResponse;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.exceptions.ClientException;

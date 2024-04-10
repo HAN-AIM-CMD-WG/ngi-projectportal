@@ -4,7 +4,7 @@ import nl.han.ngi.projectportalbackend.core.exceptions.EmptyParameterException;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.PersonRepository;
 import nl.han.ngi.projectportalbackend.core.models.Guest;
-import nl.han.ngi.projectportalbackend.responses.VerificationResponse;
+import nl.han.ngi.projectportalbackend.core.models.VerificationResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.ReflectionUtils;
