@@ -44,7 +44,6 @@ public class ProjectController {
         try {
             return new ResponseEntity(projectService.createProject(project, creator), HttpStatus.OK);
         } catch(Exception exc) {
-            exc.printStackTrace();
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

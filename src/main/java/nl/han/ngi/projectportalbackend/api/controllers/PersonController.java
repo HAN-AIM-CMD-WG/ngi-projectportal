@@ -68,8 +68,8 @@ public class PersonController {
         }
     }
 
-    @PostMapping("/createUnverified")
-    public ResponseEntity createUnverifiedPerson(@RequestBody Guest guest){
+    @PostMapping("/createGuest")
+    public ResponseEntity createGuest(@RequestBody Guest guest){
         try {
             if(guest.getEmail().isEmpty() || guest.getName().isEmpty()){
                 throw new EmptyParameterException();
@@ -84,7 +84,6 @@ public class PersonController {
 
     @PutMapping("/{email}")
     public ResponseEntity updatePerson(@PathVariable String email, @RequestBody Person person){
-        System.out.println(person.getEmail() + person.getStatus() + person.getPassword());
         try{
             return new ResponseEntity(personService.updatePerson(email, person), HttpStatus.OK);
         } catch(Exception exc){
@@ -93,7 +92,7 @@ public class PersonController {
 
     }
 
-    @PatchMapping("{email}")
+    @PatchMapping("/{email}")
     public ResponseEntity patchPerson(@PathVariable String email, @RequestBody Map<Object, Object> fields){
         try{
             return new ResponseEntity(personService.patchPerson(email, fields), HttpStatus.OK);

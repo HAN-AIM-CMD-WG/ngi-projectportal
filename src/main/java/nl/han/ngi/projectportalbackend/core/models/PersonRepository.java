@@ -158,14 +158,14 @@ public class PersonRepository {
         }
     }
 
-    public Guest createUnverifiedPerson(Guest unverifiedPerson) {
+    public Guest createGuest(Guest guest) {
         driver = db.getDriver();
         try (var session = driver.session()) {
             var query = "CREATE (p:Person {email: $email, name: $name, status: $status}) RETURN p";
             var result = session.run(query, parameters(
-                    "name", unverifiedPerson.getName(),
-                    "email", unverifiedPerson.getEmail(),
-                    "status", unverifiedPerson.getStatus()
+                    "name", guest.getName(),
+                    "email", guest.getEmail(),
+                    "status", guest.getStatus()
             ));
 
             Guest createdGuest = unverifiedPersonMapper.mapTo(result);

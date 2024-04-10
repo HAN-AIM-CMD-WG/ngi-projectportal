@@ -61,7 +61,7 @@ public class PersonService {
     }
 
     public Guest createGuest(Guest guest) {
-        return personRepository.createUnverifiedPerson(guest);
+        return personRepository.createGuest(guest);
     }
 
     public Person patchPerson(String email, Map<Object, Object> fields) {
