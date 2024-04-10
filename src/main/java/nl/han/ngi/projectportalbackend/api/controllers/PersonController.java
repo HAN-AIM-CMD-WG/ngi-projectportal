@@ -17,8 +17,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/person")
 public class PersonController {
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+
+    public PersonController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @GetMapping()
     public ResponseEntity getAll() {
@@ -26,7 +29,6 @@ public class PersonController {
             List<Person> allPersons = personService.getAll();
             return new ResponseEntity(allPersons, HttpStatus.OK);
         } catch(Exception exc) {
-            System.out.println("Error retrieving persons: " + exc.getMessage()); // Log the exception message
             return new ResponseEntity(exc.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -52,11 +54,7 @@ public class PersonController {
 
     @GetMapping("/{email}")
     public ResponseEntity getPerson(@PathVariable String email){
-        try {
             return new ResponseEntity(personService.getPerson(email), HttpStatus.OK);
-        }catch(PersonNotFoundException exc){
-            return new ResponseEntity(exc, HttpStatus.BAD_REQUEST);
-        }
     }
 
     @PostMapping("/create")
@@ -70,16 +68,7 @@ public class PersonController {
 
     @PostMapping("/createGuest")
     public ResponseEntity createGuest(@RequestBody Guest guest){
-        try {
-            if(guest.getEmail().isEmpty() || guest.getName().isEmpty()){
-                throw new EmptyParameterException();
-            }
             return new ResponseEntity(personService.createGuest(guest), HttpStatus.OK);
-        } catch(ClientException exc){
-            return new ResponseEntity("person with email: " + guest.getEmail() + " already exists in the database", HttpStatus.BAD_REQUEST);
-        } catch (Exception exc){
-            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
-        }
     }
 
     @PutMapping("/{email}")

@@ -23,11 +23,7 @@ public class ProjectController {
 
     @GetMapping()
     public ResponseEntity getAll(){
-        try {
-            return new ResponseEntity(projectService.getAll(), HttpStatus.OK);
-        } catch(Exception exc){
-            return new ResponseEntity(exc.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity(projectService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{email}")

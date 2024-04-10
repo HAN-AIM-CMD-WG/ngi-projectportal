@@ -1,5 +1,6 @@
 package nl.han.ngi.projectportalbackend.core.services;
 
+import nl.han.ngi.projectportalbackend.core.exceptions.EmptyParameterException;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.PersonRepository;
 import nl.han.ngi.projectportalbackend.core.models.Guest;
@@ -18,12 +19,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class PersonService {
+    private final EmailService emailService;
     private final PersonRepository personRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
+    public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     public List<Person> getDeelnemers() {
@@ -61,7 +64,17 @@ public class PersonService {
     }
 
     public Guest createGuest(Guest guest) {
-        return personRepository.createGuest(guest);
+        if(guest.getEmail().isEmpty() || guest.getName().isEmpty()){
+            throw new EmptyParameterException();
+        }
+        Guest createdGuest = personRepository.createGuest(guest);
+
+        String emailSubject = "Please verify your email address";
+        String verificationLink = "http://localhost:5173/verify/" + createdGuest.getEmail();
+        String emailContent = "Dear " + createdGuest.getName() + ",\n\nPlease click the following link to verify your email address: " + verificationLink + "\n\nThank you!";
+        emailService.sendSimpleEmail(createdGuest.getEmail(), emailSubject, emailContent);
+
+        return createdGuest;
     }
 
     public Person patchPerson(String email, Map<Object, Object> fields) {
