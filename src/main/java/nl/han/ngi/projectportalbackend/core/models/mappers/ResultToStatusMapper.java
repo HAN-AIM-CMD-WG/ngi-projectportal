@@ -21,17 +21,20 @@ public class ResultToStatusMapper implements IMapper<Result, Status>{
 
     @Override
     public Status mapTo(List<Result> from) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public Result mapFrom(Status to) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public Result mapFrom(List<Status> to) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
@@ -45,16 +48,19 @@ public class ResultToStatusMapper implements IMapper<Result, Status>{
 
     @Override
     public List<Status> mapToList(List<Result> from) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public List<Result> mapFromList(Status to) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public List<Result> mapFromList(List<Status> to) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

@@ -28,17 +28,20 @@ public class ResultToProjectMapper implements IMapper<Result, Project>{
 
     @Override
     public Project mapTo(List<Result> from) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public Result mapFrom(Project to) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public Result mapFrom(List<Project> to) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
@@ -62,16 +65,19 @@ public class ResultToProjectMapper implements IMapper<Result, Project>{
 
     @Override
     public List<Project> mapToList(List<Result> from) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public List<Result> mapFromList(Project to) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public List<Result> mapFromList(List<Project> to) {
-        return null;
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }
