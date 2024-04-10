@@ -1,7 +1,7 @@
 package nl.han.ngi.projectportalbackend.core.services;
 
 import nl.han.ngi.projectportalbackend.core.models.Person;
-import nl.han.ngi.projectportalbackend.core.models.PersonRepository;
+import nl.han.ngi.projectportalbackend.core.repositories.PersonRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -2,7 +2,7 @@ package nl.han.ngi.projectportalbackend.core.services;
 
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.Project;
-import nl.han.ngi.projectportalbackend.core.models.ProjectRepository;
+import nl.han.ngi.projectportalbackend.core.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

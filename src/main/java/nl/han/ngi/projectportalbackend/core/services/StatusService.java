@@ -1,7 +1,7 @@
 package nl.han.ngi.projectportalbackend.core.services;
 
 import nl.han.ngi.projectportalbackend.core.models.Status;
-import nl.han.ngi.projectportalbackend.core.models.StatusRepository;
+import nl.han.ngi.projectportalbackend.core.repositories.StatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

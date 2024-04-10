@@ -2,7 +2,7 @@ package nl.han.ngi.projectportalbackend.core.services;
 
 import nl.han.ngi.projectportalbackend.core.exceptions.EmptyParameterException;
 import nl.han.ngi.projectportalbackend.core.models.Person;
-import nl.han.ngi.projectportalbackend.core.models.PersonRepository;
+import nl.han.ngi.projectportalbackend.core.repositories.PersonRepository;
 import nl.han.ngi.projectportalbackend.core.models.Guest;
 import nl.han.ngi.projectportalbackend.core.models.VerificationResponse;
 import org.springframework.security.core.GrantedAuthority;

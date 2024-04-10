@@ -1,8 +1,11 @@
-package nl.han.ngi.projectportalbackend.core.models;
+package nl.han.ngi.projectportalbackend.core.repositories;
 
 import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfiguration;
 import nl.han.ngi.projectportalbackend.core.enums.VerificationStatus;
 import nl.han.ngi.projectportalbackend.core.exceptions.*;
+import nl.han.ngi.projectportalbackend.core.models.Guest;
+import nl.han.ngi.projectportalbackend.core.models.Person;
+import nl.han.ngi.projectportalbackend.core.models.VerificationResponse;
 import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
