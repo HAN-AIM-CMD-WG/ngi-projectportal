@@ -90,7 +90,7 @@ export const createUser = createAsyncThunk(
   ) => {
     try {
       const response = await fetch(
-        'http://localhost:8080/api/person/createUnverified',
+        'http://localhost:8080/api/person/createGuest',
         {
           method: 'POST',
           credentials: 'include',
