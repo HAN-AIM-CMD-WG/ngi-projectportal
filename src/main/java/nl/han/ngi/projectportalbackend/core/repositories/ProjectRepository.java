@@ -20,17 +20,65 @@ import java.util.List;
 import static org.neo4j.driver.Values.parameters;
 
 @Component
-public class ProjectRepository {
+public class ProjectRepository implements CRUDRepository<String, Project>{
 
     private Driver driver;
 
-    @Autowired
-    private IMapper<Result, Project> mapper;
-    @Autowired
-    private DbConnectionConfiguration db;
+    private final IMapper<Result, Project> mapper;
+    private final DbConnectionConfiguration db;
 
-    public ProjectRepository(){
+    public ProjectRepository(IMapper<Result, Project> mapper, DbConnectionConfiguration db){
 
+        this.mapper = mapper;
+        this.db = db;
+    }
+
+    public List<Project> getAll(){
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH (pr: Project) RETURN pr";
+        var result = session.run(query);
+        if (!result.hasNext()) {
+            throw new NoProjectFoundException();
+        }
+
+        return mapper.mapToList(result);
+    }
+    @Override
+    public Project get(String key) {
+        return null;
+    }
+
+    @Override
+    public Project create(Project data) {
+        // TODO: implement me
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public Project update(String key, Project data) {
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH(pr:Project {title: $title}) SET pr.title = $newTitle, pr.description = $description RETURN pr";
+
+        var result = session.run(query, parameters("title", key, "newTitle", data.getTitle(), "description", data.getDescription()));
+
+        if(!result.hasNext()){
+            throw new ProjectNotFoundException(key);
+        }
+        return mapper.mapTo(result);
+    }
+
+    @Override
+    public Project delete(String key) {
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH(pr:Project {title: $title}) DETACH DELETE pr";
+        var result = session.run(query, parameters("title", key));
+        if (!result.hasNext()){
+            throw new ProjectCouldNotBeDeletedException(key);
+        }
+        return mapper.mapTo(result);
     }
 
     public List<Project> getAllByUser(String email){
@@ -59,18 +107,6 @@ public class ProjectRepository {
         return projects;
     }
 
-
-    public List<Project> getAll(){
-        driver = db.getDriver();
-        var session = driver.session();
-        var query = "MATCH (pr: Project) RETURN pr";
-        var result = session.run(query);
-        if (!result.hasNext()) {
-            throw new NoProjectFoundException();
-        }
-
-        return mapper.mapToList(result);
-    }
     public Project getProject(String title) {
         driver = db.getDriver();
         var session = driver.session();
@@ -104,29 +140,6 @@ public class ProjectRepository {
             var query = "MATCH (pr:Project {title: $title}) RETURN count(pr) > 0 as exists";
             var result = session.run(query, parameters("title", title));
             return result.single().get("exists").asBoolean();
-        }
-    }
-
-    public Project updateProject(String title, Project project) {
-        driver = db.getDriver();
-        var session = driver.session();
-        var query = "MATCH(pr:Project {title: $title}) SET pr.title = $newTitle, pr.description = $description RETURN pr";
-
-        var result = session.run(query, parameters("title", title, "newTitle", project.getTitle(), "description", project.getDescription()));
-
-        if(!result.hasNext()){
-            throw new ProjectNotFoundException(title);
-        }
-        return mapper.mapTo(result);
-    }
-
-    public void deleteProject(String title) {
-        driver = db.getDriver();
-        var session = driver.session();
-        var query = "MATCH(pr:Project {title: $title}) DETACH DELETE pr";
-        var result = session.run(query, parameters("title", title));
-        if (!result.hasNext()){
-            throw new ProjectCouldNotBeDeletedException(title);
         }
     }
 

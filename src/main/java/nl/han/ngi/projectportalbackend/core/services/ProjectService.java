@@ -34,11 +34,11 @@ public class ProjectService {
     }
 
     public Project updateProject(String title, Project project) {
-        return projectRepository.updateProject(title, project);
+        return projectRepository.update(title, project);
     }
 
     public void deleteProject(String title) {
-        projectRepository.deleteProject(title);
+        projectRepository.delete(title);
     }
 
     public void addParticipantToProject(String title, Person person, String function) {
