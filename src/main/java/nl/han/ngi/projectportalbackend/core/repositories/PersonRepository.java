@@ -25,8 +25,7 @@ import static org.neo4j.driver.Values.parameters;
 @Component
 public class PersonRepository {
 
-    @Autowired
-    private IMapper<Result, Person> personMapper;
+    private final IMapper<Result, Person> personMapper;
 
     private final IMapper<Result, Guest> guestMapper;
 
@@ -36,9 +35,10 @@ public class PersonRepository {
 
 
 
-    public PersonRepository(DbConnectionConfiguration db, IMapper<Result, Guest> guestMapper){
+    public PersonRepository(DbConnectionConfiguration db, IMapper<Result, Guest> guestMapper, IMapper<Result, Person> personMapper){
         this.db = db;
         this.guestMapper = guestMapper;
+        this.personMapper = personMapper;
     }
 
     public List<Person> getAll(){

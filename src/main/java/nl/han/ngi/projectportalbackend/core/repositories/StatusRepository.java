@@ -15,14 +15,14 @@ import java.util.List;
 public class StatusRepository {
     private Driver driver;
 
-    @Autowired
-    private IMapper<Result, Status> mapper;
+    private final IMapper<Result, Status> mapper;
 
-    @Autowired
-    private DbConnectionConfiguration db;
+    private final DbConnectionConfiguration db;
 
-    public StatusRepository(){
+    public StatusRepository(IMapper<Result, Status> mapper, DbConnectionConfiguration db){
 
+        this.mapper = mapper;
+        this.db = db;
     }
 
     public List<Status> getAll() {

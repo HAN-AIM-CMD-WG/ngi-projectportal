@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/status")
 public class StatusController {
-    @Autowired
-    private StatusService statusService;
+    private final StatusService statusService;
+
+    public StatusController(StatusService statusService) {
+        this.statusService = statusService;
+    }
 
     @GetMapping()
     public ResponseEntity getAll(){
