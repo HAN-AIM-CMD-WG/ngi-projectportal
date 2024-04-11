@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/project")
 public class ProjectController {
 
-    @Autowired
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+
+    public ProjectController(ProjectService projectService, PersonService personService) {
+        this.projectService = projectService;
+        this.personService = personService;
+    }
 
     @GetMapping()
     public ResponseEntity getAll(){
