@@ -32,4 +32,11 @@ build/
 
 ### VS Code ###
 .vscode/
+<<<<<<< Updated upstream
 .vs/
+=======
+
+### .vite ###
+/frontend/portal/.vite/
+/frontend/portal/node_modules/
+>>>>>>> Stashed changes
