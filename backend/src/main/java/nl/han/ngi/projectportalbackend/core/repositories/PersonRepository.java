@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
+import org.springframework.stereotype.Repository;
 
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.List;
 import static org.neo4j.driver.Values.parameters;
 
 
-@Component
+@Repository
 public class PersonRepository {
 
     private final IMapper<Result, Person> personMapper;
