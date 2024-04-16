@@ -11,6 +11,3 @@ MATCH(p1:Person {email: 'jesseveldmaat@hotmail.nl'}),(pr1:Project {title:'NGI Pr
 CREATE(t:Task {title: 'Back-end ontwerpen voor NGI', description: 'Binnen deze taak ga je bezig met het ontwikkelen van de back-end van NGI', reward: 'veel geld', isDone: 0, skills: ['DevOps', 'Data Engineer']}) RETURN t
 
 MATCH(p2:Person {email: 'jesseveldmaat@hotmail.nl'}),(pr2:Project {title:'NGI Project'}), (t1 {title: 'Back-end ontwerpen voor NGI'}) CREATE(p2)-[:CREATED_TASK_FOR_PROJECT]->(t1)-[:PART_OF_PROJECT]->(pr2)
-//CREATE CONSTRAINT project_name_is_unique FOR (pr:Project) REQUIRE pr.title IS UNIQUE
-//
-//CREATE CONSTRAINT email_is_unique FOR (p:Person) REQUIRE p.email IS UNIQUE
