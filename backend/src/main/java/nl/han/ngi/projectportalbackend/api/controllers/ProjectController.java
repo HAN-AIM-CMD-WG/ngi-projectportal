@@ -7,6 +7,7 @@ import nl.han.ngi.projectportalbackend.core.models.Task;
 import nl.han.ngi.projectportalbackend.core.services.PersonService;
 import nl.han.ngi.projectportalbackend.core.services.ProjectService;
 import nl.han.ngi.projectportalbackend.core.services.TaskService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -92,7 +93,12 @@ public class ProjectController {
         }
     }
 
-    @PostMapping("/{title}/add/task/{creator}")
+    @GetMapping("/{title}/tasks")
+    public ResponseEntity getTasksOfProjectWithTitle(@PathVariable String title){
+        return new ResponseEntity(taskService.getTasksOfProjectWithTitle(title), HttpStatus.OK);
+    }
+
+    @PostMapping("/{title}/tasks/add/{creator}")
     public ResponseEntity createTaskToProject(@PathVariable String title, @PathVariable String creator, @RequestBody Task task){
         return new ResponseEntity(taskService.createTaskToProject(title, creator, task), HttpStatus.CREATED);
     }

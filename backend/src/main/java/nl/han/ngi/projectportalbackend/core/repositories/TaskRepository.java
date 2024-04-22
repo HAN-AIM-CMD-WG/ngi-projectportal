@@ -67,6 +67,22 @@ public class TaskRepository implements CRUDRepository<String, Task>{
         return mapper.mapTo(result);
     }
 
+    public List<Task> getTasksOfProjectWithTitle(String title){
+        driver = db.getDriver();
+        Session session = driver.session();
+        var query = "MATCH(pr:Project {title: $title})--(t:Task) RETURN t";
+        var result = session.run(query, parameters("title", title));
+        return mapper.mapToList(result);
+    }
+
+    public List<Task> getAvailableTasksOfPerson(String person) {
+        driver = db.getDriver();
+        Session session = driver.session();
+        var query = "MATCH(p:Person {email:$email})-[:TASK_MANAGER]->(t:Task) return t";
+        var result = session.run(query, parameters("email", person));
+        return mapper.mapToList(result);
+    }
+
     public Task createTaskForProject(String creator, String projectTitle, Task task){
         driver = db.getDriver();
         Session session = driver.session();
@@ -76,4 +92,7 @@ public class TaskRepository implements CRUDRepository<String, Task>{
         var result = session.run(query, parameters("creator", creator, "projectTitle", projectTitle, "title", task.getTitle(), "description", task.getDescription(), "reward", task.getReward(), "skills", task.getSkills()));
         return mapper.mapTo(result);
     }
+
+
+
 }

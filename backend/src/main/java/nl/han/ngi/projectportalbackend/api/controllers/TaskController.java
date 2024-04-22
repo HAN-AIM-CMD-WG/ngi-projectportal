@@ -26,4 +26,9 @@ public class TaskController {
     public ResponseEntity createTask(@PathVariable String creator, @RequestBody Task task){
         return new ResponseEntity(taskService.createTask(creator, task), HttpStatus.OK);
     }
+
+    @GetMapping("/{person}/availableTasks")
+    public ResponseEntity getAvailableTasksOfPerson(@PathVariable String person){
+        return new ResponseEntity(taskService.getAvailableTasksOfPerson(person), HttpStatus.OK);
+    }
 }
