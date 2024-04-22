@@ -3,8 +3,10 @@ package nl.han.ngi.projectportalbackend.api.controllers;
 import nl.han.ngi.projectportalbackend.core.exceptions.PersonIsAGuestException;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.Project;
+import nl.han.ngi.projectportalbackend.core.models.Task;
 import nl.han.ngi.projectportalbackend.core.services.PersonService;
 import nl.han.ngi.projectportalbackend.core.services.ProjectService;
+import nl.han.ngi.projectportalbackend.core.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +21,12 @@ public class ProjectController {
 
     private final PersonService personService;
 
-    public ProjectController(ProjectService projectService, PersonService personService) {
+    private final TaskService taskService;
+
+    public ProjectController(ProjectService projectService, PersonService personService, TaskService taskService) {
         this.projectService = projectService;
         this.personService = personService;
+        this.taskService = taskService;
     }
 
     @GetMapping()
@@ -77,7 +82,7 @@ public class ProjectController {
     public ResponseEntity addParticipantToProject(@PathVariable String title, @PathVariable String email, @RequestBody String function){
         try{
             Person person = personService.getPerson(email);
-            if(person.getStatus().contains("GAST")){
+            if(person.getStatus().isEmpty()){
                 throw new PersonIsAGuestException(email);
             }
             projectService.addParticipantToProject(title, person, function);
@@ -85,6 +90,11 @@ public class ProjectController {
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/{title}/add/task/{creator}")
+    public ResponseEntity createTaskToProject(@PathVariable String title, @PathVariable String creator, @RequestBody Task task){
+        return new ResponseEntity(taskService.createTaskToProject(title, creator, task), HttpStatus.CREATED);
     }
 
 //    @DeleteMapping("/{title}/{email}")

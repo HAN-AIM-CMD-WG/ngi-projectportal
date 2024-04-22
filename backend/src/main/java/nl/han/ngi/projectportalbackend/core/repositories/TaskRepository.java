@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static org.neo4j.driver.Values.parameters;
+
 @Repository
 public class TaskRepository implements CRUDRepository<String, Task>{
     private Driver driver;
@@ -55,18 +57,23 @@ public class TaskRepository implements CRUDRepository<String, Task>{
     }
 
     public Task createTask(String creator, Task task) {
-        Task createdTask = new Task();
+        driver = db.getDriver();
+        Session session = driver.session();
+        var query = "MATCH(p:Person{email: $email})" +
+                "CREATE(t:Task{title: $title, description: $description, reward: $reward, isDone: 0, skills: $skills}), " +
+                "(p)-[:CREATED_TASK]->(t) RETURN t";
+        var result = session.run(query, parameters("email", creator,"title", task.getTitle(), "description", task.getDescription(), "reward", task.getReward(), "skills", task.getSkills()));
 
-
-        return createdTask;
+        return mapper.mapTo(result);
     }
 
     public Task createTaskForProject(String creator, String projectTitle, Task task){
-        Task createdTask = new Task();
         driver = db.getDriver();
         Session session = driver.session();
-
-        String relationQuery = "MATCH(p:Person {email: $creator}),(pr2:Project {title: $projectTitle}), (t1 {title: $taskTitle}) CREATE(p2)-[:CREATED_TASK_FOR_PROJECT]->(t1)-[:PART_OF_PROJECT]->(pr2)";
-        return createdTask;
+        String query = "MATCH(p:Person {email: $creator}),(pr:Project {title: $projectTitle}) " +
+                "CREATE(t:Task {title:$title, description:$description, reward:$reward, isDone: 0, skills:$skills}) " +
+                "(p)-[:CREATED_TASK_FOR_PROJECT]->(t)-[:PART_OF_PROJECT]->(pr) return t";
+        var result = session.run(query, parameters("creator", creator, "projectTitle", projectTitle, "title", task.getTitle(), "description", task.getDescription(), "reward", task.getReward(), "skills", task.getSkills()));
+        return mapper.mapTo(result);
     }
 }

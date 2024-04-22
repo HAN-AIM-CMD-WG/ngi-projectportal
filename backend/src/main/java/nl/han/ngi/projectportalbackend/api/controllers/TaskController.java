@@ -23,7 +23,7 @@ public class TaskController {
     }
 
     @PostMapping("/{creator}")
-    public ResponseEntity createTask(@PathVariable String name, @RequestBody Task task){
-        return new ResponseEntity(taskService.createTask(name, task), HttpStatus.OK);
+    public ResponseEntity createTask(@PathVariable String creator, @RequestBody Task task){
+        return new ResponseEntity(taskService.createTask(creator, task), HttpStatus.OK);
     }
 }

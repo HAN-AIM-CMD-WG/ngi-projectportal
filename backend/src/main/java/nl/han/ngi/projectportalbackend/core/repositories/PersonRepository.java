@@ -10,8 +10,6 @@ import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.exceptions.ClientException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.springframework.stereotype.Repository;

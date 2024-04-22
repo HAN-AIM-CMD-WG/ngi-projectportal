@@ -6,7 +6,7 @@ CREATE(status:Status{name: 'DEELNEMER'}),(status2:Status{name: 'ADMIN'}),(status
 
 CREATE(pr:Project {title: 'NGI Project', description: 'Dit is het eerste project wat is gemaakt binnen dit project'}) RETURN pr
 
-MATCH(p1:Person {email: 'jesseveldmaat@hotmail.nl'}),(pr1:Project {title:'NGI Project'})CREATE(p1)-[:LEADS {title: 'opdrachtgever'}]->(pr1)
+MATCH(p1:Person {email: 'jesseveldmaat@hotmail.nl'}),(pr1:Project {title:'NGI Project'}) CREATE(p1)-[:LEADS {title: 'opdrachtgever'}]->(pr1)
 
 CREATE(t:Task {title: 'Back-end ontwerpen voor NGI', description: 'Binnen deze taak ga je bezig met het ontwikkelen van de back-end van NGI', reward: 'veel geld', isDone: 0, skills: ['DevOps', 'Data Engineer']}) RETURN t
 

@@ -22,4 +22,8 @@ public class TaskService {
     public Task createTask(String creator, Task task) {
         return taskRepository.createTask(creator, task);
     }
+
+    public Task createTaskToProject(String title, String creator, Task task) {
+        return taskRepository.createTaskForProject(title, creator, task);
+    }
 }
