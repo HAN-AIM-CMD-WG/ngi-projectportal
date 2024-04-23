@@ -8,10 +8,11 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Component
+@Repository
 public class StatusRepository {
     private Driver driver;
 
@@ -20,7 +21,6 @@ public class StatusRepository {
     private final DbConnectionConfiguration db;
 
     public StatusRepository(IMapper<Result, Status> mapper, DbConnectionConfiguration db){
-
         this.mapper = mapper;
         this.db = db;
     }

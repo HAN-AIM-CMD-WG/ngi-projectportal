@@ -9,6 +9,7 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -19,7 +20,7 @@ import java.util.List;
 
 import static org.neo4j.driver.Values.parameters;
 
-@Component
+@Repository
 public class ProjectRepository implements CRUDRepository<String, Project>{
 
     private Driver driver;
