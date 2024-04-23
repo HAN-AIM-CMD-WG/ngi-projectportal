@@ -1,28 +1,33 @@
-import { useEffect } from 'react';
-import { Input } from '@/components/ui/input';
+import { useEffect } from "react";
+import { Input } from "@/components/ui/input";
 import {
   CardTitle,
   CardDescription,
   CardHeader,
   CardContent,
   CardFooter,
-  Card
-} from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+  Card,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import {
   setProjectName,
   setDescription,
   createProject,
-  fetchIfTitleExists
-} from '@/app/slices/projectSlice';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
+  fetchIfTitleExists,
+} from "@/app/slices/projectSlice";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 export function Project() {
   const dispatch = useAppDispatch();
-  const { projectName, description, status, error, titleExists } =
-    useAppSelector(state => state.project);
-  const email = useAppSelector(state => state.auth.email) ?? '';
+  const {
+    projectName,
+    description,
+    status,
+    error,
+    titleExists,
+  } = useAppSelector((state) => state.project);
+  const email = useAppSelector((state) => state.auth.email) ?? "";
 
   useEffect(() => {
     if (projectName.trim()) {
@@ -31,6 +36,10 @@ export function Project() {
   }, [dispatch, projectName]);
 
   const handleCreateProject = () => {
+    if (!projectName || !description) {
+      alert("Please fill out the form.");
+      return;
+    }
     if (!titleExists) {
       dispatch(createProject({ email, projectName, description }));
     }
@@ -50,8 +59,8 @@ export function Project() {
           <Input
             id="projectName"
             value={projectName}
-            onChange={e => dispatch(setProjectName(e.target.value))}
-            className={titleExists ? 'border-red-500' : ''}
+            onChange={(e) => dispatch(setProjectName(e.target.value))}
+            className={titleExists ? "border-red-500" : ""}
           />
           {titleExists && (
             <div className="text-red-500 text-sm">
@@ -62,7 +71,7 @@ export function Project() {
           <Input
             id="description"
             value={description}
-            onChange={e => dispatch(setDescription(e.target.value))}
+            onChange={(e) => dispatch(setDescription(e.target.value))}
           />
         </div>
       </CardContent>
@@ -70,11 +79,11 @@ export function Project() {
         <Button
           type="button"
           onClick={handleCreateProject}
-          disabled={status === 'loading' || titleExists}
+          disabled={status === "loading" || titleExists}
         >
-          {status === 'loading' ? 'Creating...' : 'Create Project'}
+          {status === "loading" ? "Creating..." : "Create Project"}
         </Button>
-        {status === 'failed' && <p className="text-red-500">{error}</p>}
+        {status === "failed" && <p className="text-red-500">{error}</p>}
       </CardFooter>
     </Card>
   );
