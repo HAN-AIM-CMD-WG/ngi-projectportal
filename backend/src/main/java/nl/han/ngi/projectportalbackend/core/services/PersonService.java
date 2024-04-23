@@ -84,7 +84,6 @@ public class PersonService {
                 field.setAccessible(true);
                 ReflectionUtils.setField(field, person, value);
         });
-            System.out.println(person.getStatus());
             personRepository.patchPerson(email, person);
         return person;
     }
@@ -116,10 +115,10 @@ public class PersonService {
     public List<GrantedAuthority> fetchUserAuthorities(String email) {
         if (doesPersonExist(email)) {
             return getPerson(email).getStatus().stream()
-                    .map(status -> new SimpleGrantedAuthority("ROLE_" + status))
+                    .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
         } else {
-            return Collections.singletonList(new SimpleGrantedAuthority("ROLE_GUEST"));
+            return Collections.singletonList(new SimpleGrantedAuthority("GUEST"));
         }
     }
 }

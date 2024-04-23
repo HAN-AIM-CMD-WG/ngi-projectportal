@@ -1,21 +1,21 @@
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { logoutUser } from '@/app/slices/authSlice';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { logoutUser } from "@/app/slices/authSlice";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 export function Navbar() {
-  const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn);
-  const userRoles = useAppSelector(state => state.auth.roles);
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
+  const userRoles = useAppSelector((state) => state.auth.roles);
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
     dispatch(logoutUser())
       .unwrap()
       .then(() => {
-        console.log('Logged out successfully');
+        console.log("Logged out successfully");
       })
       .catch((error: unknown) => {
-        console.error('Logout error:', error);
+        console.error("Logout error:", error);
       });
   };
 
@@ -30,7 +30,7 @@ export function Navbar() {
       <div className="flex items-center gap-4">
         {isLoggedIn ? (
           <>
-            {userRoles?.includes('ADMIN') && (
+            {userRoles.includes("ADMIN") && (
               <Link
                 className="text-lg text-gray-600 dark:text-gray-400 hover:underline"
                 to="/admin"

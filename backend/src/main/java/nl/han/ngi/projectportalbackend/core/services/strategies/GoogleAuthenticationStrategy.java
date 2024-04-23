@@ -44,6 +44,8 @@ public class GoogleAuthenticationStrategy implements AuthenticationStrategy {
             personService.createOrUpdatePerson(email, name, pictureUrl);
             List<GrantedAuthority> authorities = personService.fetchUserAuthorities(email);
 
+            System.out.println(authorities);
+
             return new UsernamePasswordAuthenticationToken(new User(email, "", authorities), null, authorities);
         } catch (Exception e) {
             System.out.println(e.getMessage());

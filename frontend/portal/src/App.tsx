@@ -1,23 +1,23 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Landing } from './components/component/landing';
-import { AdminDashboard } from './components/component/admin-dashboard';
-import { Login } from './components/component/login';
-import { Register } from './components/component/register';
-import { NotFound } from './components/component/not-found';
-import { Navigate } from 'react-router';
-import { useEffect } from 'react';
-import { ReactNode } from 'react';
-import { checkAuthentication } from './app/slices/authSlice';
-import { Loading } from './components/component/loading';
-import { useAppDispatch, useAppSelector } from './app/hooks';
-import { Verified } from './components/component/verified';
-import { ProjectDetail } from './components/component/project-detail';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Landing } from "./components/component/landing";
+import { AdminDashboard } from "./components/component/admin-dashboard";
+import { Login } from "./components/component/login";
+import { Register } from "./components/component/register";
+import { NotFound } from "./components/component/not-found";
+import { Navigate } from "react-router";
+import { useEffect } from "react";
+import { ReactNode } from "react";
+import { checkAuthentication } from "./app/slices/authSlice";
+import { Loading } from "./components/component/loading";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
+import { Verified } from "./components/component/verified";
+import { ProjectDetail } from "./components/component/project-detail";
 
 const App = () => {
   const dispatch = useAppDispatch();
-  const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn);
-  const userRoles = useAppSelector(state => state.auth.roles);
-  const authChecking = useAppSelector(state => state.auth.authChecking);
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
+  const userRoles = useAppSelector((state) => state.auth.roles);
+  const authChecking = useAppSelector((state) => state.auth.authChecking);
 
   useEffect(() => {
     dispatch(checkAuthentication());
@@ -32,7 +32,7 @@ const App = () => {
       return <Navigate to="/" />;
     }
 
-    if (userRoles.includes('ROLE_ADMIN')) {
+    if (userRoles.includes("ADMIN")) {
       return children;
     }
 

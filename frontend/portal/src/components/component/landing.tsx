@@ -1,12 +1,12 @@
-import { Button } from '@/components/ui/button';
-import { Project } from './project';
-import { Navbar } from './navbar';
-import { ProjectList } from './project-list.tsx';
-import { UserList } from './user-list.tsx';
-import { useAppSelector } from '@/app/hooks.ts';
+import { Button } from "@/components/ui/button";
+import { Project } from "./project";
+import { Navbar } from "./navbar";
+import { ProjectList } from "./project-list.tsx";
+import { UserList } from "./user-list.tsx";
+import { useAppSelector } from "@/app/hooks.ts";
 
 export function Landing() {
-  const roles = useAppSelector(state => state.auth.roles);
+  const roles = useAppSelector((state) => state.auth.roles);
 
   return (
     <div key="1">
@@ -28,7 +28,7 @@ export function Landing() {
           </div>
         </div>
       </section>
-      {roles.includes('ROLE_OPDRACHTGEVER') && (
+      {roles.includes("OPDRACHTGEVER") && (
         <>
           <section className="w-full py-6">
             <div className="container flex flex-wrap md:flex-nowrap px-4 md:px-6">
