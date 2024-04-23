@@ -31,11 +31,7 @@ public class ProjectController {
 
     @GetMapping("/{email}")
     public ResponseEntity getAllByUser(@PathVariable String email){
-        try {
-            return new ResponseEntity(projectService.getAllByUser(email), HttpStatus.OK);
-        } catch(Exception exc){
-            return new ResponseEntity(exc.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity(projectService.getAllByUser(email), HttpStatus.OK);
     }
 
     @PostMapping("/create/{creator}")

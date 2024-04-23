@@ -96,12 +96,7 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
             Project project = new Project();
             project.setTitle(record.get("title").asString());
             project.setDescription(record.get("description").asString());
-
-            if (!record.get("created").isNull()) {
-                LocalDate createdDate = record.get("created").asLocalDate();
-                project.setCreated(createdDate.toString());
-            }
-
+            project.setCreated(record.get("created").asLocalDate().toString());
             projects.add(project);
         }
         return projects;
@@ -121,21 +116,19 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
     public Project createProject(Project project, String creator){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MERGE (pr:Project {title: $title}) ON CREATE SET pr.description = $description, pr.created = $created RETURN pr";
+        var query = "MATCH(p:Person{email:$creator}) CREATE (pr:Project {title: $title, description: $description, created: $created}), (p)-[:LEADS {title: 'project manager'}]->(pr) RETURN pr";
 
         LocalDate localDate = LocalDate.now(ZoneId.of("Europe/Amsterdam"));
-        var result = session.run(query, parameters("title", project.getTitle(), "description", project.getDescription(), "created", localDate));
+        var result = session.run(query, parameters("creator", creator,"title", project.getTitle(),"description", project.getDescription(), "created", localDate));
 
         if(!result.hasNext()){
             throw new ProjectAlreadyExistsException(project.getTitle());
         }
-        query = "MATCH (p:Person{email: $creator}), (pr:Project {title: $title}) MERGE (p)-[:LEADS {title: 'project manager'}]->(pr)";
-
-        session.run(query, parameters("creator", creator, "title", project.getTitle()));
         return mapper.mapTo(result);
     }
 
     public boolean existsByTitle(String title) {
+        driver = db.getDriver();
         try (var session = driver.session()) {
             var query = "MATCH (pr:Project {title: $title}) RETURN count(pr) > 0 as exists";
             var result = session.run(query, parameters("title", title));
