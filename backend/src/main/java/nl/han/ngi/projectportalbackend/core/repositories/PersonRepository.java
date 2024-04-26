@@ -99,12 +99,12 @@ public class PersonRepository {
             if (checkResult.hasNext()) {
                 var record = checkResult.next();
                 var statuses = record.get("status").asList();
-                if (statuses.contains("GAST")) {
+                if (!statuses.isEmpty()) {
                     return new VerificationResponse(VerificationStatus.ALREADY_VERIFIED);
                 }
             }
 
-            var updateQuery = "MATCH (p:Person {email: $email}) SET p.status = ['GAST'] RETURN p";
+            var updateQuery = "MATCH (p:Person {email: $email}) SET p.status = ['DEELNEMER'] RETURN p";
             var updateResult = session.run(updateQuery, parameters("email", email));
             if (updateResult.hasNext()) {
                 return new VerificationResponse(VerificationStatus.SUCCESS);
