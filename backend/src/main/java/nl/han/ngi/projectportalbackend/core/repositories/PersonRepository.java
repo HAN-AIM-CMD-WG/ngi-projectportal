@@ -102,15 +102,13 @@ public class PersonRepository {
                 if (!statuses.isEmpty()) {
                     return new VerificationResponse(VerificationStatus.ALREADY_VERIFIED);
                 }
-            }
-
-            var updateQuery = "MATCH (p:Person {email: $email}) SET p.status = ['DEELNEMER'] RETURN p";
-            var updateResult = session.run(updateQuery, parameters("email", email));
-            if (updateResult.hasNext()) {
-                return new VerificationResponse(VerificationStatus.SUCCESS);
             } else {
                 throw new PersonNotFoundException(email);
             }
+
+            var updateQuery = "MATCH (p:Person {email: $email}) SET p.status = ['DEELNEMER']";
+            session.run(updateQuery, parameters("email", email));
+            return new VerificationResponse(VerificationStatus.SUCCESS);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new VerificationResponse(VerificationStatus.ERROR);
