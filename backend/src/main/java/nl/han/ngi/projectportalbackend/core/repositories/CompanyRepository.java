@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static org.neo4j.driver.Values.parameters;
+
 @Repository
 public class CompanyRepository implements CRUDRepository<String, Company> {
 
@@ -31,7 +33,9 @@ public class CompanyRepository implements CRUDRepository<String, Company> {
     public List<Company> getAll() {
         driver = db.getDriver();
         var session = driver.session();
-        return List.of();
+        String query = "MATCH (c:Company) RETURN c";
+        var result = session.run(query);
+        return companyMapper.mapToList(result);
     }
 
     @Override
@@ -65,9 +69,16 @@ public class CompanyRepository implements CRUDRepository<String, Company> {
     public List<Project> getAllProjectsAssociatedWithCompany(String company) {
         driver = db.getDriver();
         var session = driver.session();
-        var result = session.run(query);
+        String query = "";
+        var result = session.run(query, parameters("company", company));
         return projectMapper.mapToList(result);
     }
 
-    public List<Person> getAllPersonsAssociatedWithCompany(String company) {}
+    public List<Person> getAllPersonsAssociatedWithCompany(String company) {
+        driver = db.getDriver();
+        var session = driver.session();
+        String query = "";
+        var result = session.run(query, parameters("company", company));
+        return personMapper.mapToList(result);
+    }
 }
