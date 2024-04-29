@@ -32,8 +32,6 @@ public class PersonRepository {
 
     private final DbConnectionConfiguration db;
 
-
-
     public PersonRepository(DbConnectionConfiguration db, IMapper<Result, Guest> guestMapper, IMapper<Result, Person> personMapper){
         this.db = db;
         this.guestMapper = guestMapper;
@@ -45,33 +43,8 @@ public class PersonRepository {
         try (var session = driver.session()) {
             var query = "MATCH (p:Person) RETURN p";
             var result = session.run(query);
-            List<Person> people = new ArrayList<>();
-            while (result.hasNext()) {
-                var record = result.next();
-                var node = record.get("p").asNode();
-
-                Person person = mapNodeToPerson(node);
-
-                people.add(person);
-                System.out.println(person.getEmail() + " - Picture URL: " + person.getPictureUrl());
-            }
-            return people;
+            return personMapper.mapToList(result);
         }
-    }
-
-    private Person mapNodeToPerson(Node node) {
-        String email = node.get("email").asString(null);
-        String name = node.get("name").asString(null);
-        String pictureUrl = node.get("pictureUrl").asString(null);
-        List<String> status = node.get("status").asList(Value::asString);
-
-        Person person = new Person();
-        person.setEmail(email);
-        person.setName(name);
-        person.setPictureUrl(pictureUrl);
-        person.setStatus(status);
-
-        return person;
     }
 
     public List<Person> getDeelnemers(){
@@ -79,16 +52,7 @@ public class PersonRepository {
         var session = driver.session();
         var query = "MATCH (p:Person) WHERE ANY(status IN p.status WHERE status = 'DEELNEMER') RETURN p";
         var result = session.run(query);
-        List<Person> people = new ArrayList<>();
-        while (result.hasNext()) {
-            var record = result.next();
-            var node = record.get("p").asNode();
-
-            Person person = mapNodeToPerson(node);
-
-            people.add(person);
-        }
-        return people;
+        return personMapper.mapToList(result);
     }
 
     public VerificationResponse verifyPerson(String email) {
@@ -99,7 +63,9 @@ public class PersonRepository {
             if (checkResult.hasNext()) {
                 var record = checkResult.next();
                 var statuses = record.get("status").asList();
-                if (!statuses.isEmpty()) {
+                if (statuses.isEmpty()) {
+                    throw new PersonIsAGuestException(email);
+                } else if (statuses.contains("DEELNEMER") || statuses.contains("OPDRACHTGEVER") || statuses.contains("ADMIN")) {
                     return new VerificationResponse(VerificationStatus.ALREADY_VERIFIED);
                 }
             } else {
