@@ -4,7 +4,7 @@ CREATE(s:Skill{name: 'DevOps'}),(s2:Skill{name: 'Front-End Developer'}), (s3:Ski
 
 CREATE(status:Status{name: 'DEELNEMER'}),(status2:Status{name: 'ADMIN'}),(status3:Status{name: 'OPDRACHTGEVER'}) RETURN status, status2, status3
 
-CREATE(pr:Project {title: 'NGI Project', description: 'Dit is het eerste project wat is gemaakt binnen dit project'}) RETURN pr
+CREATE(pr:Project {title: 'NGI Project', description: 'Dit is het eerste project wat is gemaakt binnen dit project', created: DATE("2024-04-29")}) RETURN pr
 
 MATCH(p1:Person {email: 'jesseveldmaat@hotmail.nl'}),(pr1:Project {title:'NGI Project'}) CREATE(p1)-[:LEADS {title: 'opdrachtgever'}]->(pr1)
 
