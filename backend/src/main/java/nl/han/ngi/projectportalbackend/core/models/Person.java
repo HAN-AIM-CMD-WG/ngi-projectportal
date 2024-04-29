@@ -9,11 +9,6 @@ public class Person {
     private String password;
     private List<String> status;
     private String pictureUrl;
-    enum Status {
-        OPDRACHTGEVER,
-        DEELNEMER,
-        ADMIN
-    }
     public Person(){
         // Empty constructor required as of Neo4j API 2.0.5
     }
