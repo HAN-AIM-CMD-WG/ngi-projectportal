@@ -2,6 +2,7 @@ package nl.han.ngi.projectportalbackend.core.models;
 
 public class Project {
 
+    String id;
     String title;
     String description;
     String created;
@@ -28,6 +29,14 @@ public class Project {
 
     public void setCreated(String created) {
         this.created = created;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

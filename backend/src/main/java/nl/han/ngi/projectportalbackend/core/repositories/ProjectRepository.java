@@ -82,30 +82,39 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
     }
 
     public List<Project> getAllByUser(String email){
-        driver = db.getDriver();
-        var session = driver.session();
-        var query = "MATCH (p:Person {email: $email})-[:LEADS]->(pr:Project) RETURN pr.title AS title, pr.description AS description, pr.created AS created";
-        var result = session.run(query, parameters("email", email));
-        if (!result.hasNext()) {
-            return Collections.emptyList();
-        }
-
-        List<Project> projects = new ArrayList<>();
-        while (result.hasNext()) {
-            var record = result.next();
-            Project project = new Project();
-            project.setTitle(record.get("title").asString());
-            project.setDescription(record.get("description").asString());
-
-            if (!record.get("created").isNull()) {
-                LocalDate createdDate = record.get("created").asLocalDate();
-                project.setCreated(createdDate.toString());
+        try {
+            driver = db.getDriver();
+            var session = driver.session();
+            var query = "MATCH (p:Person {email: $email})-[:LEADS]->(pr:Project) RETURN pr.title AS title, pr.description AS description, pr.created AS created, ID(pr) AS id";
+            var result = session.run(query, parameters("email", email));
+            if (!result.hasNext()) {
+                return Collections.emptyList();
             }
 
-            projects.add(project);
+            List<Project> projects = new ArrayList<>();
+            while (result.hasNext()) {
+                var record = result.next();
+                Project project = new Project();
+                long id = record.get("id").asLong();
+                project.setId(Long.toString(id));
+
+                project.setTitle(record.get("title").asString());
+                project.setDescription(record.get("description").asString());
+
+                if (!record.get("created").isNull()) {
+                    LocalDate createdDate = record.get("created").asLocalDate();
+                    project.setCreated(createdDate.toString());
+                }
+
+                projects.add(project);
+            }
+            return projects;
+        } catch (Exception e) {
+            System.out.println(e);
         }
-        return projects;
+        return null;
     }
+
 
     public Project getProject(String title) {
         driver = db.getDriver();

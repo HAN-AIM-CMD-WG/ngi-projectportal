@@ -11,7 +11,7 @@ import { checkAuthentication } from './app/slices/authSlice';
 import { Loading } from './components/component/loading';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { Verified } from './components/component/verified';
-import { ProjectDetail } from './components/component/project-detail';
+import { ProjectDetailPage } from './components/component/project-detail-v2';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -103,11 +103,11 @@ const App = () => {
           }
         />
         <Route
-          path="/project-example"
+          path="/projects/:id"
           element={
-            <GeneralRouteWrapper>
-              <ProjectDetail />
-            </GeneralRouteWrapper>
+            <AuthRouteWrapper>
+              <ProjectDetailPage />
+            </AuthRouteWrapper>
           }
         />
 

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export interface Projects {
+  id: string;
   title: string;
   description: string;
   created: string;
@@ -82,6 +83,7 @@ export const fetchProjects = createAsyncThunk(
       );
       if (!response.ok) throw new Error('Failed to fetch projects');
       const projects = await response.json();
+      console.log(projects);
       return projects;
     } catch (error: unknown) {
       if (error instanceof Error) {
