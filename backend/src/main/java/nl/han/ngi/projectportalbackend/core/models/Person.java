@@ -4,6 +4,7 @@ package nl.han.ngi.projectportalbackend.core.models;
 import java.util.List;
 
 public class Person {
+    private String id;
     private String name;
     private String email;
     private String password;
@@ -59,5 +60,13 @@ public class Person {
 
     public void setPictureUrl(String pictureUrl) {
         this.pictureUrl = pictureUrl;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

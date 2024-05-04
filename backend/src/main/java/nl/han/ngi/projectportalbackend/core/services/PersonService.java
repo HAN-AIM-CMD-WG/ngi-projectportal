@@ -33,20 +33,20 @@ public class PersonService {
         return personRepository.getDeelnemers();
     }
 
-    public VerificationResponse verifyPerson(String email) {
-        return personRepository.verifyPerson(email);
+    public VerificationResponse verifyPerson(String id) {
+        return personRepository.verifyPerson(id);
     }
 
     public List<Person> getAll() {
         return personRepository.getAll();
     }
 
-    public Person getPerson(String email){
-        return personRepository.getPerson(email);
+    public Person getPerson(String id){
+        return personRepository.getPerson(id);
     }
 
-    public boolean doesPersonExist(String email) {
-        return personRepository.doesPersonExist(email);
+    public boolean doesPersonExist(String id) {
+        return personRepository.doesPersonExist(id);
     }
 
     public Person createPerson(Person person) {
@@ -55,12 +55,12 @@ public class PersonService {
         return personRepository.createPerson(person);
     }
 
-    public Person updatePerson(String email, Person person) {
-        return personRepository.updatePerson(email, person);
+    public Person updatePerson(String id, Person person) {
+        return personRepository.updatePerson(id, person);
     }
 
-    public void deletePerson(String email) {
-        personRepository.deletePerson(email);
+    public void deletePerson(String id) {
+        personRepository.deletePerson(id);
     }
 
     public Guest createGuest(Guest guest) {
@@ -77,14 +77,14 @@ public class PersonService {
         return createdGuest;
     }
 
-    public Person patchPerson(String email, Map<Object, Object> fields) {
-        Person person = personRepository.getPerson(email);
+    public Person patchPerson(String id, Map<Object, Object> fields) {
+        Person person = personRepository.getPerson(id);
             fields.forEach((key, value) -> {
                 Field field = ReflectionUtils.findField(Person.class, (String) key);
                 field.setAccessible(true);
                 ReflectionUtils.setField(field, person, value);
         });
-            personRepository.patchPerson(email, person);
+            personRepository.patchPerson(id, person);
         return person;
     }
 
@@ -99,22 +99,23 @@ public class PersonService {
         }
     }
 
-    public void createOrUpdatePerson(String email, String name, String pictureUrl) {
-        if (!doesPersonExist(email)) {
+    public void createOrUpdatePerson(String id, String email, String name, String pictureUrl) {
+        if (!doesPersonExist(id)) {
             System.out.println("Creating unverified person");
             createUnverifiedPerson(email, name, pictureUrl);
         } else {
             System.out.println("Updating person");
-            Person person = getPerson(email);
+            Person person = getPerson(id);
+            person.setEmail(email);
             person.setName(name);
             person.setPictureUrl(pictureUrl);
-            updatePerson(email, person);
+            updatePerson(id, person);
         }
     }
 
-    public List<GrantedAuthority> fetchUserAuthorities(String email) {
-        if (doesPersonExist(email)) {
-            return getPerson(email).getStatus().stream()
+    public List<GrantedAuthority> fetchUserAuthorities(String id) {
+        if (doesPersonExist(id)) {
+            return getPerson(id).getStatus().stream()
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
         } else {

@@ -55,51 +55,50 @@ public class PersonRepository {
         return personMapper.mapToList(result);
     }
 
-    public VerificationResponse verifyPerson(String email) {
+    public VerificationResponse verifyPerson(String id) {
         driver = db.getDriver();
         try (var session = driver.session()) {
-            var checkQuery = "MATCH (p:Person {email: $email}) RETURN p.status AS status";
-            var checkResult = session.run(checkQuery, parameters("email", email));
+            var checkQuery = "MATCH (p:Person {id: id}) RETURN p.status AS status";
+            var checkResult = session.run(checkQuery, parameters("id", id));
             if (checkResult.hasNext()) {
                 var record = checkResult.next();
                 var statuses = record.get("status").asList();
                 if (statuses.isEmpty()) {
-                    throw new PersonIsAGuestException(email);
+                    throw new PersonIsAGuestException(id);
                 } else if (statuses.contains("DEELNEMER") || statuses.contains("OPDRACHTGEVER") || statuses.contains("ADMIN")) {
                     return new VerificationResponse(VerificationStatus.ALREADY_VERIFIED);
                 }
             } else {
-                throw new PersonNotFoundException(email);
+                throw new PersonNotFoundException(id);
             }
 
-            var updateQuery = "MATCH (p:Person {email: $email}) SET p.status = ['DEELNEMER']";
-            session.run(updateQuery, parameters("email", email));
+            var updateQuery = "MATCH (p:Person {id: id}) SET p.status = ['DEELNEMER']";
+            session.run(updateQuery, parameters("id", id));
             return new VerificationResponse(VerificationStatus.SUCCESS);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return new VerificationResponse(VerificationStatus.ERROR);
         }
     }
 
-    public Person getPerson(String email){
+    public Person getPerson(String id){
         driver = db.getDriver();
         try (var session = driver.session()) {
-            var query = "MATCH (p:Person {email: $email}) RETURN p";
-            var result = session.run(query, parameters("email", email));
+            var query = "MATCH (p:Person {id: id}) RETURN p";
+            var result = session.run(query, parameters("id", id));
 
             if (!result.hasNext()) {
-                throw new PersonNotFoundException(email);
+                throw new PersonNotFoundException(id);
             }
 
             return personMapper.mapTo(result);
         }
     }
 
-    public boolean doesPersonExist(String email) {
+    public boolean doesPersonExist(String id) {
         driver = db.getDriver();
         try (var session = driver.session()) {
-            var query = "MATCH (p:Person {email: $email}) RETURN p";
-            var result = session.run(query, parameters("email", email));
+            var query = "MATCH (p:Person {id: id}) RETURN p";
+            var result = session.run(query, parameters("id", id));
             return result.hasNext();
         }
     }
@@ -107,7 +106,7 @@ public class PersonRepository {
     public Person createPerson(Person person) {
         driver = db.getDriver();
         try (var session = driver.session()) {
-            var query = "CREATE (p:Person {email: $email, name: $name, status: $status, password: $password}) RETURN p";
+            var query = "CREATE (p:Person {email: $email, name: $name, status: $status, password: $password, id: randomUUID()}) RETURN p";
             var result = session.run(query, parameters(
                     "name", person.getName(),
                     "email", person.getEmail(),
@@ -125,7 +124,7 @@ public class PersonRepository {
     public Guest createGuest(Guest guest) {
         driver = db.getDriver();
         try (var session = driver.session()) {
-            var query = "CREATE (p:Person {email: $email, name: $name, status: $status}) RETURN p";
+            var query = "CREATE (p:Person {email: $email, name: $name, status: $status, id: randomUUID()}) RETURN p";
             var result = session.run(query, parameters(
                     "name", guest.getName(),
                     "email", guest.getEmail(),
@@ -137,30 +136,30 @@ public class PersonRepository {
         }
     }
 
-    public Person updatePerson(String email, Person person){
+    public Person updatePerson(String id, Person person){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH (p:Person {email: $email}) SET p.name = $name, p.email = $mail, p.status = $status, p.pictureUrl = $pictureUrl RETURN p";
-        var result = session.run(query, parameters("email", email, "name", person.getName(), "mail", person.getEmail(), "status", person.getStatus(), "pictureUrl", person.getPictureUrl()));
+        var query = "MATCH (p:Person {id: id}) SET p.name = $name, p.email = $mail, p.status = $status, p.pictureUrl = $pictureUrl RETURN p";
+        var result = session.run(query, parameters("id", id, "name", person.getName(), "mail", person.getEmail(), "status", person.getStatus(), "pictureUrl", person.getPictureUrl()));
         if (!result.hasNext()){
-            throw new PersonNotFoundException(email);
+            throw new PersonNotFoundException(id);
         }
 
         return personMapper.mapTo(result);
     }
-    public void patchPerson(String email, Person person) {
+    public void patchPerson(String id, Person person) {
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH(p:Person {email: $email}) SET p.name = $name, p.email = $mail, p.status = $status RETURN p";
-        var result = session.run(query, parameters("email", email, "name", person.getName(), "mail", person.getEmail(), "status", person.getStatus()));
+        var query = "MATCH(p:Person {id: id}) SET p.name = $name, p.email = $email, p.status = $status RETURN p";
+        var result = session.run(query, parameters("id", id, "name", person.getName(), "email", person.getEmail(), "status", person.getStatus()));
     }
-    public void deletePerson(String email){
+    public void deletePerson(String id){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH(p:Person {email: $email}) DELETE p";
-        var result = session.run(query, parameters("email", email));
+        var query = "MATCH(p:Person {id: id}) DELETE p";
+        var result = session.run(query, parameters("id", id));
         if (result.hasNext()){
-            throw new PersonCouldNotBeDeletedException(email);
+            throw new PersonCouldNotBeDeletedException(id);
         }
     }
 }

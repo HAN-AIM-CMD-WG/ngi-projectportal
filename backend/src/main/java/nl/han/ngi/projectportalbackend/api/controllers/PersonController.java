@@ -43,18 +43,18 @@ public class PersonController {
         }
     }
 
-    @GetMapping("/verify/{email}")
-    public ResponseEntity verifyPerson(@PathVariable String email){
+    @GetMapping("/verify/{id}")
+    public ResponseEntity verifyPerson(@PathVariable String id){
         try {
-            return new ResponseEntity(personService.verifyPerson(email), HttpStatus.OK);
+            return new ResponseEntity(personService.verifyPerson(id), HttpStatus.OK);
         }catch(PersonNotFoundException exc){
             return new ResponseEntity(exc, HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity getPerson(@PathVariable String email){
-            return new ResponseEntity(personService.getPerson(email), HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ResponseEntity getPerson(@PathVariable String id){
+            return new ResponseEntity(personService.getPerson(id), HttpStatus.OK);
     }
 
     @PostMapping("/create")
@@ -71,30 +71,30 @@ public class PersonController {
             return new ResponseEntity(personService.createGuest(guest), HttpStatus.OK);
     }
 
-    @PutMapping("/{email}")
-    public ResponseEntity updatePerson(@PathVariable String email, @RequestBody Person person){
+    @PutMapping("/{id}")
+    public ResponseEntity updatePerson(@PathVariable String id, @RequestBody Person person){
         try{
-            return new ResponseEntity(personService.updatePerson(email, person), HttpStatus.OK);
+            return new ResponseEntity(personService.updatePerson(id, person), HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    @PatchMapping("/{email}")
-    public ResponseEntity patchPerson(@PathVariable String email, @RequestBody Map<Object, Object> fields){
+    @PatchMapping("/{id}")
+    public ResponseEntity patchPerson(@PathVariable String id, @RequestBody Map<Object, Object> fields){
         try{
-            return new ResponseEntity(personService.patchPerson(email, fields), HttpStatus.OK);
+            return new ResponseEntity(personService.patchPerson(id, fields), HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @DeleteMapping("{email}")
-    public ResponseEntity deletePerson(@PathVariable String email){
+    @DeleteMapping("{id}")
+    public ResponseEntity deletePerson(@PathVariable String id){
         try{
-            personService.deletePerson(email);
-            return new ResponseEntity("Person with email: " + email + " has been successfully deleted", HttpStatus.OK);
+            personService.deletePerson(id);
+            return new ResponseEntity("Person with id: " + id + " has been successfully deleted", HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }

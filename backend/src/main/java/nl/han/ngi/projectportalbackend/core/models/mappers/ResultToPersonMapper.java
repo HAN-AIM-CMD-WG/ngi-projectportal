@@ -15,6 +15,7 @@ public class ResultToPersonMapper implements IMapper<Result, Person> {
         Person person = new Person();
         var res = from.next();
         var node = res.get("p").asNode();
+        person.setId(node.get("id").asString());
         person.setName(node.get("name").asString());
         person.setEmail(node.get("email").asString());
         person.setPictureUrl(node.get("pictureUrl").asString(null));
