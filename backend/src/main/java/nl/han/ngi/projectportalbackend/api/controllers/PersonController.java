@@ -43,18 +43,18 @@ public class PersonController {
         }
     }
 
-    @GetMapping("/verify/{id}")
-    public ResponseEntity verifyPerson(@PathVariable String id){
+    @GetMapping("/verify/{uuid}")
+    public ResponseEntity verifyPerson(@PathVariable String uuid){
         try {
-            return new ResponseEntity(personService.verifyPerson(id), HttpStatus.OK);
+            return new ResponseEntity(personService.verifyPerson(uuid), HttpStatus.OK);
         }catch(PersonNotFoundException exc){
             return new ResponseEntity(exc, HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity getPerson(@PathVariable String id){
-            return new ResponseEntity(personService.getPerson(id), HttpStatus.OK);
+    @GetMapping("/{uuid}")
+    public ResponseEntity getPerson(@PathVariable String uuid){
+            return new ResponseEntity(personService.getPerson(uuid), HttpStatus.OK);
     }
 
     @PostMapping("/create")
@@ -71,30 +71,30 @@ public class PersonController {
             return new ResponseEntity(personService.createGuest(guest), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity updatePerson(@PathVariable String id, @RequestBody Person person){
+    @PutMapping("/{uuid}")
+    public ResponseEntity updatePerson(@PathVariable String uuid, @RequestBody Person person){
         try{
-            return new ResponseEntity(personService.updatePerson(id, person), HttpStatus.OK);
+            return new ResponseEntity(personService.updatePerson(uuid, person), HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity patchPerson(@PathVariable String id, @RequestBody Map<Object, Object> fields){
+    @PatchMapping("/{uuid}")
+    public ResponseEntity patchPerson(@PathVariable String uuid, @RequestBody Map<Object, Object> fields){
         try{
-            return new ResponseEntity(personService.patchPerson(id, fields), HttpStatus.OK);
+            return new ResponseEntity(personService.patchPerson(uuid, fields), HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity deletePerson(@PathVariable String id){
+    @DeleteMapping("{uuid}")
+    public ResponseEntity deletePerson(@PathVariable String uuid){
         try{
-            personService.deletePerson(id);
-            return new ResponseEntity("Person with id: " + id + " has been successfully deleted", HttpStatus.OK);
+            personService.deletePerson(uuid);
+            return new ResponseEntity("Person with uuid: " + uuid + " has been successfully deleted", HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }

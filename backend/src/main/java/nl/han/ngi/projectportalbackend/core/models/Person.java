@@ -4,7 +4,7 @@ package nl.han.ngi.projectportalbackend.core.models;
 import java.util.List;
 
 public class Person {
-    private String id;
+    private String uuid;
     private String name;
     private String email;
     private String password;
@@ -62,11 +62,11 @@ public class Person {
         this.pictureUrl = pictureUrl;
     }
 
-    public String getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

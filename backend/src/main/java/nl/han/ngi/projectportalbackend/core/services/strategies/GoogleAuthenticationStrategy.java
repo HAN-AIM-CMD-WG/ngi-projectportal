@@ -36,13 +36,12 @@ public class GoogleAuthenticationStrategy implements AuthenticationStrategy {
     public Authentication authenticate(String token, HttpServletRequest request) {
         try {
             Map<String, Object> userInfo = fetchUserInfo(token);
-            String id = (String) userInfo.get("id");
             String email = (String) userInfo.get("email");
             String name = (String) userInfo.get("name");
             System.out.println(userInfo);
             String pictureUrl = (String) userInfo.get("picture");
 
-            personService.createOrUpdatePerson(id, email, name, pictureUrl);
+            personService.createOrUpdatePerson(email, name, pictureUrl);
             List<GrantedAuthority> authorities = personService.fetchUserAuthorities(email);
 
             System.out.println(authorities);
