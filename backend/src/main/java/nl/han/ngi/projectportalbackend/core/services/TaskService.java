@@ -27,13 +27,19 @@ public class TaskService {
     public List<Task> getTasksOfProjectWithTitle(String title) {
         return taskRepository.getTasksOfProjectWithTitle(title);
     }
-
-    public Task createTaskToProject(String title, String creator, Task task) {
-        return taskRepository.createTaskForProject(title, creator, task);
+    public List<Task> getTasksOfProject(String uuid) {
+        return taskRepository.getTasksOfProject(uuid);
     }
+
+    public Task createTaskToProject(String uuid, String creator, Task task) {
+        return taskRepository.createTaskForProject(uuid, creator, task);
+    }
+
 
 
     public List<Task> getAvailableTasksOfPerson(String person) {
         return taskRepository.getAvailableTasksOfPerson(person);
     }
+
+
 }

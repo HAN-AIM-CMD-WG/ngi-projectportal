@@ -57,36 +57,36 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
     }
 
     @Override
-    public Project update(String key, Project data) {
+    public Project update(String uuid, Project data) {
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH(pr:Project {title: $title}) SET pr.title = $newTitle, pr.description = $description RETURN pr";
+        var query = "MATCH(pr:Project {uuid: $uuid}) SET pr.title = $newTitle, pr.description = $description RETURN pr";
 
-        var result = session.run(query, parameters("title", key, "newTitle", data.getTitle(), "description", data.getDescription()));
+        var result = session.run(query, parameters("uuid", uuid, "newTitle", data.getTitle(), "description", data.getDescription()));
 
         if(!result.hasNext()){
-            throw new ProjectNotFoundException(key);
+            throw new ProjectNotFoundException(uuid);
         }
         return mapper.mapTo(result);
     }
 
     @Override
-    public Project delete(String key) {
+    public Project delete(String uuid) {
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH(pr:Project {title: $title}) DETACH DELETE pr";
-        var result = session.run(query, parameters("title", key));
+        var query = "MATCH(pr:Project {uuid: $uuid}) DETACH DELETE pr";
+        var result = session.run(query, parameters("uuid", uuid));
         if (!result.hasNext()){
-            throw new ProjectCouldNotBeDeletedException(key);
+            throw new ProjectCouldNotBeDeletedException(uuid);
         }
         return mapper.mapTo(result);
     }
 
-    public List<Project> getAllByUser(String email){
+    public List<Project> getAllByUser(String uuid){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH (p:Person {email: $email})-[:LEADS]->(pr:Project) RETURN pr.title AS title, pr.description AS description, pr.created AS created";
-        var result = session.run(query, parameters("email", email));
+        var query = "MATCH (p:Person {uuid: $uuid})-[:LEADS]->(pr:Project) RETURN pr.title AS title, pr.description AS description, pr.created AS created";
+        var result = session.run(query, parameters("uuid", uuid));
         if (!result.hasNext()) {
             return Collections.emptyList();
         }
@@ -117,7 +117,7 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
     public Project createProject(Project project, String creator){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH(p:Person{email:$creator}) CREATE (pr:Project {title: $title, description: $description, created: $created}), (p)-[:LEADS {title: 'project manager'}]->(pr) RETURN pr";
+        var query = "MATCH(p:Person{uuid:$creator}) CREATE (pr:Project {title: $title, description: $description, created: $created, uuid: randomUUID()}), (p)-[:LEADS {title: 'project manager'}]->(pr) RETURN pr";
 
         LocalDate localDate = LocalDate.now(ZoneId.of("Europe/Amsterdam"));
         var result = session.run(query, parameters("creator", creator,"title", project.getTitle(),"description", project.getDescription(), "created", localDate));
@@ -137,23 +137,23 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
         }
     }
 
-    public void addParticipantToProject(String title, Person person, String function) {
+    public void addParticipantToProject(String uuid, Person person, String function) {
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH (p:Person{email: $email}), (pr:Project {title: $title}) MERGE (p)-[:PARTICIPATES {title: $function}]->(pr)";
-        var result = session.run(query, parameters("email", person.getEmail(), "title", title, "function", function));
+        var query = "MATCH (p:Person{email: $email}), (pr:Project {uuid: $uuid}) MERGE (p)-[:PARTICIPATES {title: $function}]->(pr)";
+        var result = session.run(query, parameters("email", person.getEmail(), "uuid", uuid, "function", function));
         if(!result.hasNext()){
-            throw new PersonAlreadyAddedToProjectException(title, person.getEmail());
+            throw new PersonAlreadyAddedToProjectException(uuid, person.getEmail());
         }
     }
 
-//    public void removeParticipantFromProject(String title, String email) {
+//    public void removeParticipantFromProject(String uuid, String email) {
 //        driver = db.getDriver();
 //        var session = driver.session();
 //        var query = "";
-//        var result = session.run(query, parameters("title", title, "email", email));
+//        var result = session.run(query, parameters("uuid", uuid, "email", email));
 //        if(!result.hasNext()){
-//            throw new PersonCouldNotBeRemovedException(title, email);
+//            throw new PersonCouldNotBeRemovedException(uuid, email);
 //        }
 //    }
 }

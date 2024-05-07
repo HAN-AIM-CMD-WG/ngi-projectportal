@@ -3,6 +3,7 @@ package nl.han.ngi.projectportalbackend.core.models;
 import java.util.List;
 
 public class Task {
+    String uuid;
     String title;
     String description;
     String reward;
@@ -46,5 +47,13 @@ public class Task {
 
     public void setSkills(List<String> skills) {
         this.skills = skills;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

@@ -14,6 +14,7 @@ public class ResultToCompanyMapper implements IMapper<Result, Company> {
         Company company = new Company();
         var res = from.next();
         var node = res.get("p").asNode();
+        company.setUuid(node.get("uuid").asString());
         company.setName(node.get("name").asString());
         return company;
     }

@@ -19,6 +19,7 @@ public class ResultToProjectMapper implements IMapper<Result, Project>{
         for (Pair<String, Value> nameValue: values) {
             if ("pr".equals(nameValue.key())) {
                 Value value = nameValue.value();
+                project.setUuid(value.get("uuid").asString());
                 project.setTitle(value.get("title").asString());
                 project.setDescription(value.get("description").asString());
             }

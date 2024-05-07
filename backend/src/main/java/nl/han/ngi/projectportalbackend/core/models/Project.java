@@ -1,7 +1,7 @@
 package nl.han.ngi.projectportalbackend.core.models;
 
 public class Project {
-
+    String uuid;
     String title;
     String description;
     String created;
@@ -28,6 +28,13 @@ public class Project {
 
     public void setCreated(String created) {
         this.created = created;
+    }
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
 }

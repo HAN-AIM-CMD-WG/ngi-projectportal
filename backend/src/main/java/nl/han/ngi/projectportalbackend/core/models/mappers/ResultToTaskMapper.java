@@ -15,6 +15,7 @@ public class ResultToTaskMapper implements IMapper<Result, Task>{
         Task task = new Task();
         var res = from.next();
         var node = res.get("p").asNode();
+        task.setUuid(node.get("uuid").asString());
         task.setTitle(node.get("title").asString());
         task.setDescription(node.get("description").asString());
         task.setSkills(node.get("skills").asList(Value::asString));

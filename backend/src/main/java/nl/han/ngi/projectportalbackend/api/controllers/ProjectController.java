@@ -35,9 +35,9 @@ public class ProjectController {
         return new ResponseEntity(projectService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity getAllByUser(@PathVariable String email){
-        return new ResponseEntity(projectService.getAllByUser(email), HttpStatus.OK);
+    @GetMapping("/{uuid}")
+    public ResponseEntity getAllByUser(@PathVariable String uuid){
+        return new ResponseEntity(projectService.getAllByUser(uuid), HttpStatus.OK);
     }
 
     @PostMapping("/create/{creator}")
@@ -49,10 +49,10 @@ public class ProjectController {
         }
     }
 
-    @PutMapping("/{title}")
-    public ResponseEntity updateProject(@PathVariable String title, @RequestBody Project project){
+    @PutMapping("/{uuid}")
+    public ResponseEntity updateProject(@PathVariable String uuid, @RequestBody Project project){
         try{
-            return new ResponseEntity(projectService.updateProject(title, project), HttpStatus.OK);
+            return new ResponseEntity(projectService.updateProject(uuid, project), HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -65,28 +65,33 @@ public class ProjectController {
         return new ResponseEntity<>(exists, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{title}")
-    public ResponseEntity deleteProject(@PathVariable String title){
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity deleteProject(@PathVariable String uuid){
         try{
-            projectService.deleteProject(title);
-            return new ResponseEntity("Project with title: " + title + " has been successfully deleted", HttpStatus.OK);
+            projectService.deleteProject(uuid);
+            return new ResponseEntity("Project with uuid: " + uuid + " has been successfully deleted", HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PostMapping("/{title}/{email}")
-    public ResponseEntity addParticipantToProject(@PathVariable String title, @PathVariable String email, @RequestBody String function){
+    @PostMapping("/{uuid}/{email}")
+    public ResponseEntity addParticipantToProject(@PathVariable String uuid, @PathVariable String email, @RequestBody String function){
         try{
             Person person = personService.getPerson(email);
             if(person.getStatus().isEmpty()){
                 throw new PersonIsAGuestException(email);
             }
-            projectService.addParticipantToProject(title, person, function);
-            return new ResponseEntity("Person with email: " + email + " has been successfully added to project with title: " + title, HttpStatus.OK);
+            projectService.addParticipantToProject(uuid, person, function);
+            return new ResponseEntity("Person with email: " + email + " has been successfully added to project with uuid: " + uuid, HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/{uuid}/tasks")
+    public ResponseEntity getTasksOfProject(@PathVariable String uuid){
+        return new ResponseEntity(taskService.getTasksOfProject(uuid), HttpStatus.OK);
     }
 
     @GetMapping("/{title}/tasks")
@@ -94,9 +99,9 @@ public class ProjectController {
         return new ResponseEntity(taskService.getTasksOfProjectWithTitle(title), HttpStatus.OK);
     }
 
-    @PostMapping("/{title}/tasks/add/{creator}")
-    public ResponseEntity createTaskToProject(@PathVariable String title, @PathVariable String creator, @RequestBody Task task){
-        return new ResponseEntity(taskService.createTaskToProject(title, creator, task), HttpStatus.CREATED);
+    @PostMapping("/{uuid}/tasks/add/{creator}")
+    public ResponseEntity createTaskToProject(@PathVariable String uuid, @PathVariable String creator, @RequestBody Task task){
+        return new ResponseEntity(taskService.createTaskToProject(uuid, creator, task), HttpStatus.CREATED);
     }
 
 //    @DeleteMapping("/{title}/{email}")

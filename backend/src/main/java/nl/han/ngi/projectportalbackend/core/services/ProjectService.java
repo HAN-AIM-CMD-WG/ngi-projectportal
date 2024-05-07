@@ -20,8 +20,8 @@ public class ProjectService {
         return projectRepository.getAll();
     }
 
-    public List<Project> getAllByUser(String email) {
-        return projectRepository.getAllByUser(email);
+    public List<Project> getAllByUser(String uuid) {
+        return projectRepository.getAllByUser(uuid);
     }
 
     public boolean existsByTitle(String title) {
@@ -36,16 +36,16 @@ public class ProjectService {
         return projectRepository.createProject(project, creator);
     }
 
-    public Project updateProject(String title, Project project) {
-        return projectRepository.update(title, project);
+    public Project updateProject(String uuid, Project project) {
+        return projectRepository.update(uuid, project);
     }
 
-    public void deleteProject(String title) {
-        projectRepository.delete(title);
+    public void deleteProject(String uuid) {
+        projectRepository.delete(uuid);
     }
 
-    public void addParticipantToProject(String title, Person person, String function) {
-        projectRepository.addParticipantToProject(title, person, function);
+    public void addParticipantToProject(String uuid, Person person, String function) {
+        projectRepository.addParticipantToProject(uuid, person, function);
     }
 
 //    public void removeParticipantFromProject(String title, String email) {

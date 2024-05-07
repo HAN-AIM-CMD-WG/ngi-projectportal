@@ -75,6 +75,14 @@ public class TaskRepository implements CRUDRepository<String, Task>{
         return mapper.mapToList(result);
     }
 
+    public List<Task> getTasksOfProject(String uuid) {
+        driver = db.getDriver();
+        Session session = driver.session();
+        var query = "MATCH(pr:Project {uuid: $uuid})--(t:Task) RETURN t";
+        var result = session.run(query, parameters("uuid", uuid));
+        return mapper.mapToList(result);
+    }
+
     public List<Task> getAvailableTasksOfPerson(String person) {
         driver = db.getDriver();
         Session session = driver.session();
@@ -83,13 +91,13 @@ public class TaskRepository implements CRUDRepository<String, Task>{
         return mapper.mapToList(result);
     }
 
-    public Task createTaskForProject(String creator, String projectTitle, Task task){
+    public Task createTaskForProject(String creator, String uuid, Task task){
         driver = db.getDriver();
         Session session = driver.session();
-        String query = "MATCH(p:Person {email: $creator}),(pr:Project {title: $projectTitle}) " +
+        String query = "MATCH(p:Person {email: $creator}),(pr:Project {uuid: $uuid}) " +
                 "CREATE(t:Task {title:$title, description:$description, reward:$reward, isDone: 0, skills:$skills}) " +
                 "(p)-[:CREATED_TASK_FOR_PROJECT]->(t)-[:PART_OF_PROJECT]->(pr) return t";
-        var result = session.run(query, parameters("creator", creator, "projectTitle", projectTitle, "title", task.getTitle(), "description", task.getDescription(), "reward", task.getReward(), "skills", task.getSkills()));
+        var result = session.run(query, parameters("creator", creator, "uuid", uuid, "title", task.getTitle(), "description", task.getDescription(), "reward", task.getReward(), "skills", task.getSkills()));
         return mapper.mapTo(result);
     }
 

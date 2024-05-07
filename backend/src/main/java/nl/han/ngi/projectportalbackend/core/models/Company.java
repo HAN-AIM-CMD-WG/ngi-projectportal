@@ -1,6 +1,7 @@
 package nl.han.ngi.projectportalbackend.core.models;
 
 public class Company {
+    String uuid;
     private String name;
 
     public Company(){
@@ -17,5 +18,12 @@ public class Company {
 
     public void setName(String name) {
         this.name = name;
+    }
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }
