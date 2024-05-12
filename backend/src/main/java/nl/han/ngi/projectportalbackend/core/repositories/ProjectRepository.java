@@ -4,9 +4,12 @@ import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfigura
 import nl.han.ngi.projectportalbackend.core.exceptions.*;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.Project;
+import nl.han.ngi.projectportalbackend.core.models.Task;
 import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
+import nl.han.ngi.projectportalbackend.core.models.mappers.ResultToTaskMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -161,6 +164,45 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
             throw new PersonAlreadyAddedToProjectException(title, person.getEmail());
         }
     }
+
+    public List<Task> getProjectTasks(String projectId) {
+        try (Session session = db.getDriver().session()) {
+            var query = "MATCH (pr:Project {id: $id})-[:HAS_TASK]->(t:Task) RETURN t";
+            var result = session.run(query, parameters("id", projectId));
+            if (!result.hasNext()) {
+                throw new NoTaskFoundException(projectId);
+            }
+            ResultToTaskMapper mapper = new ResultToTaskMapper();
+            return mapper.mapToList(result);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch tasks for project " + projectId, e);
+        }
+    }
+
+    public void addTaskToProject(String projectId, Task task) {
+        try (Session session = db.getDriver().session()) {
+            session.writeTransaction(tx -> {
+                var projectExistsQuery = "MATCH (pr:Project) WHERE ID(pr) = $id RETURN pr";
+                var result = tx.run(projectExistsQuery, parameters("id", Integer.parseInt(projectId))).list();
+                if (result.isEmpty()) {
+                    throw new ProjectNotFoundException("Project with ID: " + projectId + " not found.");
+                }
+
+                var createTaskQuery = "MATCH (pr:Project) WHERE ID(pr) = $id CREATE (pr)-[:HAS_TASK]->(t:Task {title: $taskTitle, description: $taskDescription, created: $taskCreated})";
+                tx.run(createTaskQuery, parameters(
+                        "id", Integer.parseInt(projectId),
+                        "taskTitle", task.getTitle(),
+                        "taskDescription", task.getDescription(),
+                        "taskCreated", task.getCreated()
+                ));
+                return null;
+            });
+        } catch (Exception e) {
+            System.out.println("Error during transaction: " + e.getMessage());
+            throw new RuntimeException("Failed to add task to project " + projectId, e);
+        }
+    }
+
 
 //    public void removeParticipantFromProject(String title, String email) {
 //        driver = db.getDriver();

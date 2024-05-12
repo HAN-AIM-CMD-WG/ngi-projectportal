@@ -3,6 +3,7 @@ package nl.han.ngi.projectportalbackend.api.controllers;
 import nl.han.ngi.projectportalbackend.core.exceptions.PersonIsAGuestException;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.Project;
+import nl.han.ngi.projectportalbackend.core.models.Task;
 import nl.han.ngi.projectportalbackend.core.services.PersonService;
 import nl.han.ngi.projectportalbackend.core.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,26 @@ public class ProjectController {
             }
             projectService.addParticipantToProject(title, person, function);
             return new ResponseEntity("Person with email: " + email + " has been successfully added to project with title: " + title, HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/tasks/{id}")
+    public ResponseEntity getProjectTasks(@PathVariable String id){
+        try{
+            return new ResponseEntity(projectService.getProjectTasks(id), HttpStatus.OK);
+        } catch(Exception exc){
+            return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //add task
+    @PostMapping("/tasks/{id}")
+    public ResponseEntity addTaskToProject(@PathVariable String id, @RequestBody Task task){
+        try{
+            projectService.addTaskToProject(id, task);
+            return new ResponseEntity(HttpStatus.OK);
         } catch(Exception exc){
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }

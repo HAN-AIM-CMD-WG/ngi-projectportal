@@ -2,6 +2,7 @@ package nl.han.ngi.projectportalbackend.core.services;
 
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.Project;
+import nl.han.ngi.projectportalbackend.core.models.Task;
 import nl.han.ngi.projectportalbackend.core.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,14 @@ public class ProjectService {
 
     public void addParticipantToProject(String title, Person person, String function) {
         projectRepository.addParticipantToProject(title, person, function);
+    }
+
+    public List<Task> getProjectTasks(String title) {
+        return projectRepository.getProjectTasks(title);
+    }
+
+    public void addTaskToProject(String id, Task task) {
+        projectRepository.addTaskToProject(id, task);
     }
 
 //    public void removeParticipantFromProject(String title, String email) {
