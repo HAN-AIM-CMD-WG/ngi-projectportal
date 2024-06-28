@@ -12,6 +12,8 @@ import { Loading } from "./components/component/loading";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { Verified } from "./components/component/verified";
 import { ProjectDetail } from "./components/component/project-detail";
+import { CompanyDetail } from "./components/component/company-overview";
+import { RegisterCompany } from "./components/component/register-company";
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -107,6 +109,22 @@ const App = () => {
           element={
             <GeneralRouteWrapper>
               <ProjectDetail />
+            </GeneralRouteWrapper>
+          }
+        />
+        <Route
+          path="/company/:id"
+          element={
+            <GeneralRouteWrapper>
+              <CompanyDetail />
+            </GeneralRouteWrapper>
+          }
+        />
+        <Route
+          path="/register-company"
+          element={
+            <GeneralRouteWrapper>
+              <RegisterCompany />
             </GeneralRouteWrapper>
           }
         />

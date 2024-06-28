@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 export function Navbar() {
   const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
   const userRoles = useAppSelector((state) => state.auth.roles);
+  const userCompany = 
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
@@ -30,6 +31,20 @@ export function Navbar() {
       <div className="flex items-center gap-4">
         {isLoggedIn ? (
           <>
+            {userCompany && (
+              <Link
+                className="text-lg text-gray-600 dark:text-gray-400 hover:underline"
+                to={`/company/${userCompany[0]}`}
+              >
+                {userCompany[1]}
+              </Link>
+            )}
+            <Link
+              className="text-lg text-gray-600 dark:text-gray-400 hover:underline"
+              to="/register-company"
+            >
+              Register Company
+            </Link>
             {userRoles.includes("ADMIN") && (
               <Link
                 className="text-lg text-gray-600 dark:text-gray-400 hover:underline"

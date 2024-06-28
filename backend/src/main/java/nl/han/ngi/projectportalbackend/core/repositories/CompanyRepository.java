@@ -49,14 +49,14 @@ public class CompanyRepository implements CRUDRepository<String, Company> {
     public Company create(Company data) {
         driver = db.getDriver();
         var session = driver.session();
-        return null;
+        return data;
     }
 
     @Override
     public Company update(String key, Company data) {
         driver = db.getDriver();
         var session = driver.session();
-        return null;
+        return data;
     }
 
     @Override
