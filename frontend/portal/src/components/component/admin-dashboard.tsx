@@ -1,27 +1,27 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { fetchUsers, fetchStatuses } from '@/app/slices/userSlice';
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { fetchUsers, fetchStatuses } from "@/app/slices/userSlice";
 import {
   TableHead,
   TableRow,
   TableHeader,
   TableCell,
   TableBody,
-  Table
-} from '@/components/ui/table';
-import { AvatarImage, AvatarFallback, Avatar } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Navbar } from './navbar';
-import { Button } from '@/components/ui/button';
-import { AddUser } from './add-user';
-import { EditUser } from './edit-user';
-import { User } from '@/app/types/user';
-import { Status } from '@/app/types/status';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
+  Table,
+} from "@/components/ui/table";
+import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Navbar } from "./navbar";
+import { Button } from "@/components/ui/button";
+import { AddUser } from "./add-user";
+import { EditUser } from "./edit-user";
+import { User } from "@/app/types/user";
+import { Status } from "@/app/types/status";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 export function AdminDashboard() {
   const dispatch = useAppDispatch();
-  const { users } = useAppSelector(state => state.users);
+  const { users } = useAppSelector((state) => state.users);
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -79,7 +79,7 @@ export function AdminDashboard() {
                         <Avatar className="w-[40px] h-9">
                           <AvatarImage
                             alt={`${user.name}'s avatar`}
-                            src={user.pictureUrl || '/placeholder.svg'}
+                            src={user.pictureUrl || "/placeholder.svg"}
                           />
                           <AvatarFallback>{user.name[0]}</AvatarFallback>
                         </Avatar>
@@ -100,14 +100,14 @@ export function AdminDashboard() {
                                 </Badge>
                               )
                             )
-                          : 'No status'}
+                          : "No status"}
                       </TableCell>
                       <TableCell>
                         <EditUser
                           user={{
                             name: user.name,
                             email: user.email,
-                            status: [user.status.join(', ')]
+                            status: [user.status.join(", ")],
                           }}
                         />
                         <Button size="icon" variant="ghost">

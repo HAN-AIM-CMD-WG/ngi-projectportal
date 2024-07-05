@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 interface AuthState {
   email: string | null;
   roles: string[];
+  company: string[];
   isLoading: boolean;
   authChecking: boolean;
   error: string | null;
@@ -12,6 +13,7 @@ interface AuthState {
 const initialState: AuthState = {
   email: null,
   roles: [],
+  company: ["1cc74591-d6a6-48ba-bd20-c8830956e80f", "NGI"],
   isLoading: false,
   authChecking: true,
   error: null,

@@ -42,7 +42,9 @@ public class CompanyRepository implements CRUDRepository<String, Company> {
     public Company get(String key) {
         driver = db.getDriver();
         var session = driver.session();
-        return null;
+        String query = "MATCH (c:Company {uuid: $uuid}) RETURN c";
+        var result = session.run(query, parameters("uuid", key));
+        return companyMapper.mapTo(result);
     }
 
     @Override

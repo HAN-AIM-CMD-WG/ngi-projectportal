@@ -75,6 +75,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/project/**").permitAll()
                         .requestMatchers("/api/project/exists/**").permitAll()
                         .requestMatchers("/api/person").permitAll()
+                        .requestMatchers("/api/company/**").permitAll()
                         .requestMatchers("/api/status").permitAll())
                         .formLogin(form -> form
                         .loginProcessingUrl("/api/login")

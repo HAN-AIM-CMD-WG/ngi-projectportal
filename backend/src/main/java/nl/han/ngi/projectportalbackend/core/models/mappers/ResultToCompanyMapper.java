@@ -13,9 +13,18 @@ public class ResultToCompanyMapper implements IMapper<Result, Company> {
     public Company mapTo(Result from) {
         Company company = new Company();
         var res = from.next();
-        var node = res.get("p").asNode();
+        var node = res.get("c").asNode();
         company.setUuid(node.get("uuid").asString());
         company.setName(node.get("name").asString());
+        company.setDescription(node.get("description").asString());
+        company.setCompanySize(node.get("company_size").asString());
+        company.setEmail(node.get("email").asString());
+        company.setPostal(node.get("postal").asString());
+        company.setProvince(node.get("province").asString());
+        company.setSector(node.get("sector").asString());
+        company.setStreet(node.get("street").asString());
+        company.setTelephone(node.get("telephone").asString());
+        company.setTown(node.get("town").asString());
         return company;
     }
 

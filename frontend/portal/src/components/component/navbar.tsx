@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 export function Navbar() {
   const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
   const userRoles = useAppSelector((state) => state.auth.roles);
-  const userCompany = 
+  const userCompany = useAppSelector((state) => state.auth.company);
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
@@ -35,6 +35,7 @@ export function Navbar() {
               <Link
                 className="text-lg text-gray-600 dark:text-gray-400 hover:underline"
                 to={`/company/${userCompany[0]}`}
+                property={userCompany[0]}
               >
                 {userCompany[1]}
               </Link>
