@@ -29,4 +29,14 @@ public class Companycontroller {
     public ResponseEntity get(@PathVariable String uuid){
         return new ResponseEntity(companyService.get(uuid), HttpStatus.OK);
     }
+
+    @GetMapping("/{uuid}/projects")
+    public ResponseEntity getProjectsAssociatedToCompany(@PathVariable String uuid){
+        return new ResponseEntity(companyService.getProjectsAssociatedToCompany(uuid),HttpStatus.OK);
+    }
+
+    @GetMapping("/{uuid}/members")
+    public ResponseEntity getMembersAssociatedToCompany(@PathVariable String uuid){
+        return new ResponseEntity(companyService.getMembersAssociatedToCompany(uuid), HttpStatus.OK);
+    }
 }

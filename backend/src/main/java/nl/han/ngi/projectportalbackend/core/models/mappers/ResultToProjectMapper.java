@@ -5,6 +5,7 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.util.Pair;
 import org.springframework.stereotype.Component;
+import java.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,8 @@ public class ResultToProjectMapper implements IMapper<Result, Project>{
                 project.setUuid(value.get("uuid").asString());
                 project.setTitle(value.get("title").asString());
                 project.setDescription(value.get("description").asString());
+                project.setCreated(value.get("created").asLocalDate());
+                System.out.println(project);
             }
         }
         return project;
@@ -49,17 +52,7 @@ public class ResultToProjectMapper implements IMapper<Result, Project>{
     public List<Project> mapToList(Result from) {
         List<Project> projectList = new ArrayList<>();
         while(from.hasNext()){
-            var res = from.next();
-            List<Pair<String, Value>> values = res.fields();
-            for (Pair<String, Value> nameValue : values) {
-                if ("pr".equals(nameValue.key())) {
-                    Project project = new Project();
-                    Value value = nameValue.value();
-                    project.setTitle(value.get("title").asString());
-                    project.setDescription(value.get("description").asString());
-                    projectList.add(project);
-                }
-            }
+            projectList.add(mapTo(from));
         }
         return projectList;
     }

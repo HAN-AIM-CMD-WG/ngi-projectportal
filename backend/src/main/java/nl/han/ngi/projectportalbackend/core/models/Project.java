@@ -1,10 +1,12 @@
 package nl.han.ngi.projectportalbackend.core.models;
 
+import java.time.LocalDate;
+
 public class Project {
     String uuid;
     String title;
     String description;
-    String created;
+    LocalDate created;
 
     public String getTitle() {
         return title;
@@ -22,11 +24,11 @@ public class Project {
         this.description = description;
     }
 
-    public String getCreated() {
+    public LocalDate getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(LocalDate created) {
         this.created = created;
     }
     public String getUuid() {

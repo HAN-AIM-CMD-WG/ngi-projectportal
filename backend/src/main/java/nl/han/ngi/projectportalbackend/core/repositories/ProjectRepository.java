@@ -97,7 +97,7 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
             Project project = new Project();
             project.setTitle(record.get("title").asString());
             project.setDescription(record.get("description").asString());
-            project.setCreated(record.get("created").asLocalDate().toString());
+            project.setCreated(record.get("created").asLocalDate());
             projects.add(project);
         }
         return projects;
@@ -145,6 +145,16 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
         if(!result.hasNext()){
             throw new PersonAlreadyAddedToProjectException(uuid, person.getEmail());
         }
+    }
+
+    public List<Project> getProjectsAssociatedToCompany(String uuid) {
+        driver = db.getDriver();
+        var session = driver.session();
+        System.out.println(uuid);
+        var query = "MATCH(pr:Project)<-[]-(Person)-[]->(Company{uuid:$uuid}) RETURN pr";
+        var result = session.run(query, parameters("uuid", uuid));
+        System.out.println("wiewoo");
+        return mapper.mapToList(result);
     }
 
 //    public void removeParticipantFromProject(String uuid, String email) {

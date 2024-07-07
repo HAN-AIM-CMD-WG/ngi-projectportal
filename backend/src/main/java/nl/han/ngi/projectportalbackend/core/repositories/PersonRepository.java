@@ -185,4 +185,12 @@ public class PersonRepository {
             throw new PersonCouldNotBeDeletedException(uuid);
         }
     }
+
+    public List<Person> getPersonsAssociatedToCompany(String uuid) {
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH(p:Person)-[]->(Company{uuid:$uuid}) RETURN p";
+        var result = session.run(query, parameters("uuid", uuid));
+        return personMapper.mapToList(result);
+    }
 }

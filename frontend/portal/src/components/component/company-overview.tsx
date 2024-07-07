@@ -1,23 +1,27 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar } from "./navbar";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { fetchCompanyData } from "@/app/slices/companySlice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { CompanyHome } from "./company-home";
+import { CompanyInfo } from "./company-info";
+import { CompanyMembers } from "./company-members";
+import { CompanyProjects } from "./company-projects";
+import { CompanySettings } from "./company-settings";
 
 export function CompanyDetail() {
-  const { company } = useAppSelector((state) => state.company);
+  //const { company } = useAppSelector((state) => state.company);
   const userCompany = useAppSelector((state) => state.auth.company);
   const dispatch = useAppDispatch();
-  console.log(userCompany[0]);
-  const selectedItem = "Home";
+  console.log("uuid = " + userCompany[0]);
+  const [selectedItem, setSelectedItem] = useState("Home");
   useEffect(() => {
-    dispatch(fetchCompanyData({ uuid: userCompany[0] }));
+    dispatch(fetchCompanyData(userCompany[0]));
   }, [dispatch, userCompany]);
 
-  console.log("CompanyDetail");
-  console.log(company);
+  console.log(selectedItem);
+  console.log("Now usercompany is " + userCompany[0]);
   return (
     <div className="">
       <Navbar />
@@ -35,6 +39,9 @@ export function CompanyDetail() {
               <nav className="grid items-start px-4 text-sm font-medium">
                 <Link
                   className="flex items-center gap-3 rounded-lg bg-gray-100 px-3 py-2 text-gray-900 transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
+                  onClick={() => {
+                    setSelectedItem("Home");
+                  }}
                   to="#"
                 >
                   <HomeIcon className="h-4 w-4" />
@@ -42,6 +49,9 @@ export function CompanyDetail() {
                 </Link>
                 <Link
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                  onClick={() => {
+                    setSelectedItem("Info");
+                  }}
                   to="#"
                 >
                   <PackageIcon className="h-4 w-4" />
@@ -49,6 +59,9 @@ export function CompanyDetail() {
                 </Link>
                 <Link
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                  onClick={() => {
+                    setSelectedItem("Members");
+                  }}
                   to="#"
                 >
                   <UsersIcon className="h-4 w-4" />
@@ -56,6 +69,9 @@ export function CompanyDetail() {
                 </Link>
                 <Link
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                  onClick={() => {
+                    setSelectedItem("Projects");
+                  }}
                   to="#"
                 >
                   <PackageIcon className="h-4 w-4" />
@@ -63,6 +79,9 @@ export function CompanyDetail() {
                 </Link>
                 <Link
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                  onClick={() => {
+                    setSelectedItem("Settings");
+                  }}
                   to="#"
                 >
                   <SettingsIcon className="h-4 w-4" />
@@ -72,8 +91,15 @@ export function CompanyDetail() {
             </div>
           </div>
         </div>
-        {/* return the right component based on selected item in the sidebar*/}
-        <CompanyHome />
+        <>
+          {selectedItem === "Home" && <CompanyHome />}
+          {selectedItem === "Info" && <CompanyInfo />}
+          {selectedItem === "Members" && <CompanyMembers />}
+          {selectedItem === "Projects" && (
+            <CompanyProjects uuid={userCompany[0]} />
+          )}
+          {selectedItem === "Settings" && <CompanySettings />}
+        </>
       </div>
     </div>
   );
