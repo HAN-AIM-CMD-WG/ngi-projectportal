@@ -1,7 +1,18 @@
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { fetchApplicantsByCompany } from "@/app/slices/companySlice";
 
-export function CompanyHome() {
+export function CompanyHome(props) {
+  const dispatch = useAppDispatch();
+  const applicantCount = useAppSelector(
+    (state) => state.company.applicantCount
+  );
+
+  useEffect(() => {
+    dispatch(fetchApplicantsByCompany(props.uuid));
+  }, [dispatch]);
   return (
     <div className="flex flex-col">
       <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
@@ -38,6 +49,12 @@ export function CompanyHome() {
               <h2 className="text-xl font-semibold">Pending Tasks</h2>
               <p className="text-gray-500 dark:text-gray-400">
                 You have 8 pending tasks.
+              </p>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold">Pending Applicants</h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                You have {applicantCount} pending applicants.
               </p>
             </div>
           </div>

@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Navbar } from "./navbar";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { fetchCompanyData } from "@/app/slices/companySlice";
+import {
+  fetchCompanyData,
+  fetchApplicantsByCompany,
+} from "@/app/slices/companySlice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { CompanyHome } from "./company-home";
 import { CompanyInfo } from "./company-info";
@@ -11,13 +14,12 @@ import { CompanyProjects } from "./company-projects";
 import { CompanySettings } from "./company-settings";
 
 export function CompanyDetail() {
-  //const { company } = useAppSelector((state) => state.company);
-  const userCompany = useAppSelector((state) => state.auth.company);
   const dispatch = useAppDispatch();
-  console.log("uuid = " + userCompany[0]);
+  const userCompany = useAppSelector((state) => state.auth.company);
   const [selectedItem, setSelectedItem] = useState("Home");
   useEffect(() => {
     dispatch(fetchCompanyData(userCompany[0]));
+    dispatch(fetchApplicantsByCompany(userCompany[0]));
   }, [dispatch, userCompany]);
 
   console.log(selectedItem);
@@ -92,9 +94,11 @@ export function CompanyDetail() {
           </div>
         </div>
         <>
-          {selectedItem === "Home" && <CompanyHome />}
+          {selectedItem === "Home" && <CompanyHome uuid={userCompany[0]} />}
           {selectedItem === "Info" && <CompanyInfo />}
-          {selectedItem === "Members" && <CompanyMembers />}
+          {selectedItem === "Members" && (
+            <CompanyMembers uuid={userCompany[0]} />
+          )}
           {selectedItem === "Projects" && (
             <CompanyProjects uuid={userCompany[0]} />
           )}

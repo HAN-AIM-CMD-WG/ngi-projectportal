@@ -1,7 +1,7 @@
 import { Status } from './status';
 
 export type User = {
-  id: string;
+  uuid: string;
   name: string;
   email: string;
   status: Status[];

@@ -9,6 +9,7 @@ import nl.han.ngi.projectportalbackend.core.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CompanyService {
@@ -32,6 +33,18 @@ public class CompanyService {
     }
 
     public List<Person> getMembersAssociatedToCompany(String uuid) {
-        return personRepository.getPersonsAssociatedToCompany(uuid);
+        return companyRepository.getPersonsAssociatedToCompany(uuid);
+    }
+
+    public List<Person> getApplicantsAssociatedToCompany(String uuid) {
+        return companyRepository.getApplicantsAssociatedToCompany(uuid);
+    }
+
+    public void updateApplicantStatusToCompany(String uuid, String userUuid, String status) {
+        if(status.equals("ACCEPTED")){
+            companyRepository.acceptApplicantToCompany(uuid, userUuid);
+        } else if(status.equals("REJECTED")){
+            companyRepository.rejectApplicantToCompany(uuid, userUuid);
+        }
     }
 }

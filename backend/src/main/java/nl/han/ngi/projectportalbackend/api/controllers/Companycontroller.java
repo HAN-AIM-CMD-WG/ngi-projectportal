@@ -5,10 +5,9 @@ import nl.han.ngi.projectportalbackend.core.services.CompanyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/company")
@@ -38,5 +37,16 @@ public class Companycontroller {
     @GetMapping("/{uuid}/members")
     public ResponseEntity getMembersAssociatedToCompany(@PathVariable String uuid){
         return new ResponseEntity(companyService.getMembersAssociatedToCompany(uuid), HttpStatus.OK);
+    }
+
+    @GetMapping("/{uuid}/applicants")
+    public ResponseEntity getApplicantsAssociatedToCompany(@PathVariable String uuid){
+        return new ResponseEntity(companyService.getApplicantsAssociatedToCompany(uuid), HttpStatus.OK);
+    }
+
+    @PostMapping("/{uuid}/applicant/{userUuid}")
+    public ResponseEntity updateApplicantStatusToCompany(@PathVariable String uuid, @PathVariable String userUuid, @RequestBody String status){
+        companyService.updateApplicantStatusToCompany(uuid,userUuid, status);
+        return new ResponseEntity("Succesfully added status: " + status + " to applicant: " + userUuid,HttpStatus.OK);
     }
 }

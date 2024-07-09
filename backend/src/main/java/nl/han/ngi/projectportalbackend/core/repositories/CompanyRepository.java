@@ -10,6 +10,7 @@ import org.neo4j.driver.Result;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -68,19 +69,33 @@ public class CompanyRepository implements CRUDRepository<String, Company> {
         return null;
     }
 
-    public List<Project> getAllProjectsAssociatedWithCompany(String company) {
+    public List<Person> getPersonsAssociatedToCompany(String uuid) {
         driver = db.getDriver();
         var session = driver.session();
-        String query = "";
-        var result = session.run(query, parameters("company", company));
-        return projectMapper.mapToList(result);
+        var query = "MATCH(p:Person)-[:COMPANY_CREATOR|COMPANY_MEMBER]->(Company{uuid:$uuid}) RETURN p";
+        var result = session.run(query, parameters("uuid", uuid));
+        return personMapper.mapToList(result);
     }
 
-    public List<Person> getAllPersonsAssociatedWithCompany(String company) {
+    public List<Person> getApplicantsAssociatedToCompany(String uuid) {
         driver = db.getDriver();
         var session = driver.session();
-        String query = "";
-        var result = session.run(query, parameters("company", company));
+        var query = "MATCH(p:Person)-[:COMPANY_APPLICANT]-(Company{uuid:$uuid}) RETURN p";
+        var result = session.run(query, parameters("uuid", uuid));
         return personMapper.mapToList(result);
+    }
+
+    public void acceptApplicantToCompany(String uuid, String userUuid) {
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH(p:Person{uuid:$userUuid})-[cl:COMPANY_APPLICANT]->(c:Company{uuid:$uuid}) DELETE cl CREATE(p)-[:COMPANY_MEMBER]->(c)";
+        session.run(query, parameters("userUuid", userUuid, "uuid", uuid));
+    }
+
+    public void rejectApplicantToCompany(String uuid, String userUuid) {
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH(p:Person{uuid:$userUuid})-[cl:COMPANY_APPLICANT]->(c:Company{uuid:$uuid}) DELETE cl";
+        session.run(query, parameters("userUuid", userUuid, "uuid", uuid));
     }
 }

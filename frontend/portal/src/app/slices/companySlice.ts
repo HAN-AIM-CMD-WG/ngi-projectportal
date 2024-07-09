@@ -8,7 +8,9 @@ interface CompanyState {
   companies: Company[] | null;
   isLoading: boolean;
   projects: Project[] | null;
-  members: User[] | null;
+  members: User[];
+  applicants: User[];
+  applicantCount: number;
   error: string | null;
 }
 
@@ -18,6 +20,8 @@ const initialState: CompanyState = {
   isLoading: false,
   projects: [],
   members: [],
+  applicants: [],
+  applicantCount: 0,
   error: null,
 };
 
@@ -124,11 +128,76 @@ export const fetchMembersByCompany = createAsyncThunk(
   }
 );
 
+export const fetchApplicantsByCompany = createAsyncThunk(
+  'company/fetchApplicantsByCompany',
+  async (uuid: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/company/${uuid}/applicants`,
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      if (!response.ok) throw new Error('Failed to fetch applicants');
+      const applicants = await response.json();
+      return applicants;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      } else {
+        return rejectWithValue(error as string);
+      }
+    }
+  }
+
+);
+
+export const updateApplicantStatus = createAsyncThunk(
+  'company/updateApplicantStatus',
+  async ({ uuid, userUuid, status }: { uuid: string; userUuid: string; status: string} , { rejectWithValue }) => {
+    console.log(status);
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/company/${uuid}/applicant/${userUuid}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: status
+        }
+      );
+      if (!response.ok) throw new Error('Failed to update applicant status');
+      const data = await response.json();
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      } else {
+        return rejectWithValue(error as string);
+      }
+    }
+  }
+
+);
+
 
 const companySlice = createSlice({
     name: 'company',
     initialState,
-    reducers: {},
+    reducers: {
+      addMember(state, action){
+        state.members.push(action.payload);
+      },
+      removeApplicant(state, action){
+        state.applicants = state.applicants.filter(applicant => applicant.uuid !== action.payload);
+      }
+    },
     extraReducers: builder => {
         builder
             .addCase(fetchCompanyData.pending, state => {
@@ -162,8 +231,38 @@ const companySlice = createSlice({
                 state.isLoading = false;
                 state.members = action.payload;
                 state.error = null;
-            });
+            })
+            .addCase(fetchMembersByCompany.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload as string;
+            })
+            .addCase(fetchApplicantsByCompany.pending, state => {
+                state.isLoading = true;
+            })
+            .addCase(fetchApplicantsByCompany.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.applicants = action.payload;
+                state.applicantCount = action.payload.length;
+                state.error = null;
+            })
+            .addCase(fetchApplicantsByCompany.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload as string;
+            })
+            .addCase(updateApplicantStatus.pending, state => {
+                state.isLoading = true;
+            })
+            .addCase(updateApplicantStatus.fulfilled, (state) => {
+                state.isLoading = false;
+                state.error = null;
+            })
+            .addCase(updateApplicantStatus.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload as string;
+            })
+            ;
     }
 });
 
+export const { addMember, removeApplicant } = companySlice.actions;
 export default companySlice.reducer;

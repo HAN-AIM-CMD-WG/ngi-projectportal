@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -25,49 +25,67 @@ import {
   DialogContent,
   DialogTitle,
   DialogDescription,
-  DialogClose,
 } from "@/components/ui/dialog";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import {
+  fetchApplicantsByCompany,
+  fetchMembersByCompany,
+  updateApplicantStatus,
+  addMember,
+  removeApplicant,
+} from "@/app/slices/companySlice";
 
-export function CompanyMembers() {
-  const [applicantCount, setApplicantCount] = useState(25);
+export function CompanyMembers(props) {
+  const dispatch = useAppDispatch();
+  const applicants = useAppSelector((state) => state.company.applicants);
+  const members = useAppSelector((state) => state.company.members);
+  const applicationStatus = "PENDING";
+  const applicantCount = useAppSelector(
+    (state) => state.company.applicantCount
+  );
   const [showApplicantsModal, setShowApplicantsModal] = useState(false);
-  const [applicants, setApplicants] = useState([
-    {
-      name: "John Doe",
-      email: "john.doe@example.com",
-      status: "pending",
-    },
-    {
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      status: "pending",
-    },
-    {
-      name: "Michael Johnson",
-      email: "michael.johnson@example.com",
-      status: "pending",
-    },
-    {
-      name: "Sarah Lee",
-      email: "sarah.lee@example.com",
-      status: "pending",
-    },
-    {
-      name: "David Kim",
-      email: "david.kim@example.com",
-      status: "pending",
-    },
-  ]);
+  const [denialReasons, setDenialReasons] = useState([]);
+
+  console.log(applicationStatus);
+  const handleDenialReasonChange = (index, value) => {
+    setDenialReasons((prev) => {
+      const updated = [...prev];
+      updated[index] = value;
+      return updated;
+    });
+  };
+
   const handleAcceptApplicant = (index) => {
-    const updatedApplicants = [...applicants];
-    updatedApplicants[index].status = "accepted";
-    setApplicants(updatedApplicants);
+    dispatch(
+      updateApplicantStatus({
+        uuid: props.uuid,
+        userUuid: applicants[index].uuid,
+        status: "ACCEPTED",
+      })
+    );
+    dispatch(addMember(applicants[index]));
+    dispatch(removeApplicant(applicants[index].uuid));
   };
+
   const handleDenyApplicant = (index) => {
-    const updatedApplicants = [...applicants];
-    updatedApplicants[index].status = "denied";
-    setApplicants(updatedApplicants);
+    dispatch(
+      updateApplicantStatus({
+        uuid: props.uuid,
+        userUuid: applicants[index].uuid,
+        status: "REJECTED",
+      })
+    );
   };
+
+  const handleDenial = (index) => {
+    console.log("Denying applicant", applicants[index].name);
+  };
+
+  useEffect(() => {
+    dispatch(fetchApplicantsByCompany(props.uuid));
+    dispatch(fetchMembersByCompany(props.uuid));
+  }, [dispatch, props.uuid, applicationStatus]);
+
   return (
     <div className="flex flex-col">
       <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
@@ -145,47 +163,52 @@ export function CompanyMembers() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell>
-                  <Link to="#" className="flex items-center gap-3 font-medium">
-                    <Avatar className="w-8 h-8 border">
-                      <AvatarImage src="/placeholder-user.jpg" />
-                      <AvatarFallback>JD</AvatarFallback>
-                    </Avatar>
-                    <div>John Doe</div>
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <Link to="#" className="text-blue-600 underline">
-                    john.doe@acme.com
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <div>+1 (555) 555-5555</div>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline" className="px-2 py-1 rounded-full">
-                    Developer
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="success" className="px-2 py-1 rounded-full">
-                    Active
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon">
-                      <FilePenIcon className="h-4 w-4" />
-                      <span className="sr-only">Edit</span>
-                    </Button>
-                    <Button variant="outline" size="icon">
-                      <TrashIcon className="h-4 w-4" />
-                      <span className="sr-only">Delete</span>
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
+              {members.map((member, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Link
+                      to="#"
+                      className="flex items-center gap-3 font-medium"
+                    >
+                      <Avatar className="w-8 h-8 border">
+                        <AvatarImage src={member.pictureUrl} />
+                        <AvatarFallback>{member.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div>{member.name}</div>
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Link to="#" className="text-blue-600 underline">
+                      {member.email}
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <div>+1 (555) 555-5555</div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="px-2 py-1 rounded-full">
+                      Developer
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="success" className="px-2 py-1 rounded-full">
+                      Active
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="icon">
+                        <FilePenIcon className="h-4 w-4" />
+                        <span className="sr-only">Edit</span>
+                      </Button>
+                      <Button variant="outline" size="icon">
+                        <TrashIcon className="h-4 w-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
@@ -201,47 +224,86 @@ export function CompanyMembers() {
                 </DialogDescription>
               </div>
               <div>
-                <Button variant="ghost" size="icon">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowApplicantsModal(false)}
+                >
                   <XIcon className="h-4 w-4" />
                 </Button>
               </div>
             </div>
             <div className="space-y-4">
-              {applicants.map((applicant, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between rounded-lg bg-gray-100 p-4 dark:bg-gray-800"
-                >
-                  <div className="flex items-center gap-4">
-                    <Avatar className="w-10 h-10 border">
-                      <AvatarImage src="/placeholder-user.jpg" />
-                      <AvatarFallback>
-                        {applicant.name.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{applicant.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {applicant.email}
-                      </p>
+              <div className="space-y-4">
+                {applicants &&
+                  applicants.map((applicant, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-col gap-4 rounded-lg bg-gray-100 p-4 dark:bg-gray-800"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="w-10 h-10 border">
+                            <AvatarImage src="/placeholder-user.jpg" />
+                            <AvatarFallback>
+                              {applicant.name.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{applicant.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {applicant.email}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            onClick={() => handleAcceptApplicant(index)}
+                          >
+                            Accept
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => handleDenyApplicant(index)}
+                          >
+                            Deny
+                          </Button>
+                        </div>
+                      </div>
+                      {applicationStatus === "DENIED" && (
+                        <div className="flex items-center gap-2">
+                          <Label
+                            htmlFor={`denial-reason-${index}`}
+                            className="text-sm font-medium"
+                          >
+                            Reason for Denial:
+                          </Label>
+                          <Textarea
+                            id={`denial-reason-${index}`}
+                            placeholder="Enter reason for denial"
+                            value={denialReasons[index] || ""}
+                            onChange={(e) =>
+                              handleDenialReasonChange(index, e.target.value)
+                            }
+                            className="flex-1"
+                          />
+                          <Button
+                            variant="outline"
+                            onClick={() => handleDenial(index)}
+                          >
+                            Send
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => handleAcceptApplicant(index)}
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => handleDenyApplicant(index)}
-                    >
-                      Deny
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                  ))}
+              </div>
+              {applicantCount === 0 && (
+                <DialogDescription>
+                  There are currently no applicants.
+                </DialogDescription>
+              )}
             </div>
           </div>
         </DialogContent>
