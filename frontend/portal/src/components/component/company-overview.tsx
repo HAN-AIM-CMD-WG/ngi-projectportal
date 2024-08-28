@@ -1,29 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { Navbar } from "./navbar";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from 'react';
+import { Navbar } from './navbar';
+import { Link } from 'react-router-dom';
 import {
   fetchCompanyData,
-  fetchApplicantsByCompany,
-} from "@/app/slices/companySlice";
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { CompanyHome } from "./company-home";
-import { CompanyInfo } from "./company-info";
-import { CompanyMembers } from "./company-members";
-import { CompanyProjects } from "./company-projects";
-import { CompanySettings } from "./company-settings";
+  fetchApplicantsByCompany
+} from '@/app/slices/companySlice';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { CompanyHome } from './company-home';
+import { CompanyInfo } from './company-info';
+import { CompanyMembers } from './company-members';
+import { CompanyProjects } from './company-projects';
+import { CompanySettings } from './company-settings';
 
 export function CompanyDetail() {
   const dispatch = useAppDispatch();
-  const userCompany = useAppSelector((state) => state.auth.company);
-  const [selectedItem, setSelectedItem] = useState("Home");
+  const userCompany = useAppSelector(state => state.auth.company);
+  const [selectedItem, setSelectedItem] = useState('Home');
   useEffect(() => {
     dispatch(fetchCompanyData(userCompany[0]));
     dispatch(fetchApplicantsByCompany(userCompany[0]));
   }, [dispatch, userCompany]);
 
   console.log(selectedItem);
-  console.log("Now usercompany is " + userCompany[0]);
+  console.log('Now usercompany is ' + userCompany[0]);
   return (
     <div className="">
       <Navbar />
@@ -42,7 +41,7 @@ export function CompanyDetail() {
                 <Link
                   className="flex items-center gap-3 rounded-lg bg-gray-100 px-3 py-2 text-gray-900 transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
                   onClick={() => {
-                    setSelectedItem("Home");
+                    setSelectedItem('Home');
                   }}
                   to="#"
                 >
@@ -52,7 +51,7 @@ export function CompanyDetail() {
                 <Link
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                   onClick={() => {
-                    setSelectedItem("Info");
+                    setSelectedItem('Info');
                   }}
                   to="#"
                 >
@@ -62,7 +61,7 @@ export function CompanyDetail() {
                 <Link
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                   onClick={() => {
-                    setSelectedItem("Members");
+                    setSelectedItem('Members');
                   }}
                   to="#"
                 >
@@ -72,7 +71,7 @@ export function CompanyDetail() {
                 <Link
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                   onClick={() => {
-                    setSelectedItem("Projects");
+                    setSelectedItem('Projects');
                   }}
                   to="#"
                 >
@@ -82,7 +81,7 @@ export function CompanyDetail() {
                 <Link
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                   onClick={() => {
-                    setSelectedItem("Settings");
+                    setSelectedItem('Settings');
                   }}
                   to="#"
                 >
@@ -94,15 +93,15 @@ export function CompanyDetail() {
           </div>
         </div>
         <>
-          {selectedItem === "Home" && <CompanyHome uuid={userCompany[0]} />}
-          {selectedItem === "Info" && <CompanyInfo />}
-          {selectedItem === "Members" && (
+          {selectedItem === 'Home' && <CompanyHome uuid={userCompany[0]} />}
+          {selectedItem === 'Info' && <CompanyInfo />}
+          {selectedItem === 'Members' && (
             <CompanyMembers uuid={userCompany[0]} />
           )}
-          {selectedItem === "Projects" && (
+          {selectedItem === 'Projects' && (
             <CompanyProjects uuid={userCompany[0]} />
           )}
-          {selectedItem === "Settings" && <CompanySettings />}
+          {selectedItem === 'Settings' && <CompanySettings />}
         </>
       </div>
     </div>

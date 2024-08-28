@@ -20,8 +20,8 @@ public class ProjectService {
         return projectRepository.getAll();
     }
 
-    public List<Project> getAllByUser(String uuid) {
-        return projectRepository.getAllByUser(uuid);
+    public List<Project> getAllByUser(String email) {
+        return projectRepository.getAllByUser(email);
     }
 
     public boolean existsByTitle(String title) {

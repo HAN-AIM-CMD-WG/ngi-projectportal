@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/api/task")
 public class TaskController {
@@ -17,14 +19,25 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping()
-    public ResponseEntity getAll(){
-            return new ResponseEntity(taskService.getAll(), HttpStatus.OK);
+    @PostMapping // Change to POST
+    public ResponseEntity<List<Task>> getAll(@RequestBody List<String> projectUuids) {
+        try {
+            System.out.println(projectUuids);
+            List<Task> tasks = taskService.getAllByProjectUuids(projectUuids);
+            System.out.println(tasks);
+            return new ResponseEntity<>(tasks, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/{creator}")
-    public ResponseEntity createTask(@PathVariable String creator, @RequestBody Task task){
-        return new ResponseEntity(taskService.createTask(creator, task), HttpStatus.OK);
+    public ResponseEntity createTask(
+            @PathVariable String creator,
+            @RequestParam String projectUuid,
+            @RequestBody Task task
+    ) {
+        return new ResponseEntity(taskService.createTaskToProject(projectUuid, creator, task), HttpStatus.OK);
     }
 
     @GetMapping("/{person}/availableTasks")

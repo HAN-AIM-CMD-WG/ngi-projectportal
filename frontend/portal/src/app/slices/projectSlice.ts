@@ -1,12 +1,27 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export interface Projects {
+  uuid: string;
   title: string;
   description: string;
   created: string;
+  tasks: Task[];
 }
 
-interface ProjectState {
+interface Task {
+  title: string;
+  skills: string[];
+  isDone: boolean;
+  uuid: string;
+  projectUuid: string;
+}
+
+interface NewTask {
+  title: string;
+  skills: string[];
+}
+
+export interface ProjectState {
   projectName: string;
   description: string;
   email: string;
@@ -56,6 +71,68 @@ export const createProject = createAsyncThunk(
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      } else {
+        return rejectWithValue(error as string);
+      }
+    }
+  }
+);
+
+export const fetchTasks = createAsyncThunk(
+  'project/fetchTasks',
+  async (projectUuids: string[], { rejectWithValue }) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/task`, {
+        method: 'POST', // Change to POST
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(projectUuids) // Send the body with POST
+      });
+      if (!response.ok) throw new Error('Failed to fetch tasks');
+      const tasks = await response.json();
+      console.log(tasks);
+      return tasks;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      } else {
+        return rejectWithValue(error as string);
+      }
+    }
+  }
+);
+
+export const createTask = createAsyncThunk(
+  'project/createTask',
+  async (
+    {
+      creator,
+      projectUuid,
+      task
+    }: { creator: string; projectUuid: string; task: NewTask },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/task/${creator}?projectUuid=${projectUuid}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(task)
+        }
+      );
+      if (!response.ok) throw new Error('Failed to create task');
+      const createdTask = await response.json();
+      console.log(createdTask);
+      return { projectUuid, task: createdTask };
     } catch (error: unknown) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
@@ -165,6 +242,64 @@ const projectSlice = createSlice({
       })
       .addCase(fetchIfTitleExists.rejected, (state, action) => {
         state.error = action.payload as string;
+      })
+      .addCase(createTask.pending, state => {
+        state.status = 'loading';
+      })
+      .addCase(createTask.fulfilled, (state, action) => {
+        const { projectUuid, task } = action.payload;
+        const project = state.projects.find(p => p.uuid === projectUuid);
+
+        console.log('Project found:', project);
+        console.log('Task being added:', task);
+
+        if (!project) {
+          console.error(`Project with uuid ${projectUuid} not found.`);
+          return;
+        }
+
+        // Ensure tasks array is initialized
+        if (!project.tasks) {
+          project.tasks = [];
+        }
+
+        if (project) {
+          project.tasks.push(task);
+        }
+        state.status = 'succeeded';
+      })
+      .addCase(createTask.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(fetchTasks.pending, state => {
+        state.fetchStatus = 'loading';
+      })
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.fetchStatus = 'succeeded';
+
+        const incomingTasks = action.payload;
+
+        // Group tasks by projectUuid
+        const tasksByProject = incomingTasks.reduce((acc, task) => {
+          const { projectUuid } = task;
+          if (!acc[projectUuid]) {
+            acc[projectUuid] = [];
+          }
+          acc[projectUuid].push(task);
+          return acc;
+        }, {});
+
+        // Iterate over the projects in state and add the corresponding tasks
+        state.projects.forEach(project => {
+          if (tasksByProject[project.uuid]) {
+            if (!project.tasks) {
+              project.tasks = [];
+            }
+            // Add the new tasks to the project's tasks array
+            project.tasks.push(...tasksByProject[project.uuid]);
+          }
+        });
       });
   }
 });

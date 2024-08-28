@@ -4,40 +4,31 @@ import java.util.List;
 
 public class Task {
     String uuid;
+    String projectUuid;
     String title;
-    String description;
-    String reward;
-    Boolean isDone;
+    int isDone;
     List<String> skills;
     public String getTitle() {
         return title;
+    }
+
+    public String getProjectUuid() {
+        return projectUuid;
+    }
+
+    public void setProjectUuid(String projectUuid) {
+        this.projectUuid = projectUuid;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getReward() {
-        return reward;
-    }
-
-    public void setReward(String reward) {
-        this.reward = reward;
-    }
-
-    public Boolean getDone() {
+    public int getIsDone() {
         return isDone;
     }
 
-    public void setDone(Boolean done) {
+    public void setIsDone(int done) {
         isDone = done;
     }
 

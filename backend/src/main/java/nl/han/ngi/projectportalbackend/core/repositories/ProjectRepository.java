@@ -82,11 +82,11 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
         return mapper.mapTo(result);
     }
 
-    public List<Project> getAllByUser(String uuid){
+    public List<Project> getAllByUser(String email){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH (p:Person {uuid: $uuid})-[:LEADS]->(pr:Project) RETURN pr.title AS title, pr.description AS description, pr.created AS created";
-        var result = session.run(query, parameters("uuid", uuid));
+        var query = "MATCH (p:Person {email: $email})-[:LEADS]->(pr:Project) RETURN pr.title AS title, pr.description AS description, pr.created AS created, pr.uuid AS uuid";
+        var result = session.run(query, parameters("email", email));
         if (!result.hasNext()) {
             return Collections.emptyList();
         }
@@ -98,10 +98,12 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
             project.setTitle(record.get("title").asString());
             project.setDescription(record.get("description").asString());
             project.setCreated(record.get("created").asLocalDate());
+            project.setUuid(record.get("uuid").asString());  // Include UUID
             projects.add(project);
         }
         return projects;
     }
+
 
     public Project getProject(String title) {
         driver = db.getDriver();
@@ -117,7 +119,7 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
     public Project createProject(Project project, String creator){
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH(p:Person{uuid:$creator}) CREATE (pr:Project {title: $title, description: $description, created: $created, uuid: randomUUID()}), (p)-[:LEADS {title: 'project manager'}]->(pr) RETURN pr";
+        var query = "MATCH(p:Person{email:$creator}) CREATE (pr:Project {title: $title, description: $description, created: $created, uuid: randomUUID()}), (p)-[:LEADS {title: 'project manager'}]->(pr) RETURN pr";
 
         LocalDate localDate = LocalDate.now(ZoneId.of("Europe/Amsterdam"));
         var result = session.run(query, parameters("creator", creator,"title", project.getTitle(),"description", project.getDescription(), "created", localDate));

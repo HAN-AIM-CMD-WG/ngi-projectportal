@@ -17,8 +17,8 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public List<Task> getAll() {
-        return taskRepository.getAll();
+    public List<Task> getAllByProjectUuids(List<String> projectUuids) {
+        return taskRepository.getAllByProjectUuids(projectUuids);
     }
 
     public Task createTask(String creator, Task task) {
@@ -31,11 +31,9 @@ public class TaskService {
         return taskRepository.getTasksOfProject(uuid);
     }
 
-    public Task createTaskToProject(String uuid, String creator, Task task) {
-        return taskRepository.createTaskForProject(uuid, creator, task);
+    public Task createTaskToProject(String projectUuid, String creator, Task task) {
+        return taskRepository.createTaskForProject(projectUuid, creator, task);
     }
-
-
 
     public List<Task> getAvailableTasksOfPerson(String person) {
         return taskRepository.getAvailableTasksOfPerson(person);

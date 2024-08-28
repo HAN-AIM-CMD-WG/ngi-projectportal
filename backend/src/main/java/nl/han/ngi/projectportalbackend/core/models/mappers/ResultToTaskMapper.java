@@ -13,12 +13,22 @@ public class ResultToTaskMapper implements IMapper<Result, Task>{
     @Override
     public Task mapTo(Result from) {
         Task task = new Task();
-        var res = from.next();
-        var node = res.get("p").asNode();
-        task.setUuid(node.get("uuid").asString());
-        task.setTitle(node.get("title").asString());
-        task.setDescription(node.get("description").asString());
-        task.setSkills(node.get("skills").asList(Value::asString));
+        if (from.hasNext()) {
+            var res = from.next();
+            // Change "p" to "t" since the query returns the task node as "t"
+            if (!res.containsKey("t") || res.get("t").isNull()) {
+                // Handle the case where "t" is null or does not exist
+                throw new RuntimeException("Node 't' is null or not found in the result");
+            }
+            var node = res.get("t").asNode(); // Use "t" here instead of "p"
+            task.setUuid(node.get("uuid").asString());
+            task.setProjectUuid(node.get("projectUuid").asString());
+            task.setTitle(node.get("title").asString());
+            task.setSkills(node.get("skills").asList(Value::asString));
+            task.setIsDone(node.get("isDone").asInt());
+        } else {
+            throw new RuntimeException("Result has no next entry");
+        }
         return task;
     }
 
@@ -43,10 +53,24 @@ public class ResultToTaskMapper implements IMapper<Result, Task>{
     @Override
     public List<Task> mapToList(Result from) {
         List<Task> taskList = new ArrayList<>();
-        while(from.hasNext()){
-            taskList.add(mapTo(from));
+        while (from.hasNext()) {
+            var res = from.next();
+            Task task = new Task();
+
+            if (!res.containsKey("t") || res.get("t").isNull()) {
+                throw new RuntimeException("Node 't' is null or not found in the result");
+            }
+
+            var node = res.get("t").asNode();
+            task.setUuid(node.get("uuid").asString());
+            task.setProjectUuid(node.get("projectUuid").asString());
+            task.setTitle(node.get("title").asString());
+            task.setSkills(node.get("skills").asList(Value::asString));
+            task.setIsDone(node.get("isDone").asInt());
+
+            taskList.add(task);
         }
-        return null;
+        return taskList; // Return the list of tasks instead of null
     }
 
     @Override

@@ -35,9 +35,9 @@ public class ProjectController {
         return new ResponseEntity(projectService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity getAllByUser(@PathVariable String uuid){
-        return new ResponseEntity(projectService.getAllByUser(uuid), HttpStatus.OK);
+    @GetMapping("/{email}")
+    public ResponseEntity getAllByUser(@PathVariable String email){
+        return new ResponseEntity(projectService.getAllByUser(email), HttpStatus.OK);
     }
 
     @PostMapping("/create/{creator}")
