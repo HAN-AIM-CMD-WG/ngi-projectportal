@@ -277,10 +277,9 @@ const projectSlice = createSlice({
       })
       .addCase(fetchTasks.fulfilled, (state, action) => {
         state.fetchStatus = 'succeeded';
-
+      
         const incomingTasks = action.payload;
-
-        // Group tasks by projectUuid
+      
         const tasksByProject = incomingTasks.reduce((acc, task) => {
           const { projectUuid } = task;
           if (!acc[projectUuid]) {
@@ -289,15 +288,17 @@ const projectSlice = createSlice({
           acc[projectUuid].push(task);
           return acc;
         }, {});
-
-        // Iterate over the projects in state and add the corresponding tasks
+      
         state.projects.forEach(project => {
           if (tasksByProject[project.uuid]) {
             if (!project.tasks) {
               project.tasks = [];
             }
-            // Add the new tasks to the project's tasks array
-            project.tasks.push(...tasksByProject[project.uuid]);
+            const newTasks = tasksByProject[project.uuid].filter(incomingTask => {
+              return !project.tasks.some(existingTask => existingTask.uuid === incomingTask.uuid);
+            });
+
+            project.tasks.push(...newTasks);
           }
         });
       });
