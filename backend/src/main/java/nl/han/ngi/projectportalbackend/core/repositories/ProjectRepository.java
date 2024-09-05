@@ -104,15 +104,18 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
         return projects;
     }
 
-
-    public Project getProject(String title) {
+    public Project getProject(String uuid) {
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH (pr: Project {title: $title}) RETURN pr";
-        var result = session.run(query, parameters("title", title));
-        if(!result.hasNext()){
-            throw new ProjectNotFoundException(title);
+        var query = "MATCH (pr: Project {uuid: $uuid}) " +
+                "OPTIONAL MATCH (pr)-[:PART_OF_PROJECT]->(t: Task) " +
+                "RETURN pr, collect(t) as tasks";
+        var result = session.run(query, parameters("uuid", uuid));
+
+        if (!result.hasNext()) {
+            throw new ProjectNotFoundException(uuid);
         }
+
         return mapper.mapTo(result);
     }
 

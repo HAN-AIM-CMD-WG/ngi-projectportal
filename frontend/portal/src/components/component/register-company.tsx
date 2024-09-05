@@ -1,16 +1,15 @@
-import React from "react";
-import { Navbar } from "./navbar";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { Navbar } from './navbar';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+  SelectItem
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 
 export function RegisterCompany() {
   return (

@@ -35,9 +35,14 @@ public class ProjectController {
         return new ResponseEntity(projectService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/user/{email}")
     public ResponseEntity getAllByUser(@PathVariable String email){
         return new ResponseEntity(projectService.getAllByUser(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/{uuid}")
+    public ResponseEntity getProject(@PathVariable String uuid){
+        return new ResponseEntity(projectService.getProject(uuid), HttpStatus.OK);
     }
 
     @PostMapping("/create/{creator}")
@@ -102,6 +107,7 @@ public class ProjectController {
     @PostMapping("/{uuid}/tasks/add/{creator}")
     public ResponseEntity createTaskToProject(@PathVariable String uuid, @PathVariable String creator, @RequestBody Task task){
         return new ResponseEntity(taskService.createTaskToProject(uuid, creator, task), HttpStatus.CREATED);
+
     }
 
 //    @DeleteMapping("/{title}/{email}")

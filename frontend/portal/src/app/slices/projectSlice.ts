@@ -27,6 +27,7 @@ export interface ProjectState {
   email: string;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   projects: Projects[];
+  currentProject: Projects | null;
   fetchStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | undefined;
   titleExists: boolean;
@@ -38,6 +39,7 @@ const initialState: ProjectState = {
   email: '',
   status: 'idle',
   projects: [],
+  currentProject: null,
   fetchStatus: 'idle',
   error: undefined,
   titleExists: false
@@ -148,7 +150,7 @@ export const fetchProjects = createAsyncThunk(
   async (email: string, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/project/${email}`,
+        `http://localhost:8080/api/project/user/${email}`,
         {
           method: 'GET',
           credentials: 'include',
@@ -160,6 +162,34 @@ export const fetchProjects = createAsyncThunk(
       if (!response.ok) throw new Error('Failed to fetch projects');
       const projects = await response.json();
       return projects;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      } else {
+        return rejectWithValue(error as string);
+      }
+    }
+  }
+);
+
+export const fetchProject = createAsyncThunk(
+  'project/fetchProject',
+  async (uuid: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/project/${uuid}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      if (!response.ok) throw new Error('Failed to fetch project');
+      const project = await response.json();
+      console.log(project);
+      return project; // This will return a single project with tasks
     } catch (error: unknown) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
@@ -277,9 +307,9 @@ const projectSlice = createSlice({
       })
       .addCase(fetchTasks.fulfilled, (state, action) => {
         state.fetchStatus = 'succeeded';
-      
+
         const incomingTasks = action.payload;
-      
+
         const tasksByProject = incomingTasks.reduce((acc, task) => {
           const { projectUuid } = task;
           if (!acc[projectUuid]) {
@@ -288,19 +318,34 @@ const projectSlice = createSlice({
           acc[projectUuid].push(task);
           return acc;
         }, {});
-      
+
         state.projects.forEach(project => {
           if (tasksByProject[project.uuid]) {
             if (!project.tasks) {
               project.tasks = [];
             }
-            const newTasks = tasksByProject[project.uuid].filter(incomingTask => {
-              return !project.tasks.some(existingTask => existingTask.uuid === incomingTask.uuid);
-            });
+            const newTasks = tasksByProject[project.uuid].filter(
+              incomingTask => {
+                return !project.tasks.some(
+                  existingTask => existingTask.uuid === incomingTask.uuid
+                );
+              }
+            );
 
             project.tasks.push(...newTasks);
           }
         });
+      })
+      .addCase(fetchProject.pending, state => {
+        state.fetchStatus = 'loading';
+      })
+      .addCase(fetchProject.fulfilled, (state, action) => {
+        state.fetchStatus = 'succeeded';
+        state.currentProject = action.payload; // Store the fetched project
+      })
+      .addCase(fetchProject.rejected, (state, action) => {
+        state.fetchStatus = 'failed';
+        state.error = action.payload as string;
       });
   }
 });

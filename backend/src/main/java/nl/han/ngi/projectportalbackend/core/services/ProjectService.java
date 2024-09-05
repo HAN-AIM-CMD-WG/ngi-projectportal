@@ -4,7 +4,11 @@ import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.Project;
 import nl.han.ngi.projectportalbackend.core.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -28,8 +32,8 @@ public class ProjectService {
         return projectRepository.existsByTitle(title);
     }
 
-    public Project getProject(String title){
-        return projectRepository.getProject(title);
+    public Project getProject(String uuid){
+        return projectRepository.getProject(uuid);
     }
 
     public Project createProject(Project project, String creator) {
