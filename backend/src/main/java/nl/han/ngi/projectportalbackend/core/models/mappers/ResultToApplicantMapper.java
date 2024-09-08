@@ -4,6 +4,7 @@ import nl.han.ngi.projectportalbackend.core.models.Applicant;
 import org.neo4j.driver.Result;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 @Component
 public class ResultToApplicantMapper implements IMapper<Result, Applicant>{
@@ -37,7 +38,11 @@ public class ResultToApplicantMapper implements IMapper<Result, Applicant>{
 
     @Override
     public List<Applicant> mapToList(Result from) {
-        return null;
+        List<Applicant> applicantList = new ArrayList<>();
+        while(from.hasNext()){
+            applicantList.add(mapTo(from));
+        }
+        return applicantList;
     }
 
     @Override
