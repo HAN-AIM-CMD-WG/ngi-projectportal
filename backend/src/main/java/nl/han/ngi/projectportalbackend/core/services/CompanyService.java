@@ -1,5 +1,6 @@
 package nl.han.ngi.projectportalbackend.core.services;
 
+import nl.han.ngi.projectportalbackend.core.models.Applicant;
 import nl.han.ngi.projectportalbackend.core.models.Company;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.Project;
@@ -36,7 +37,7 @@ public class CompanyService {
         return companyRepository.getPersonsAssociatedToCompany(uuid);
     }
 
-    public List<Person> getApplicantsAssociatedToCompany(String uuid) {
+    public List<Applicant> getApplicantsAssociatedToCompany(String uuid) {
         return companyRepository.getApplicantsAssociatedToCompany(uuid);
     }
 

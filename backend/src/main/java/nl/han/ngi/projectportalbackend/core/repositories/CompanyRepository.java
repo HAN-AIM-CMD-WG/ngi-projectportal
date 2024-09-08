@@ -1,6 +1,7 @@
 package nl.han.ngi.projectportalbackend.core.repositories;
 
 import nl.han.ngi.projectportalbackend.core.configurations.DbConnectionConfiguration;
+import nl.han.ngi.projectportalbackend.core.models.Applicant;
 import nl.han.ngi.projectportalbackend.core.models.Company;
 import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.models.Project;
@@ -20,13 +21,15 @@ public class CompanyRepository implements CRUDRepository<String, Company> {
     private final IMapper<Result, Person> personMapper;
     private final IMapper<Result, Project> projectMapper;
     private final IMapper<Result, Company> companyMapper;
+    private final IMapper<Result, Applicant> applicantMapper;
     private Driver driver;
     private final DbConnectionConfiguration db;
 
-    public CompanyRepository(IMapper<Result, Person> personMapper, IMapper<Result, Project> projectMapper, IMapper<Result, Company> companyMapper, DbConnectionConfiguration db) {
+    public CompanyRepository(IMapper<Result, Person> personMapper, IMapper<Result, Project> projectMapper, IMapper<Result, Company> companyMapper, IMapper<Result, Applicant> applicantMapper, DbConnectionConfiguration db) {
         this.personMapper = personMapper;
         this.projectMapper = projectMapper;
         this.companyMapper = companyMapper;
+        this.applicantMapper = applicantMapper;
         this.db = db;
     }
 
@@ -77,12 +80,12 @@ public class CompanyRepository implements CRUDRepository<String, Company> {
         return personMapper.mapToList(result);
     }
 
-    public List<Person> getApplicantsAssociatedToCompany(String uuid) {
+    public List<Applicant> getApplicantsAssociatedToCompany(String uuid) {
         driver = db.getDriver();
         var session = driver.session();
         var query = "MATCH(p:Person)-[:COMPANY_APPLICANT]-(Company{uuid:$uuid}) RETURN p";
         var result = session.run(query, parameters("uuid", uuid));
-        return personMapper.mapToList(result);
+        return applicantMapper.mapToList(result);
     }
 
     public void acceptApplicantToCompany(String uuid, String userUuid) {
