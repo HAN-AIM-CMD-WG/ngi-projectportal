@@ -259,8 +259,7 @@ const companySlice = createSlice({
             .addCase(updateApplicantStatus.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload as string;
-            })
-            ;
+            });
     }
 });
 
