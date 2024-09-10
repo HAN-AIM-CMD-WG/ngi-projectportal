@@ -197,6 +197,22 @@ const companySlice = createSlice({
       },
       removeApplicant(state, action){
         state.applicants = state.applicants.filter(applicant => applicant.uuid !== action.payload);
+      },
+      rejectApplicant(state, action){
+        state.applicants = state.applicants.map(applicant => {
+          if(applicant.uuid === action.payload){
+            applicant.status = 'DENIED';
+          }
+          return applicant;
+        });
+      },
+      acceptApplicant(state, action){
+        state.applicants = state.applicants.map(applicant => {
+          if(applicant.uuid === action.payload){
+            applicant.status = 'ACCEPTED';
+          }
+          return applicant;
+        });
       }
     },
     extraReducers: builder => {
@@ -264,5 +280,5 @@ const companySlice = createSlice({
     }
 });
 
-export const { addMember, removeApplicant } = companySlice.actions;
+export const { addMember, removeApplicant, rejectApplicant, acceptApplicant } = companySlice.actions;
 export default companySlice.reducer;
