@@ -133,6 +133,31 @@ export const checkAuthentication = createAsyncThunk(
   }
 );
 
+export const getUserCompany = createAsyncThunk(
+  'auth/getUserCompany',
+  async ( uuid: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/person/${uuid}/company`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      if (response.ok){
+        const data = await response.json();
+        console.log(data);
+        return data;
+      } else {
+        return rejectWithValue('No company found');
+      }
+    } catch(error: unknown){
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      } else {
+        return rejectWithValue(error as string);
+      }
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -218,6 +243,19 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
         state.authChecking = false;
+      })
+      .addCase(getUserCompany.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      }
+      )
+      .addCase(getUserCompany.fulfilled, (state, action) => {
+        //state.company = [action.payload.uuid, action.payload.name]
+        console.log(`uuid: ${action.payload.uuid} and name: ${action.payload.name}`);
+        state.isLoading = false;
+      })
+      .addCase(getUserCompany.rejected, state => {
+        state.isLoading = false;
       });
   }
 });

@@ -1,22 +1,22 @@
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { useState } from 'react';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { useNavigate } from 'react-router-dom';
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { useState } from "react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useNavigate } from "react-router-dom";
 import {
   loginUser,
-  loginWithGoogle as loginWithGoogleThunk
-} from '@/app/slices/authSlice';
-import { useGoogleLogin } from '@react-oauth/google';
-import { useAppDispatch } from '@/app/hooks';
+  loginWithGoogle as loginWithGoogleThunk,
+} from "@/app/slices/authSlice";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useAppDispatch } from "@/app/hooks";
 
 export function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
+  const [alertMessage, setAlertMessage] = useState("");
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -32,11 +32,11 @@ export function Login() {
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
-        navigate('/');
+        navigate("/");
       })
       .catch((error: unknown) => {
-        console.error('Login error:', error);
-        setAlertMessage('Login failed. Please try again.');
+        console.error("Login error:", error);
+        setAlertMessage("Login failed. Please try again.");
         setShowAlert(true);
       });
   };
@@ -45,10 +45,10 @@ export function Login() {
     credentialResponse: GoogleCredentialResponse
   ) => {
     dispatch(loginWithGoogleThunk(credentialResponse.access_token))
-      .then(() => navigate('/'))
+      .then(() => navigate("/"))
       .catch((error: unknown) => {
-        console.error('Google login error:', error);
-        setAlertMessage('Google Login failed. Please try again.');
+        console.error("Google login error:", error);
+        setAlertMessage("Google Login failed. Please try again.");
         setShowAlert(true);
       });
   };
@@ -56,10 +56,10 @@ export function Login() {
   const signInWithGoogle = useGoogleLogin({
     onSuccess: handleGoogleSuccess,
     onError: (error: unknown) => {
-      console.error('Google Login Error:', error);
-      setAlertMessage('Google Login failed. Please try again.');
+      console.error("Google Login Error:", error);
+      setAlertMessage("Google Login failed. Please try again.");
       setShowAlert(true);
-    }
+    },
   });
 
   return (
@@ -86,7 +86,7 @@ export function Login() {
               required
               type="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -97,7 +97,7 @@ export function Login() {
               required
               type="password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="flex justify-between items-center">
@@ -131,7 +131,7 @@ export function Login() {
               <Button
                 className="w-full"
                 variant="outline"
-                onClick={event => {
+                onClick={(event) => {
                   event.preventDefault();
                   signInWithGoogle();
                 }}

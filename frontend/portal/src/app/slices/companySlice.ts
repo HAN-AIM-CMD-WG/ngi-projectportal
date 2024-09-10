@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { Company } from '../types/company';
 import { Project } from '../types/project';
 import { User } from '../types/user';
+import { Applicant } from '../types/applicant';
 
 interface CompanyState {
   company : Company | null;
@@ -9,7 +10,7 @@ interface CompanyState {
   isLoading: boolean;
   projects: Project[] | null;
   members: User[];
-  applicants: User[];
+  applicants: Applicant[];
   applicantCount: number;
   error: string | null;
 }

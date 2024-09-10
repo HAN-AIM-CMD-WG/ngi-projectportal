@@ -1,10 +1,13 @@
 package nl.han.ngi.projectportalbackend.core.services;
 
 import nl.han.ngi.projectportalbackend.core.exceptions.EmptyParameterException;
+import nl.han.ngi.projectportalbackend.core.models.Company;
 import nl.han.ngi.projectportalbackend.core.models.Person;
+import nl.han.ngi.projectportalbackend.core.repositories.CompanyRepository;
 import nl.han.ngi.projectportalbackend.core.repositories.PersonRepository;
 import nl.han.ngi.projectportalbackend.core.models.Guest;
 import nl.han.ngi.projectportalbackend.core.models.VerificationResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.ReflectionUtils;
@@ -22,11 +25,13 @@ public class PersonService {
     private final EmailService emailService;
     private final PersonRepository personRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CompanyRepository companyRepository;
 
-    public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder, EmailService emailService, CompanyRepository companyRepository) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.companyRepository = companyRepository;
     }
 
     public List<Person> getDeelnemers() {
@@ -130,5 +135,9 @@ public class PersonService {
         } else {
             return Collections.singletonList(new SimpleGrantedAuthority("GUEST"));
         }
+    }
+
+    public Company getCompanyAssociatedToPerson(String uuid) {
+        return companyRepository.getCompanyAssociatedToPerson(uuid);
     }
 }

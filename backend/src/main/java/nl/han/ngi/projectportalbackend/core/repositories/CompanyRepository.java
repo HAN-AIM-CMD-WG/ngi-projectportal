@@ -101,4 +101,12 @@ public class CompanyRepository implements CRUDRepository<String, Company> {
         var query = "MATCH(p:Person{uuid:$userUuid})-[cl:COMPANY_APPLICANT]->(c:Company{uuid:$uuid}) DELETE cl";
         session.run(query, parameters("userUuid", userUuid, "uuid", uuid));
     }
+
+    public Company getCompanyAssociatedToPerson(String uuid) {
+        driver = db.getDriver();
+        var session = driver.session();
+        var query = "MATCH(p:Person{uuid:$uuid})-[]->(c:Company) RETURN c";
+        var result = session.run(query, parameters("uuid", uuid));
+        return companyMapper.mapTo(result);
+    }
 }

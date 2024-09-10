@@ -99,4 +99,9 @@ public class PersonController {
             return new ResponseEntity(exc.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/{uuid}/company")
+    public ResponseEntity getCompanyAssociatedToPerson(@PathVariable String uuid){
+        return new ResponseEntity(personService.getCompanyAssociatedToPerson(uuid), HttpStatus.OK);
+    }
 }

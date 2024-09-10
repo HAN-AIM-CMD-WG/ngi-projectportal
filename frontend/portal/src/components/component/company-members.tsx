@@ -39,14 +39,13 @@ export function CompanyMembers(props) {
   const dispatch = useAppDispatch();
   const applicants = useAppSelector((state) => state.company.applicants);
   const members = useAppSelector((state) => state.company.members);
-  const applicationStatus = "PENDING";
   const applicantCount = useAppSelector(
     (state) => state.company.applicantCount
   );
   const [showApplicantsModal, setShowApplicantsModal] = useState(false);
   const [denialReasons, setDenialReasons] = useState([]);
 
-  console.log(applicationStatus);
+  console.log(applicants);
   const handleDenialReasonChange = (index, value) => {
     setDenialReasons((prev) => {
       const updated = [...prev];
@@ -74,6 +73,7 @@ export function CompanyMembers(props) {
         userUuid: applicants[index].uuid,
         status: "REJECTED",
       })
+      //TO-DO: send the message
     );
   };
 
@@ -84,7 +84,7 @@ export function CompanyMembers(props) {
   useEffect(() => {
     dispatch(fetchApplicantsByCompany(props.uuid));
     dispatch(fetchMembersByCompany(props.uuid));
-  }, [dispatch, props.uuid, applicationStatus]);
+  }, [dispatch, props.uuid]);
 
   return (
     <div className="flex flex-col">
@@ -271,7 +271,7 @@ export function CompanyMembers(props) {
                           </Button>
                         </div>
                       </div>
-                      {applicationStatus === "DENIED" && (
+                      {applicants[index].status === "DENIED" && (
                         <div className="flex items-center gap-2">
                           <Label
                             htmlFor={`denial-reason-${index}`}
