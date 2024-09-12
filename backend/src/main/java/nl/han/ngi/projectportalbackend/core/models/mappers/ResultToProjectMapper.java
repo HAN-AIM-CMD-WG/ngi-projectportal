@@ -36,13 +36,15 @@ public class ResultToProjectMapper implements IMapper<Result, Project>{
                     List<Object> taskObjects = nameValue.value().asList();
 
                     for (Object taskObject : taskObjects) {
-                        Value taskValue = (Value) taskObject;
-                        Task task = new Task();
-                        task.setUuid(taskValue.get("uuid").asString());
-                        task.setTitle(taskValue.get("title").asString());
-                        task.setSkills(taskValue.get("skills").asList(Value::asString));
-                        task.setIsDone(taskValue.get("isDone").asInt());
-                        tasks.add(task);
+                        if (taskObject instanceof org.neo4j.driver.internal.InternalNode) {
+                            org.neo4j.driver.internal.InternalNode taskNode = (org.neo4j.driver.internal.InternalNode) taskObject;
+                            Task task = new Task();
+                            task.setUuid(taskNode.get("uuid").asString());
+                            task.setTitle(taskNode.get("title").asString());
+                            task.setSkills(taskNode.get("skills").asList(Value::asString));
+                            task.setIsDone(taskNode.get("isDone").asInt());
+                            tasks.add(task);
+                        }
                     }
                 }
             }

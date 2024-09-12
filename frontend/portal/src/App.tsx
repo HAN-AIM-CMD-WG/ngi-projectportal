@@ -14,6 +14,7 @@ import { Verified } from './components/component/verified';
 import { ProjectDetail } from './components/component/project-detail';
 import { CompanyDetail } from './components/component/company-overview';
 import { RegisterCompany } from './components/component/register-company';
+import { ProjectOveriew } from './components/component/project-overview';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -108,7 +109,7 @@ const App = () => {
           path="/project/:projectUuid"
           element={
             <GeneralRouteWrapper>
-              <ProjectDetail />
+              <ProjectOveriew />
             </GeneralRouteWrapper>
           }
         />

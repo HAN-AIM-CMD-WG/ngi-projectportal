@@ -108,7 +108,7 @@ public class ProjectRepository implements CRUDRepository<String, Project>{
         driver = db.getDriver();
         var session = driver.session();
         var query = "MATCH (pr: Project {uuid: $uuid}) " +
-                "OPTIONAL MATCH (pr)-[:PART_OF_PROJECT]->(t: Task) " +
+                "OPTIONAL MATCH (t: Task {projectUuid: $uuid}) " +  // Match tasks by projectUuid
                 "RETURN pr, collect(t) as tasks";
         var result = session.run(query, parameters("uuid", uuid));
 
