@@ -1,4 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { Task } from '../types/task';
+import { NewTask } from '../types/task';
 
 export interface Projects {
   uuid: string;
@@ -6,19 +8,6 @@ export interface Projects {
   description: string;
   created: string;
   tasks: Task[];
-}
-
-interface Task {
-  title: string;
-  skills: string[];
-  isDone: boolean;
-  uuid: string;
-  projectUuid: string;
-}
-
-interface NewTask {
-  title: string;
-  skills: string[];
 }
 
 export interface ProjectState {
@@ -120,6 +109,7 @@ export const createTask = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      console.log("CREATE TASK FIRED!")
       const response = await fetch(
         `http://localhost:8080/api/task/${creator}?projectUuid=${projectUuid}`,
         {
@@ -133,7 +123,6 @@ export const createTask = createAsyncThunk(
       );
       if (!response.ok) throw new Error('Failed to create task');
       const createdTask = await response.json();
-      console.log(createdTask);
       return { projectUuid, task: createdTask };
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -279,25 +268,19 @@ const projectSlice = createSlice({
       .addCase(createTask.fulfilled, (state, action) => {
         const { projectUuid, task } = action.payload;
         const project = state.projects.find(p => p.uuid === projectUuid);
-
-        console.log('Project found:', project);
-        console.log('Task being added:', task);
-
+      
         if (!project) {
           console.error(`Project with uuid ${projectUuid} not found.`);
           return;
         }
-
-        // Ensure tasks array is initialized
+      
         if (!project.tasks) {
           project.tasks = [];
         }
-
-        if (project) {
-          project.tasks.push(task);
-        }
+      
+        project.tasks.push(task);
         state.status = 'succeeded';
-      })
+      })      
       .addCase(createTask.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;

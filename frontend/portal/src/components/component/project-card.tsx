@@ -3,14 +3,7 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
-  CardFooter
 } from '@/components/ui/card';
-import { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { createTask } from '@/app/slices/projectSlice';
 import { Project } from '@/app/types/project';
 import { Link } from 'react-router-dom';
 
@@ -19,30 +12,6 @@ export default function ProjectCard({
 }: {
   project: Project;
 }) {
-  const [taskName, setTaskName] = useState('');
-  const [taskSkills, setTaskSkills] = useState('');
-  const dispatch = useAppDispatch();
-  const { email } = useAppSelector(state => state.auth);
-  const userRoles = useAppSelector(state => state.auth.roles);
-
-  const handleAddTask = () => {
-    if (taskName && taskSkills) {
-      const newTask = {
-        title: taskName,
-        skills: taskSkills.split(',').map(skill => skill.trim())
-      };
-      dispatch(
-        createTask({
-          creator: email || '',
-          projectUuid: project.uuid,
-          task: newTask
-        })
-      );
-      setTaskName('');
-      setTaskSkills('');
-    }
-  };
-
   return (
     <Link to={`/project/${project.uuid}`} style={{ textDecoration: 'none' }}>
       <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer">
@@ -75,32 +44,6 @@ export default function ProjectCard({
             )}
           </div>
         </CardContent>
-
-        {userRoles.includes('OPDRACHTGEVER') && (
-          <CardFooter className="flex flex-col space-y-4">
-            <Label htmlFor={`taskName-${project.uuid}`}>Task Name</Label>
-            <Input
-              id={`taskName-${project.uuid}`}
-              value={taskName}
-              onChange={e => setTaskName(e.target.value)}
-              placeholder="Enter task name"
-            />
-
-            <Label htmlFor={`taskSkills-${project.uuid}`}>
-              Required Skills (comma-separated)
-            </Label>
-            <Input
-              id={`taskSkills-${project.uuid}`}
-              value={taskSkills}
-              onChange={e => setTaskSkills(e.target.value)}
-              placeholder="e.g. React, TypeScript"
-            />
-
-            <Button onClick={handleAddTask} className="self-end">
-              Add Task
-            </Button>
-          </CardFooter>
-        )}
       </Card>
     </Link>
   );

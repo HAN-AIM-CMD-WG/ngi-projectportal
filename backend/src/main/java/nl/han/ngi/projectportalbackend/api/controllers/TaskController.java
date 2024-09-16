@@ -37,7 +37,7 @@ public class TaskController {
             @RequestParam String projectUuid,
             @RequestBody Task task
     ) {
-        return new ResponseEntity(taskService.createTaskToProject(projectUuid, creator, task), HttpStatus.OK);
+        return new ResponseEntity(taskService.createTask(projectUuid, creator, task), HttpStatus.OK);
     }
 
     @GetMapping("/{person}/availableTasks")

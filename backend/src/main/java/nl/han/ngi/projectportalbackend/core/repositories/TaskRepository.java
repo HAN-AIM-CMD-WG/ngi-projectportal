@@ -72,13 +72,34 @@ public class TaskRepository implements CRUDRepository<String, Task>{
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public Task createTask(String creator, Task task) {
+    public Task createTask(String projectUuid, String creator, Task task) {
         driver = db.getDriver();
         Session session = driver.session();
-        var query = "MATCH(p:Person{email: $email})" +
-                "CREATE(t:Task{title: $title, description: $description, reward: $reward, isDone: 0, skills: $skills}), " +
-                "(p)-[:CREATED_TASK]->(t) RETURN t";
-        var result = session.run(query, parameters("email", creator,"title", task.getTitle(), "isDone", task.getIsDone(), "skills", task.getSkills()));
+
+        String uuid = UUID.randomUUID().toString();
+        task.setUuid(uuid);
+
+        var query = "MATCH (p:Person {email: $email}), (proj:Project {uuid: $projectUuid}) " +
+                "CREATE (t:Task {uuid: $uuid, projectUuid: $projectUuid, title: $title, description: $description, " +
+                "completed: $completed, category: $category, skills: $skills, assignedTo: $assignedTo, " +
+                "dueDate: $dueDate, comments: $comments}), " +
+                "(p)-[:CREATED_TASK]->(t), " +
+                "(proj)-[:HAS_TASK]->(t) " +
+                "RETURN t";
+
+        var result = session.run(query, parameters(
+                "email", creator,
+                "projectUuid", task.getProjectUuid(),
+                "uuid", task.getUuid(),
+                "title", task.getTitle(),
+                "description", task.getDescription(),
+                "completed", task.isCompleted(),
+                "category", task.getCategory(),
+                "skills", task.getSkills(),
+                "assignedTo", task.getAssignedTo(),
+                "dueDate", task.getDueDate(),
+                "comments", task.getComments()
+        ));
 
         return mapper.mapTo(result);
     }
@@ -110,6 +131,8 @@ public class TaskRepository implements CRUDRepository<String, Task>{
     public Task createTaskForProject(String uuid, String creator, Task task) {
         driver = db.getDriver();
         Session session = driver.session();
+
+        System.out.println("CREATE TASK FIRED!");
 
         String taskUuid = UUID.randomUUID().toString();
 

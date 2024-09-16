@@ -23,26 +23,37 @@ public class ResultToProjectMapper implements IMapper<Result, Project>{
             List<Pair<String, Value>> values = res.fields();
 
             for (Pair<String, Value> nameValue : values) {
+                // Map the project node
                 if ("pr".equals(nameValue.key())) {
-                    Value value = nameValue.value();
-                    project.setUuid(value.get("uuid").asString());
-                    project.setTitle(value.get("title").asString());
-                    project.setDescription(value.get("description").asString());
-                    project.setCreated(value.get("created").asLocalDate());
+                    var node = nameValue.value().asNode();
+                    project.setUuid(node.get("uuid").asString(null));
+                    project.setTitle(node.get("title").asString(null));
+                    project.setDescription(node.get("description").asString(null));
+                    project.setCreated(node.get("created").asLocalDate(null));
                     System.out.println("Mapped project: " + project);
                 }
 
+                // Map the tasks nodes
                 if ("tasks".equals(nameValue.key())) {
-                    List<Object> taskObjects = nameValue.value().asList();
+                    List<Object> taskObjects = nameValue.value().asList(); // Retrieve list of Object
 
                     for (Object taskObject : taskObjects) {
-                        if (taskObject instanceof org.neo4j.driver.internal.InternalNode) {
-                            org.neo4j.driver.internal.InternalNode taskNode = (org.neo4j.driver.internal.InternalNode) taskObject;
+                        if (taskObject instanceof Value taskValue) {
+                            var taskNode = taskValue.asNode(); // Convert each Value to Node
                             Task task = new Task();
-                            task.setUuid(taskNode.get("uuid").asString());
-                            task.setTitle(taskNode.get("title").asString());
+
+                            // Map Task fields according to the mapToList method for Task
+                            task.setUuid(taskNode.get("uuid").asString(null));
+                            task.setProjectUuid(taskNode.get("projectUuid").asString(null));
+                            task.setTitle(taskNode.get("title").asString(null));
+                            task.setDescription(taskNode.get("description").asString(null));
+                            task.setCategory(taskNode.get("category").asString(null));
+                            task.setAssignedTo(taskNode.get("assignedTo").asString(null));
+                            task.setDueDate(taskNode.get("dueDate").asString(null));
+                            task.setCompleted(taskNode.get("completed").asBoolean(false));
                             task.setSkills(taskNode.get("skills").asList(Value::asString));
-                            task.setIsDone(taskNode.get("isDone").asInt());
+                            task.setComments(taskNode.get("comments").asList(Value::asString));
+
                             tasks.add(task);
                         }
                     }

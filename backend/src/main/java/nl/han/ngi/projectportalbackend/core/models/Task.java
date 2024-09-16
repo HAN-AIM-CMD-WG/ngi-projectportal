@@ -3,13 +3,24 @@ package nl.han.ngi.projectportalbackend.core.models;
 import java.util.List;
 
 public class Task {
-    String uuid;
-    String projectUuid;
-    String title;
-    int isDone;
-    List<String> skills;
-    public String getTitle() {
-        return title;
+    private String uuid;
+    private String projectUuid;
+    private String title;
+    private String description;
+    private boolean completed;
+    private String category;
+    private List<String> skills;
+    private String assignedTo;
+    private String dueDate;
+    private List<String> comments;
+
+    // Getters and Setters
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getProjectUuid() {
@@ -20,16 +31,36 @@ public class Task {
         this.projectUuid = projectUuid;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public int getIsDone() {
-        return isDone;
+    public String getDescription() {
+        return description;
     }
 
-    public void setIsDone(int done) {
-        isDone = done;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public List<String> getSkills() {
@@ -40,11 +71,27 @@ public class Task {
         this.skills = skills;
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getAssignedTo() {
+        return assignedTo;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public List<String> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<String> comments) {
+        this.comments = comments;
     }
 }

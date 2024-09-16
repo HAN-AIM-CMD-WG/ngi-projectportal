@@ -4,8 +4,11 @@ import PlaceholderImage from '../../images/placeholder.svg';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { CheckCircle, Circle, Rocket, Star, Zap } from 'lucide-react';
+import { useAppSelector } from '@/app/hooks';
 
 export function ProjectHome() {
+  const project = useAppSelector(state => state.project.currentProject);
+
   const roadmapItems = [
     {
       title: 'Project Inception',
@@ -46,7 +49,7 @@ export function ProjectHome() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">My Awesome Project</h1>
+      <h1 className="text-3xl font-bold mb-6">{project?.title}</h1>
 
       <Tabs defaultValue="home" className="w-full">
         <TabsList className="grid w-full grid-cols-4 mb-8">
@@ -75,16 +78,13 @@ export function ProjectHome() {
                     Welcome to Our Project
                   </h2>
                   <p className="text-muted-foreground mb-4">
-                    This is an innovative project that aims to revolutionize the
-                    way we interact with technology. Our team has been working
-                    tirelessly to bring you cutting-edge features and a seamless
-                    user experience.
+                    {project?.description}
                   </p>
                   <ul className="list-disc list-inside text-muted-foreground">
-                    <li>Intuitive user interface</li>
-                    <li>Advanced data processing</li>
-                    <li>Real-time collaboration</li>
-                    <li>Cross-platform compatibility</li>
+                    <li>-</li>
+                    <li>-</li>
+                    <li>-</li>
+                    <li>-</li>
                   </ul>
                 </div>
               </div>

@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { fetchProjects, fetchTasks } from '@/app/slices/projectSlice';
+import { useEffect } from 'react';
+import { fetchProjects } from '@/app/slices/projectSlice';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import ProjectCard from './project-card';
@@ -11,22 +11,13 @@ export function ProjectList() {
     state => state.project
   );
 
-  const hasFetchedTasks = useRef(false);
 
   useEffect(() => {
     if (email && projects.length < 1) {
       dispatch(fetchProjects(email));
-      hasFetchedTasks.current = false;
     }
   }, [dispatch, email, projects.length]);
 
-  useEffect(() => {
-    if (projects.length > 0 && !hasFetchedTasks.current) {
-      const projectUuids = projects.map(project => project.uuid);
-      dispatch(fetchTasks(projectUuids));
-      hasFetchedTasks.current = true;
-    }
-  }, [dispatch, projects]);
 
   if (fetchStatus === 'loading') {
     return (
