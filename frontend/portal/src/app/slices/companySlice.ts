@@ -157,20 +157,19 @@ export const fetchApplicantsByCompany = createAsyncThunk(
 
 );
 
-export const updateApplicantStatus = createAsyncThunk(
-  'company/updateApplicantStatus',
-  async ({ uuid, userUuid, status }: { uuid: string; userUuid: string; status: string} , { rejectWithValue }) => {
-    console.log(status);
+export const procesAcceptApplicant = createAsyncThunk(
+  'company/acceptApplicant',
+  async ({ uuid, userUuid, role }: { uuid: string; userUuid: string; role: string} , { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/company/${uuid}/applicant/${userUuid}`,
+        `http://localhost:8080/api/company/${uuid}/applicant/${userUuid}/accept`,
         {
           method: 'POST',
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: status
+          body: role
         }
       );
       if (!response.ok) throw new Error('Failed to update applicant status');
@@ -184,7 +183,33 @@ export const updateApplicantStatus = createAsyncThunk(
       }
     }
   }
+);
 
+export const procesDenyingApplicant = createAsyncThunk(
+  'company/denyApplicant',
+  async ({ uuid, userUuid }: { uuid: string; userUuid: string} , { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/company/${uuid}/applicant/${userUuid}/deny`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      if (!response.ok) throw new Error('Failed to update applicant status');
+      const data = await response.json();
+      return data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      } else {
+        return rejectWithValue(error as string);
+      }
+    }
+  }
 );
 
 
@@ -210,7 +235,15 @@ const companySlice = createSlice({
         state.applicants = state.applicants.map(applicant => {
           if(applicant.uuid === action.payload){
             applicant.status = 'ACCEPTED';
+          } else {
+            applicant.status = 'PENDING';
           }
+          return applicant;
+        });
+      },
+      resetApplicantStatusToPending(state){
+        state.applicants = state.applicants.map(applicant => {
+          applicant.status = 'PENDING';
           return applicant;
         });
       }
@@ -266,19 +299,30 @@ const companySlice = createSlice({
                 state.isLoading = false;
                 state.error = action.payload as string;
             })
-            .addCase(updateApplicantStatus.pending, state => {
+            .addCase(procesAcceptApplicant.pending, state => {
                 state.isLoading = true;
             })
-            .addCase(updateApplicantStatus.fulfilled, (state) => {
+            .addCase(procesAcceptApplicant.fulfilled, (state) => {
                 state.isLoading = false;
                 state.error = null;
             })
-            .addCase(updateApplicantStatus.rejected, (state, action) => {
+            .addCase(procesAcceptApplicant.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload as string;
+            })
+            .addCase(procesDenyingApplicant.pending, state => {
+                state.isLoading = true;
+            })
+            .addCase(procesDenyingApplicant.fulfilled, (state) => {
+                state.isLoading = false;
+                state.error = null;
+            })
+            .addCase(procesDenyingApplicant.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload as string;
             });
     }
 });
 
-export const { addMember, removeApplicant, rejectApplicant, acceptApplicant } = companySlice.actions;
+export const { addMember, removeApplicant, rejectApplicant, acceptApplicant, resetApplicantStatusToPending } = companySlice.actions;
 export default companySlice.reducer;

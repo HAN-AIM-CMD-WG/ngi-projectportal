@@ -11,7 +11,6 @@ import org.neo4j.driver.Result;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -88,11 +87,11 @@ public class CompanyRepository implements CRUDRepository<String, Company> {
         return applicantMapper.mapToList(result);
     }
 
-    public void acceptApplicantToCompany(String uuid, String userUuid) {
+    public void acceptApplicantToCompany(String uuid, String userUuid, String role) {
         driver = db.getDriver();
         var session = driver.session();
-        var query = "MATCH(p:Person{uuid:$userUuid})-[cl:COMPANY_APPLICANT]->(c:Company{uuid:$uuid}) DELETE cl CREATE(p)-[:COMPANY_MEMBER]->(c)";
-        session.run(query, parameters("userUuid", userUuid, "uuid", uuid));
+        var query = "MATCH(p:Person{uuid:$userUuid})-[cl:COMPANY_APPLICANT]->(c:Company{uuid:$uuid}) DELETE cl CREATE(p)-[:COMPANY_MEMBER{role:$role}]->(c)";
+        session.run(query, parameters("userUuid", userUuid, "uuid", uuid, "role", role));
     }
 
     public void rejectApplicantToCompany(String uuid, String userUuid) {

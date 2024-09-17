@@ -16,7 +16,7 @@ public class ResultToApplicantMapper implements IMapper<Result, Applicant>{
         applicant.setUuid(node.get("uuid").asString());
         applicant.setName(node.get("name").asString());
         applicant.setEmail(node.get("email").asString());
-        applicant.setStatus("Pending");
+        applicant.setStatus("PENDING");
 
         return applicant;
     }

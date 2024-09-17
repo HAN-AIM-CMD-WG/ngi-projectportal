@@ -30,10 +30,21 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import {
   fetchApplicantsByCompany,
   fetchMembersByCompany,
-  updateApplicantStatus,
+  procesAcceptApplicant,
+  procesDenyingApplicant,
   addMember,
   removeApplicant,
+  rejectApplicant,
+  acceptApplicant,
+  resetApplicantStatusToPending,
 } from "@/app/slices/companySlice";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 export function CompanyMembers(props) {
   const dispatch = useAppDispatch();
@@ -44,47 +55,63 @@ export function CompanyMembers(props) {
   );
   const [showApplicantsModal, setShowApplicantsModal] = useState(false);
   const [denialReasons, setDenialReasons] = useState([]);
+  const [selectedRole, setSelectedRole] = useState(false);
+  const availableRoles = ["Developer", "Designer", "Manager", "Other"];
 
-  console.log(applicants);
   const handleDenialReasonChange = (index, value) => {
     setDenialReasons((prev) => {
       const updated = [...prev];
       updated[index] = value;
+      console.log(updated);
       return updated;
     });
   };
 
-  const handleAcceptApplicant = (index) => {
+  // Handle accept logic, first accept the applicant and add role, then handle accept and finish off.
+  const handleAcceptApplicant = (index: number) => {
+    //console.log("Accepting applicant", applicants[index].name);
+    dispatch(acceptApplicant(applicants[index].uuid));
+  };
+
+  const handleAccept = (index) => {
+    console.log("Confirming acceptance of ", applicants[index]);
     dispatch(
-      updateApplicantStatus({
+      procesAcceptApplicant({
         uuid: props.uuid,
         userUuid: applicants[index].uuid,
-        status: "ACCEPTED",
+        role: selectedRole,
       })
     );
     dispatch(addMember(applicants[index]));
     dispatch(removeApplicant(applicants[index].uuid));
   };
 
+  // Handle denial logic, first deny the applicant and add reason, then handle denial and finish off.
   const handleDenyApplicant = (index) => {
-    dispatch(
-      updateApplicantStatus({
-        uuid: props.uuid,
-        userUuid: applicants[index].uuid,
-        status: "REJECTED",
-      })
-      //TO-DO: send the message
-    );
+    dispatch(rejectApplicant(applicants[index].uuid));
+    dispatch(removeApplicant(applicants[index].uuid));
   };
 
   const handleDenial = (index) => {
     console.log("Denying applicant", applicants[index].name);
+    dispatch(
+      procesDenyingApplicant({
+        uuid: props.uuid,
+        userUuid: applicants[index].uuid,
+      })
+    );
   };
 
+  // Fetch applicants and members on initial render and reset everything when modal is closed.
   useEffect(() => {
     dispatch(fetchApplicantsByCompany(props.uuid));
     dispatch(fetchMembersByCompany(props.uuid));
-  }, [dispatch, props.uuid]);
+    if (!showApplicantsModal) {
+      dispatch(resetApplicantStatusToPending());
+      setDenialReasons([]);
+      setSelectedRole("");
+    }
+  }, [dispatch, props.uuid, showApplicantsModal]);
 
   return (
     <div className="flex flex-col">
@@ -291,6 +318,37 @@ export function CompanyMembers(props) {
                           <Button
                             variant="outline"
                             onClick={() => handleDenial(index)}
+                          >
+                            Send
+                          </Button>
+                        </div>
+                      )}
+                      {applicants[index].status === "ACCEPTED" && (
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="role" className="text-sm font-medium">
+                            Select Role:
+                          </Label>
+                          <div className="w-full max-w-xs space-y-4">
+                            <Select
+                              defaultValue=""
+                              onValueChange={setSelectedRole}
+                              value={selectedRole}
+                            >
+                              <SelectTrigger className="w-3/4">
+                                <SelectValue placeholder="" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {availableRoles.map((role) => (
+                                  <SelectItem key={role} value={role}>
+                                    {role}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <Button
+                            variant="outline"
+                            onClick={() => handleAccept(index)}
                           >
                             Send
                           </Button>

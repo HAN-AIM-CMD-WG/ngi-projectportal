@@ -44,9 +44,15 @@ public class Companycontroller {
         return new ResponseEntity(companyService.getApplicantsAssociatedToCompany(uuid), HttpStatus.OK);
     }
 
-    @PostMapping("/{uuid}/applicant/{userUuid}")
-    public ResponseEntity updateApplicantStatusToCompany(@PathVariable String uuid, @PathVariable String userUuid, @RequestBody String status){
-        companyService.updateApplicantStatusToCompany(uuid,userUuid, status);
-        return new ResponseEntity("Succesfully added status: " + status + " to applicant: " + userUuid,HttpStatus.OK);
+    @PostMapping("/{uuid}/applicant/{userUuid}/accept")
+    public ResponseEntity acceptApplicantStatusToCompany(@PathVariable String uuid, @PathVariable String userUuid, @RequestBody String role){
+        companyService.acceptApplicantStatusToCompany(uuid,userUuid, role);
+        return new ResponseEntity("Succesfully added user to company with role: " + role + " to applicant: " + userUuid,HttpStatus.OK);
+    }
+
+    @PostMapping("/{uuid}/applicant/{userUuid}/deny")
+    public ResponseEntity rejectApplicantStatusToCompany(@PathVariable String uuid, @PathVariable String userUuid){
+        companyService.rejectApplicantStatusToCompany(uuid,userUuid);
+        return new ResponseEntity("Succesfully rejected user with: " + userUuid,HttpStatus.OK);
     }
 }
