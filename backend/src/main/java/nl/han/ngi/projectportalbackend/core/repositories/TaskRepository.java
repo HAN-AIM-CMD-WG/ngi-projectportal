@@ -6,8 +6,10 @@ import nl.han.ngi.projectportalbackend.core.models.mappers.IMapper;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import org.neo4j.driver.Values;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,6 +45,29 @@ public class TaskRepository implements CRUDRepository<String, Task>{
         }
     }
 
+    public List<Task> getTasks(String projectUuid) {
+        List<Task> tasks = new ArrayList<>();
+        try {
+            driver = db.getDriver();
+            try (Session session = driver.session()) {
+
+                String query = "MATCH (p:Project {uuid: $projectUuid})-[:HAS_TASK]->(t:Task) " +
+                        "RETURN t";
+
+                Result result = session.run(query, Values.parameters("projectUuid", projectUuid));
+
+                tasks = mapper.mapToList(result);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (driver != null) {
+                driver.close();
+            }
+        }
+        return tasks;
+    }
+
     @Override
     public List<Task> getAll() {
         return null;
@@ -73,6 +98,9 @@ public class TaskRepository implements CRUDRepository<String, Task>{
     }
 
     public Task createTask(String projectUuid, String creator, Task task) {
+        System.out.println(creator);
+        System.out.println(projectUuid);
+
         driver = db.getDriver();
         Session session = driver.session();
 
@@ -89,7 +117,7 @@ public class TaskRepository implements CRUDRepository<String, Task>{
 
         var result = session.run(query, parameters(
                 "email", creator,
-                "projectUuid", task.getProjectUuid(),
+                "projectUuid", projectUuid,
                 "uuid", task.getUuid(),
                 "title", task.getTitle(),
                 "description", task.getDescription(),

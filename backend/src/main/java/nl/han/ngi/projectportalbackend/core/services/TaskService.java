@@ -21,9 +21,14 @@ public class TaskService {
         return taskRepository.getAllByProjectUuids(projectUuids);
     }
 
+    public List<Task> getTasks(String projectUuid) {
+        return taskRepository.getTasks(projectUuid);
+    }
+
     public Task createTask(String projectUuid, String creator, Task task) {
         return taskRepository.createTask(projectUuid, creator, task);
     }
+
     public List<Task> getTasksOfProjectWithTitle(String title) {
         return taskRepository.getTasksOfProjectWithTitle(title);
     }

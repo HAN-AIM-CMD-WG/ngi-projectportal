@@ -36,22 +36,33 @@ import {
   ChevronUp
 } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/app/hooks';
-import { createTask, fetchProject } from '@/app/slices/projectSlice';
+import { createTask, fetchTasks } from '@/app/slices/projectSlice';
 import { useParams } from 'react-router-dom'; // or appropriate import
 
 type Skill = string;
 type ProjectMember = string;
 
-interface Task {
+export interface Task {
   uuid: string;
+  projectUuid: string;
   title: string;
   description: string;
   completed: boolean;
   category: string;
-  skills: Skill[];
-  assignedTo: ProjectMember | null;
+  skills: string[];
+  assignedTo: string | null;
   dueDate: string;
   comments: string[];
+}
+
+export interface NewTask {
+  title: string;
+  description: string;
+  category: string;
+  skills: string[];
+  dueDate: string;
+  assignedTo?: string | null;
+  comments?: string[];
 }
 
 const categories = ['Development', 'Design', 'Marketing', 'Research'];
@@ -85,7 +96,8 @@ export function TaskManager() {
 
   useEffect(() => {
     if (projectUuid) {
-      dispatch(fetchProject(projectUuid));
+      console.log('test');
+      dispatch(fetchTasks(projectUuid));
     }
   }, [projectUuid, dispatch]);
 
@@ -100,7 +112,13 @@ export function TaskManager() {
         assignedTo: null,
         comments: []
       };
-      dispatch(createTask({ creator: currentUserEmail || "", projectUuid: projectUuid || "", task: task }));
+      dispatch(
+        createTask({
+          creator: currentUserEmail || '',
+          projectUuid: projectUuid || '',
+          task: task
+        })
+      );
       setNewTask('');
       setNewDescription('');
       setNewSkills([]);
@@ -230,7 +248,9 @@ export function TaskManager() {
               key={task.uuid}
               open={expandedTaskId === task.uuid}
               onOpenChange={() =>
-                setExpandedTaskId(expandedTaskId === task.uuid ? null : task.uuid)
+                setExpandedTaskId(
+                  expandedTaskId === task.uuid ? null : task.uuid
+                )
               }
             >
               <Card

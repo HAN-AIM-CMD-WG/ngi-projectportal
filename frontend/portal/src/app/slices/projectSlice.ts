@@ -74,25 +74,30 @@ export const createProject = createAsyncThunk(
 
 export const fetchTasks = createAsyncThunk(
   'project/fetchTasks',
-  async (projectUuids: string[], { rejectWithValue }) => {
+  async (projectUuid: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/task`, {
-        method: 'POST', // Change to POST
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(projectUuids) // Send the body with POST
-      });
-      if (!response.ok) throw new Error('Failed to fetch tasks');
+      const response = await fetch(
+        `http://localhost:8080/api/task/${projectUuid}`,
+        {
+          method: 'GET', // Use GET method
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch tasks');
+      }
+
       const tasks = await response.json();
-      console.log(tasks);
       return tasks;
     } catch (error: unknown) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
       } else {
-        return rejectWithValue(error as string);
+        return rejectWithValue('An unknown error occurred');
       }
     }
   }
@@ -109,7 +114,7 @@ export const createTask = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      console.log("CREATE TASK FIRED!")
+      console.log('CREATE TASK FIRED!');
       const response = await fetch(
         `http://localhost:8080/api/task/${creator}?projectUuid=${projectUuid}`,
         {
@@ -268,19 +273,19 @@ const projectSlice = createSlice({
       .addCase(createTask.fulfilled, (state, action) => {
         const { projectUuid, task } = action.payload;
         const project = state.projects.find(p => p.uuid === projectUuid);
-      
+
         if (!project) {
           console.error(`Project with uuid ${projectUuid} not found.`);
           return;
         }
-      
+
         if (!project.tasks) {
           project.tasks = [];
         }
-      
+
         project.tasks.push(task);
         state.status = 'succeeded';
-      })      
+      })
       .addCase(createTask.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
@@ -291,33 +296,15 @@ const projectSlice = createSlice({
       .addCase(fetchTasks.fulfilled, (state, action) => {
         state.fetchStatus = 'succeeded';
 
-        const incomingTasks = action.payload;
+        const tasks = action.payload as Task[];
 
-        const tasksByProject = incomingTasks.reduce((acc, task) => {
-          const { projectUuid } = task;
-          if (!acc[projectUuid]) {
-            acc[projectUuid] = [];
+        if (state.currentProject && tasks.length > 0) {
+          const projectUuid = tasks[0].projectUuid;
+
+          if (state.currentProject.uuid === projectUuid) {
+            state.currentProject.tasks = tasks;
           }
-          acc[projectUuid].push(task);
-          return acc;
-        }, {});
-
-        state.projects.forEach(project => {
-          if (tasksByProject[project.uuid]) {
-            if (!project.tasks) {
-              project.tasks = [];
-            }
-            const newTasks = tasksByProject[project.uuid].filter(
-              incomingTask => {
-                return !project.tasks.some(
-                  existingTask => existingTask.uuid === incomingTask.uuid
-                );
-              }
-            );
-
-            project.tasks.push(...newTasks);
-          }
-        });
+        }
       })
       .addCase(fetchProject.pending, state => {
         state.fetchStatus = 'loading';

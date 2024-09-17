@@ -31,6 +31,12 @@ public class TaskController {
         }
     }
 
+    @GetMapping("/{projectUuid}")
+    public ResponseEntity<List<Task>> getTasks(@PathVariable String projectUuid){
+        List<Task> tasks = taskService.getTasks(projectUuid);
+        return new ResponseEntity<>(tasks, HttpStatus.OK);
+    }
+
     @PostMapping("/{creator}")
     public ResponseEntity createTask(
             @PathVariable String creator,
