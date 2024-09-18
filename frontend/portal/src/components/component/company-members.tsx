@@ -55,7 +55,7 @@ export function CompanyMembers(props: { uuid: string }) {
     (state) => state.company.applicantCount
   );
   const [showApplicantsModal, setShowApplicantsModal] = useState(false);
-  const [denialReasons, setDenialReasons] = useState([]);
+  const [denialReasons, setDenialReasons] = useState<string[]>([]);
   const [selectedRole, setSelectedRole] = useState("");
   const availableRoles = ["Developer", "Designer", "Manager", "Other"];
 
@@ -63,7 +63,6 @@ export function CompanyMembers(props: { uuid: string }) {
     setDenialReasons((prev) => {
       const updated = [...prev];
       updated[index] = value;
-      console.log(updated);
       return updated;
     });
   };
