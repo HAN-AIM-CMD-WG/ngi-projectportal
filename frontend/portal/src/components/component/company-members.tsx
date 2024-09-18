@@ -70,7 +70,7 @@ export function CompanyMembers(props) {
 
   // Handle accept logic, first accept the applicant and add role, then handle accept and finish off.
   const handleAcceptApplicant = (index: number) => {
-    //console.log("Accepting applicant", applicants[index].name);
+    setSelectedRole("");
     dispatch(acceptApplicant(applicants[index].uuid));
   };
 
