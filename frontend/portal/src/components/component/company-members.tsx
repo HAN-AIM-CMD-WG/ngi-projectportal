@@ -47,7 +47,7 @@ import {
   SelectValue,
 } from "../ui/select";
 
-export function CompanyMembers(props) {
+export function CompanyMembers(props: { uuid: string }) {
   const dispatch = useAppDispatch();
   const applicants = useAppSelector((state) => state.company.applicants);
   const members = useAppSelector((state) => state.company.members);
@@ -59,7 +59,7 @@ export function CompanyMembers(props) {
   const [selectedRole, setSelectedRole] = useState("");
   const availableRoles = ["Developer", "Designer", "Manager", "Other"];
 
-  const handleDenialReasonChange = (index, value) => {
+  const handleDenialReasonChange = (index: number, value: string) => {
     setDenialReasons((prev) => {
       const updated = [...prev];
       updated[index] = value;
@@ -74,7 +74,7 @@ export function CompanyMembers(props) {
     dispatch(acceptApplicant(applicants[index].uuid));
   };
 
-  const handleAccept = (index) => {
+  const handleAccept = (index: number) => {
     console.log("Confirming acceptance of ", applicants[index]);
     dispatch(
       procesAcceptApplicant({
@@ -89,11 +89,11 @@ export function CompanyMembers(props) {
   };
 
   // Handle denial logic, first deny the applicant and add reason, then handle denial and finish off.
-  const handleDenyApplicant = (index) => {
+  const handleDenyApplicant = (index: number) => {
     dispatch(rejectApplicant(applicants[index].uuid));
   };
 
-  const handleDenial = (index) => {
+  const handleDenial = (index: number) => {
     console.log("Denying applicant", applicants[index].name);
     dispatch(
       procesDenyingApplicant({

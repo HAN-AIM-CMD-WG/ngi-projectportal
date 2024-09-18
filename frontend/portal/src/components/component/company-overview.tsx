@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navbar } from "./navbar";
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   fetchCompanyData,
   fetchApplicantsByCompany,
@@ -21,8 +21,6 @@ export function CompanyDetail() {
     dispatch(fetchApplicantsByCompany(userCompany[0]));
   }, [dispatch, userCompany]);
 
-  console.log(selectedItem);
-  console.log("Now usercompany is " + userCompany[0]);
   return (
     <div className="">
       <Navbar />
