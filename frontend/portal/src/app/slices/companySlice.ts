@@ -227,6 +227,8 @@ const companySlice = createSlice({
         state.applicants = state.applicants.map(applicant => {
           if(applicant.uuid === action.payload){
             applicant.status = 'DENIED';
+          } else {
+            applicant.status = 'PENDING';
           }
           return applicant;
         });
@@ -246,6 +248,9 @@ const companySlice = createSlice({
           applicant.status = 'PENDING';
           return applicant;
         });
+      },
+      updateApplicantCount(state){
+        state.applicantCount = state.applicants.length;
       }
     },
     extraReducers: builder => {
@@ -324,5 +329,5 @@ const companySlice = createSlice({
     }
 });
 
-export const { addMember, removeApplicant, rejectApplicant, acceptApplicant, resetApplicantStatusToPending } = companySlice.actions;
+export const { addMember, removeApplicant, rejectApplicant, acceptApplicant, resetApplicantStatusToPending,updateApplicantCount } = companySlice.actions;
 export default companySlice.reducer;

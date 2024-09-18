@@ -37,6 +37,7 @@ import {
   rejectApplicant,
   acceptApplicant,
   resetApplicantStatusToPending,
+  updateApplicantCount,
 } from "@/app/slices/companySlice";
 import {
   Select,
@@ -55,7 +56,7 @@ export function CompanyMembers(props) {
   );
   const [showApplicantsModal, setShowApplicantsModal] = useState(false);
   const [denialReasons, setDenialReasons] = useState([]);
-  const [selectedRole, setSelectedRole] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("");
   const availableRoles = ["Developer", "Designer", "Manager", "Other"];
 
   const handleDenialReasonChange = (index, value) => {
@@ -84,12 +85,12 @@ export function CompanyMembers(props) {
     );
     dispatch(addMember(applicants[index]));
     dispatch(removeApplicant(applicants[index].uuid));
+    dispatch(updateApplicantCount());
   };
 
   // Handle denial logic, first deny the applicant and add reason, then handle denial and finish off.
   const handleDenyApplicant = (index) => {
     dispatch(rejectApplicant(applicants[index].uuid));
-    dispatch(removeApplicant(applicants[index].uuid));
   };
 
   const handleDenial = (index) => {
@@ -100,6 +101,8 @@ export function CompanyMembers(props) {
         userUuid: applicants[index].uuid,
       })
     );
+    dispatch(removeApplicant(applicants[index].uuid));
+    dispatch(updateApplicantCount());
   };
 
   // Fetch applicants and members on initial render and reset everything when modal is closed.
