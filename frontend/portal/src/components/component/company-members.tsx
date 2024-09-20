@@ -74,7 +74,6 @@ export function CompanyMembers(props: { uuid: string }) {
   };
 
   const handleAccept = (index: number) => {
-    console.log("Confirming acceptance of ", applicants[index]);
     dispatch(
       procesAcceptApplicant({
         uuid: props.uuid,
@@ -93,7 +92,6 @@ export function CompanyMembers(props: { uuid: string }) {
   };
 
   const handleDenial = (index: number) => {
-    console.log("Denying applicant", applicants[index].name);
     dispatch(
       procesDenyingApplicant({
         uuid: props.uuid,

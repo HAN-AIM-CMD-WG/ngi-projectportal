@@ -13,8 +13,6 @@ export function Landing() {
     (state) => state.company.applicantCount
   );
 
-  console.log(applicantCount);
-
   return (
     <div key="1">
       <Navbar />
