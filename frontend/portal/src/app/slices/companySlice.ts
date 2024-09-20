@@ -187,8 +187,11 @@ export const procesAcceptApplicant = createAsyncThunk(
 
 export const procesDenyingApplicant = createAsyncThunk(
   'company/denyApplicant',
-  async ({ uuid, userUuid }: { uuid: string; userUuid: string} , { rejectWithValue }) => {
+  async ({ uuid, userUuid, email, reason }: { uuid: string; userUuid: string, email: string, reason: string} , { rejectWithValue }) => {
     try {
+      JSON.stringify({ email, reason });
+      const params = JSON.stringify({ email, reason });
+
       const response = await fetch(
         `http://localhost:8080/api/company/${uuid}/applicant/${userUuid}/deny`,
         {
@@ -196,7 +199,8 @@ export const procesDenyingApplicant = createAsyncThunk(
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
-          }
+          },
+          body: params
         }
       );
       if (!response.ok) throw new Error('Failed to update applicant status');

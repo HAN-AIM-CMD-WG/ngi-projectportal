@@ -1,5 +1,6 @@
 package nl.han.ngi.projectportalbackend.api.controllers;
 
+import net.minidev.json.JSONObject;
 import nl.han.ngi.projectportalbackend.core.models.Company;
 import nl.han.ngi.projectportalbackend.core.services.CompanyService;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
 import java.util.Map;
 
 @Controller
@@ -51,8 +53,8 @@ public class Companycontroller {
     }
 
     @PostMapping("/{uuid}/applicant/{userUuid}/deny")
-    public ResponseEntity rejectApplicantStatusToCompany(@PathVariable String uuid, @PathVariable String userUuid){
-        companyService.rejectApplicantStatusToCompany(uuid,userUuid);
+    public ResponseEntity rejectApplicantStatusToCompany(@PathVariable String uuid, @PathVariable String userUuid, @RequestBody Map<Object,String> qparams) {
+        companyService.rejectApplicantStatusToCompany(uuid,userUuid, qparams.get("reason"), qparams.get("email"));
         return new ResponseEntity("Succesfully rejected user with: " + userUuid,HttpStatus.OK);
     }
 }

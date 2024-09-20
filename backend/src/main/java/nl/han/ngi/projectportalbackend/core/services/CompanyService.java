@@ -14,11 +14,13 @@ import java.util.List;
 @Service
 public class CompanyService {
 
+    private final EmailService emailService;
     CompanyRepository companyRepository;
     ProjectRepository projectRepository;
     PersonRepository personRepository;
 
-    public CompanyService(CompanyRepository companyRepository, ProjectRepository projectRepository, PersonRepository personRepository) {this.companyRepository = companyRepository; this.projectRepository = projectRepository; this.personRepository = personRepository;}
+    public CompanyService(EmailService emailService, CompanyRepository companyRepository, ProjectRepository projectRepository, PersonRepository personRepository) {
+        this.emailService = emailService; this.companyRepository = companyRepository; this.projectRepository = projectRepository; this.personRepository = personRepository;}
 
     public List<Company> getAll() {
         return companyRepository.getAll();
@@ -44,7 +46,11 @@ public class CompanyService {
             companyRepository.acceptApplicantToCompany(uuid, userUuid, role);
     }
 
-    public void rejectApplicantStatusToCompany(String uuid, String userUuid) {
+    public void rejectApplicantStatusToCompany(String uuid, String userUuid, String reason, String email) {
+
+        String emailSubject = "Your application has been rejected";
+        String emailText = "Dear applicant, \n\n" + "We regret to inform you that your application has been rejected. The reason for this is: " + reason + "\n\n" + "Kind regards, \n\n" + "The Project Portal Team";
+        emailService.sendSimpleEmail(email, emailSubject, emailText);
         companyRepository.rejectApplicantToCompany(uuid, userUuid);
     }
 }

@@ -98,6 +98,8 @@ export function CompanyMembers(props: { uuid: string }) {
       procesDenyingApplicant({
         uuid: props.uuid,
         userUuid: applicants[index].uuid,
+        email: applicants[index].email,
+        reason: denialReasons[index],
       })
     );
     dispatch(removeApplicant(applicants[index].uuid));
