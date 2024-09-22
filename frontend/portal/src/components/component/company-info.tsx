@@ -13,12 +13,12 @@ import {
   MailIcon,
   Package2Icon,
   PhoneIcon,
-  TrashIcon,
   XIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { JSX } from "react/jsx-runtime";
 
 export function CompanyInfo() {
   const [isEditing, setIsEditing] = useState(false);
@@ -286,7 +286,9 @@ export function CompanyInfo() {
   );
 }
 
-function FilePenIcon(props) {
+function FilePenIcon(
+  props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) {
   return (
     <svg
       {...props}
