@@ -1,5 +1,8 @@
 CREATE(p:Person {email: 'jesseveldmaat@hotmail.nl', name: 'Jesse Veldmaat', status: ['ADMIN', 'OPDRACHTGEVER']}) RETURN p
 
+CREATE(c:Company{name:'NGI', street:'Apeldoornseweg 11', postal:'6814BG',town:'Arnhem',province:'Gelderland',telephone:'0627417416',email:'jesseveldmaat@hotmail.nl',website:'ngi.eu',sector:'it',company_size:'10',about:'really long text', uuid:randomUUID()}) return c
+
+
 CREATE(s:Skill{name: 'DevOps'}),(s2:Skill{name: 'Front-End Developer'}), (s3:Skill{name: 'Software Engineer'}), (s4:Skill{name: 'Data Engineer'}) RETURN s, s2, s3, s4
 
 CREATE(status:Status{name: 'DEELNEMER'}),(status2:Status{name: 'ADMIN'}),(status3:Status{name: 'OPDRACHTGEVER'}) RETURN status, status2, status3
