@@ -77,6 +77,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/person").permitAll()
                         .requestMatchers("/api/company/**").permitAll()
                         .requestMatchers("/api/task/**").permitAll()
+                        .requestMatchers("/api/projectDetail/**").permitAll()
                         .requestMatchers("/api/status").permitAll())
                         .formLogin(form -> form
                         .loginProcessingUrl("/api/login")
@@ -102,7 +103,6 @@ class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler
 
         var principal = (User) authentication.getPrincipal();
         String email = principal.getUsername();
-
         String roles = principal.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));

@@ -106,7 +106,7 @@ const App = () => {
           }
         />
         <Route
-          path="/project/:projectUuid"
+          path="/project/:uuid"
           element={
             <GeneralRouteWrapper>
               <ProjectOveriew />

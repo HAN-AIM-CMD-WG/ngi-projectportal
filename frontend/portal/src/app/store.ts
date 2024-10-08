@@ -3,13 +3,15 @@ import authReducer from './slices/authSlice';
 import userReducer from './slices/userSlice';
 import projectReducer from './slices/projectSlice';
 import companyReducer from './slices/companySlice';
+import projectDetailReducer from './slices/projectDetailSlice';
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     users: userReducer,
     project: projectReducer,
-    company: companyReducer
+    company: companyReducer,
+    projectDetail: projectDetailReducer
   }
 });
 

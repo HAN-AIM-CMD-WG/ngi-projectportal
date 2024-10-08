@@ -1,26 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Navbar } from './navbar';
 import { Link } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { useParams } from 'react-router-dom';
-import { fetchProject } from '@/app/slices/projectSlice';
 import { ProjectHome } from './project-home';
 import { TaskManager } from './task-manager';
 
 type SelectedItem = 'Home' | 'Tasks' | 'Members' | 'Projects' | 'Settings';
 
 export const ProjectOveriew: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const project = useAppSelector(state => state.project.currentProject);
   const [selectedItem, setSelectedItem] = useState<SelectedItem>('Home');
-
-  const { projectUuid } = useParams<{ projectUuid: string }>(); // Extract projectUuid from URL
-
-  useEffect(() => {
-    if (projectUuid) {
-      dispatch(fetchProject(projectUuid)); // Fetch project using the UUID from the URL
-    }
-  }, [dispatch, projectUuid]);
 
   return (
     <div className="min-h-screen w-full">

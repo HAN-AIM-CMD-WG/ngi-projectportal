@@ -1,3 +1,4 @@
+// src/main/java/nl/han/ngi/projectportalbackend/core/models/Project.java
 package nl.han.ngi.projectportalbackend.core.models;
 
 import java.time.LocalDate;
@@ -9,37 +10,31 @@ public class Project {
     private String description;
     private LocalDate created;
 
+    // Additional Fields
+    private String nextSteps;
+    private String image; // Base64 encoded image
+    private List<RoadmapStep> roadmapSteps;
+
     // List of tasks
     private List<Task> tasks;
 
-    // Getter and Setter for title
-    public String getTitle() {
-        return title;
-    }
+    // Constructors
+    public Project() {}
 
-    public void setTitle(String title) {
+    public Project(String uuid, String title, String description, LocalDate created,
+                   String nextSteps, String image, List<RoadmapStep> roadmapSteps, List<Task> tasks) {
+        this.uuid = uuid;
         this.title = title;
-    }
-
-    // Getter and Setter for description
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
-    }
-
-    // Getter and Setter for created
-    public LocalDate getCreated() {
-        return created;
-    }
-
-    public void setCreated(LocalDate created) {
         this.created = created;
+        this.nextSteps = nextSteps;
+        this.image = image;
+        this.roadmapSteps = roadmapSteps;
+        this.tasks = tasks;
     }
 
-    // Getter and Setter for uuid
+    // Getters and Setters
+
     public String getUuid() {
         return uuid;
     }
@@ -48,7 +43,54 @@ public class Project {
         this.uuid = uuid;
     }
 
-    // Getter and Setter for tasks
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDate getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDate created) {
+        this.created = created;
+    }
+
+    public String getNextSteps() {
+        return nextSteps;
+    }
+
+    public void setNextSteps(String nextSteps) {
+        this.nextSteps = nextSteps;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public List<RoadmapStep> getRoadmapSteps() {
+        return roadmapSteps;
+    }
+
+    public void setRoadmapSteps(List<RoadmapStep> roadmapSteps) {
+        this.roadmapSteps = roadmapSteps;
+    }
+
     public List<Task> getTasks() {
         return tasks;
     }
