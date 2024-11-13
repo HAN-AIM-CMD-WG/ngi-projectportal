@@ -137,7 +137,7 @@ public class PersonService {
         }
     }
 
-    public Company getCompanyAssociatedToPerson(String uuid) {
-        return companyRepository.getCompanyAssociatedToPerson(uuid);
+    public List<Company> getCompaniesAssociatedToPerson(String uuid) {
+        return companyRepository.getCompaniesAssociatedToPerson(uuid);
     }
 }
