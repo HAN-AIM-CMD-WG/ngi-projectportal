@@ -100,8 +100,8 @@ public class PersonController {
         }
     }
 
-    @GetMapping("/{uuid}/company")
-    public ResponseEntity getCompanyAssociatedToPerson(@PathVariable String uuid){
-        return new ResponseEntity(personService.getCompanyAssociatedToPerson(uuid), HttpStatus.OK);
+    @GetMapping("/{uuid}/companies")
+    public ResponseEntity getCompaniesAssociatedToPerson(@PathVariable String uuid){
+        return new ResponseEntity(personService.getCompaniesAssociatedToPerson(uuid), HttpStatus.OK);
     }
 }

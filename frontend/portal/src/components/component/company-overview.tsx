@@ -14,11 +14,12 @@ import { CompanySettings } from "./company-settings";
 
 export function CompanyDetail() {
   const dispatch = useAppDispatch();
-  const userCompany = useAppSelector((state) => state.auth.company);
+  const userCompany = useAppSelector((state) => state.company.selectedCompany);
+  console.log("userCompany = " + userCompany?.uuid);
   const [selectedItem, setSelectedItem] = useState("Home");
   useEffect(() => {
-    dispatch(fetchCompanyData(userCompany[0]));
-    dispatch(fetchApplicantsByCompany(userCompany[0]));
+    dispatch(fetchCompanyData(userCompany.uuid));
+    dispatch(fetchApplicantsByCompany(userCompany.uuid));
   }, [dispatch, userCompany]);
 
   return (
@@ -105,13 +106,13 @@ export function CompanyDetail() {
           </div>
         </div>
         <>
-          {selectedItem === "Home" && <CompanyHome uuid={userCompany[0]} />}
+          {selectedItem === "Home" && <CompanyHome uuid={userCompany.uuid} />}
           {selectedItem === "Info" && <CompanyInfo />}
           {selectedItem === "Members" && (
-            <CompanyMembers uuid={userCompany[0]} />
+            <CompanyMembers uuid={userCompany.uuid} />
           )}
           {selectedItem === "Projects" && (
-            <CompanyProjects uuid={userCompany[0]} />
+            <CompanyProjects uuid={userCompany.uuid} />
           )}
           {selectedItem === "Settings" && <CompanySettings />}
         </>

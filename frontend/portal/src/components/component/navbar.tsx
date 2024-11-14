@@ -1,23 +1,31 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { logoutUser } from "@/app/slices/authSlice";
+import { setSelectedCompany } from "@/app/slices/companySlice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Company } from "@/app/types/company";
 
 export function Navbar() {
   const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
   const userRoles = useAppSelector((state) => state.auth.roles);
-  const userCompany = useAppSelector((state) => state.auth.company);
+  const userCompany = useAppSelector((state) => state.auth.companies);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logoutUser())
       .unwrap()
       .then(() => {
+        navigate("/");
         console.log("Logged out successfully");
       })
       .catch((error: unknown) => {
         console.error("Logout error:", error);
       });
+  };
+
+  const handleSelectedCompany = (company: Company) => {
+    dispatch(setSelectedCompany(company));
   };
 
   return (
@@ -31,15 +39,18 @@ export function Navbar() {
       <div className="flex items-center gap-4">
         {isLoggedIn ? (
           <>
-            {userCompany && (
+            {userCompany.map((company) => (
               <Link
+                key={company.uuid}
                 className="text-lg text-gray-600 dark:text-gray-400 hover:underline"
-                to={`/company/${userCompany[0]}`}
-                property={userCompany[0]}
+                to={`/company/${company.uuid}`}
+                onClick={(event) => {
+                  handleSelectedCompany(company);
+                }}
               >
-                {userCompany[1]}
+                {company.name}
               </Link>
-            )}
+            ))}
             <Link
               className="text-lg text-gray-600 dark:text-gray-400 hover:underline"
               to="/register-company"

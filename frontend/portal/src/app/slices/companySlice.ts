@@ -6,7 +6,7 @@ import { Applicant } from '../types/applicant';
 
 interface CompanyState {
   company : Company | null;
-  companies: Company[] | null;
+  selectedCompany: Company | null;
   isLoading: boolean;
   projects: Project[] | null;
   members: User[];
@@ -17,7 +17,7 @@ interface CompanyState {
 
 const initialState: CompanyState = {
   company: null,
-  companies: [],
+  selectedCompany: null,
   isLoading: false,
   projects: [],
   members: [],
@@ -255,7 +255,10 @@ const companySlice = createSlice({
       },
       updateApplicantCount(state){
         state.applicantCount = state.applicants.length;
-      }
+      },
+      setSelectedCompany(state, action){
+        state.selectedCompany = action.payload;
+      },
     },
     extraReducers: builder => {
         builder
@@ -333,5 +336,5 @@ const companySlice = createSlice({
     }
 });
 
-export const { addMember, removeApplicant, rejectApplicant, acceptApplicant, resetApplicantStatusToPending,updateApplicantCount } = companySlice.actions;
+export const { setSelectedCompany, addMember, removeApplicant, rejectApplicant, acceptApplicant, resetApplicantStatusToPending,updateApplicantCount } = companySlice.actions;
 export default companySlice.reducer;

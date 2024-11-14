@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { fetchApplicantsByCompany } from "@/app/slices/companySlice";
 
-export function CompanyHome(props) {
+export function CompanyHome(props: { uuid: string }) {
   const dispatch = useAppDispatch();
   const applicantCount = useAppSelector(
     (state) => state.company.applicantCount
@@ -12,7 +12,7 @@ export function CompanyHome(props) {
 
   useEffect(() => {
     dispatch(fetchApplicantsByCompany(props.uuid));
-  }, [dispatch]);
+  }, [dispatch, props.uuid]);
   return (
     <div className="flex flex-col">
       <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">

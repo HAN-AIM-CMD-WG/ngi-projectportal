@@ -3,6 +3,7 @@ package nl.han.ngi.projectportalbackend.core.services;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import nl.han.ngi.projectportalbackend.core.models.Person;
 import nl.han.ngi.projectportalbackend.core.services.strategies.AuthenticationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,11 +18,13 @@ import org.springframework.security.core.GrantedAuthority;
 
 @Service
 public class AuthServiceImpl implements AuthService {
+    private final PersonService personService;
 
     private final List<AuthenticationStrategy> strategies;
 
     @Autowired
-    public AuthServiceImpl(List<AuthenticationStrategy> strategies) {
+    public AuthServiceImpl(PersonService personService, List<AuthenticationStrategy> strategies) {
+        this.personService = personService;
         this.strategies = strategies;
     }
 
@@ -40,12 +43,16 @@ public class AuthServiceImpl implements AuthService {
                             .map(GrantedAuthority::getAuthority)
                             .collect(Collectors.joining(","));
 
+                    String uuid = personService.getPersonByEmail(authentication.getName()).getUuid();
+
+                    System.out.print("UUID: " + uuid + " EMAIL: " + authentication.getName());
+
                     response.setContentType("application/json");
                     response.setStatus(HttpStatus.OK.value());
                     response.getWriter().write(
                             String.format(
-                                    "{\"message\":\"Successfully authenticated.\", \"email\":\"%s\", \"roles\":\"%s\"}",
-                                    authentication.getName(), roles
+                                    "{\"message\":\"Successfully authenticated.\", \"email\":\"%s\", \"roles\":\"%s\", \"uuid\":\"%s\"}",
+                                    authentication.getName(), roles, uuid
                             )
                     );
                     return;

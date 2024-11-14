@@ -45,7 +45,9 @@ export function Login() {
     credentialResponse: GoogleCredentialResponse
   ) => {
     dispatch(loginWithGoogleThunk(credentialResponse.access_token))
-      .then(() => navigate("/"))
+      .then(() => {
+        navigate("/");
+      })
       .catch((error: unknown) => {
         console.error("Google login error:", error);
         setAlertMessage("Google Login failed. Please try again.");

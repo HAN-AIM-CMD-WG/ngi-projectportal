@@ -3,15 +3,23 @@ import { Project } from "./project";
 import { Navbar } from "./navbar";
 import { ProjectList } from "./project-list.tsx";
 import { UserList } from "./user-list.tsx";
-import { useAppSelector } from "@/app/hooks.ts";
+import { useAppDispatch, useAppSelector } from "@/app/hooks.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card.tsx";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { getUserCompany } from "@/app/slices/authSlice.ts";
 
 export function Landing() {
+  const dispatch = useAppDispatch();
   const roles = useAppSelector((state) => state.auth.roles);
+  const uuid = useAppSelector((state) => state.auth.uuid);
   const applicantCount = useAppSelector(
     (state) => state.company.applicantCount
   );
+
+  useEffect(() => {
+    dispatch(getUserCompany(uuid));
+  }, [dispatch, uuid]);
 
   return (
     <div key="1">

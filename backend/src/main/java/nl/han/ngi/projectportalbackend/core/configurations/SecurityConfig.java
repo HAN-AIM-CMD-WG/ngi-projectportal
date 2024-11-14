@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import nl.han.ngi.projectportalbackend.core.enums.Roles;
+import nl.han.ngi.projectportalbackend.core.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,11 +33,11 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+
+    public SecurityConfig(PersonService personService, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
     }

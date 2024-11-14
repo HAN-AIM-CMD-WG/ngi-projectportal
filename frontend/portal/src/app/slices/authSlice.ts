@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { Company } from '../types/company';
 
 interface AuthState {
   email: string | null;
   roles: string[];
-  company: string[];
+  uuid: string | null;
+  companies: Company[];
   isLoading: boolean;
   authChecking: boolean;
   error: string | null;
@@ -13,7 +15,8 @@ interface AuthState {
 const initialState: AuthState = {
   email: null,
   roles: [],
-  company: ["1cc74591-d6a6-48ba-bd20-c8830956e80f", "NGI"],
+  uuid: null,
+  companies: [],
   isLoading: false,
   authChecking: true,
   error: null,
@@ -74,6 +77,7 @@ export const loginWithGoogle = createAsyncThunk(
       }
 
       const data = await response.json();
+      console.log(data);
       return data;
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -137,13 +141,12 @@ export const getUserCompany = createAsyncThunk(
   'auth/getUserCompany',
   async ( uuid: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/person/${uuid}/company`, {
+      const response = await fetch(`/api/person/${uuid}/companies`, {
         method: 'GET',
         credentials: 'include'
       });
       if (response.ok){
         const data = await response.json();
-        console.log(data);
         return data;
       } else {
         return rejectWithValue('No company found');
@@ -234,6 +237,7 @@ const authSlice = createSlice({
       .addCase(loginWithGoogle.fulfilled, (state, action) => {
         state.email = action.payload.email;
         state.roles = action.payload.roles;
+        state.uuid = action.payload.uuid;
         state.isLoggedIn = true;
         state.isLoading = false;
         state.authChecking = false;
@@ -250,8 +254,8 @@ const authSlice = createSlice({
       }
       )
       .addCase(getUserCompany.fulfilled, (state, action) => {
-        //state.company = [action.payload.uuid, action.payload.name]
-        console.log(`uuid: ${action.payload.uuid} and name: ${action.payload.name}`);
+        console.log(action.payload);
+        state.companies = action.payload;
         state.isLoading = false;
       })
       .addCase(getUserCompany.rejected, state => {
