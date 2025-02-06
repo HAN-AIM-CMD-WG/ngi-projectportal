@@ -40,3 +40,6 @@ build/
 /frontend/portal/.vite/
 /frontend/portal/node_modules/
 >>>>>>> Stashed changes
+
+
+.DS_STORE
